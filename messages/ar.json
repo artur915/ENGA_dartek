@@ -1,0 +1,86 @@
+{
+  "common": {
+    "appName": "إنجا",
+    "tagline": "سوق الخدمات الهندسية",
+    "getStarted": "ابدأ الآن",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "dashboard": "لوحة التحكم",
+    "services": "الخدمات",
+    "packages": "الباقات",
+    "agencies": "المكاتب الهندسية",
+    "requests": "الطلبات",
+    "quotations": "عروض الأسعار",
+    "projects": "المشاريع",
+    "finance": "المالية",
+    "settings": "الإعدادات",
+    "admin": "الإدارة",
+    "learnMore": "اعرف المزيد",
+    "viewAll": "عرض الكل",
+    "search": "بحث",
+    "language": "اللغة"
+  },
+  "landing": {
+    "heroTitle": "تواصل مع المكاتب الهندسية المرخصة في المملكة العربية السعودية",
+    "heroSubtitle": "قدّم طلب مشروعك، قارن عروض الأسعار، ووقّع الاتفاقيات، وتتبع التنفيذ — كل ذلك في منصة واحدة.",
+    "ctaClient": "أحتاج خدمات هندسية",
+    "ctaAgency": "أنا مكتب هندسي",
+    "ctaEngineer": "أنا مهندس فردي",
+    "workflowTitle": "كيف تعمل المنصة",
+    "workflowSteps": {
+      "submit": "تقديم الطلب",
+      "float": "طرح الطلب",
+      "compare": "مقارنة العروض",
+      "agree": "توقيع الاتفاقية",
+      "execute": "متابعة التنفيذ",
+      "pay": "تأكيد الدفع",
+      "close": "الإغلاق والأرشفة"
+    },
+    "packagesTitle": "باقات الخدمات",
+    "packagesSubtitle": "اختر باقة جاهزة أو حدد خدمات فردية من كتالوجنا المكون من 147 خدمة هندسية.",
+    "catalogTitle": "كتالوج الخدمات",
+    "catalogSubtitle": "10 فئات تشمل التصميم والتصاريح والإشراف والفحوصات وغيرها.",
+    "stats": {
+      "services": "147 خدمة",
+      "categories": "10 فئات",
+      "packages": "7 باقات"
+    }
+  },
+  "auth": {
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "fullName": "الاسم الكامل",
+    "phone": "رقم الجوال",
+    "role": "أنا",
+    "roles": {
+      "client": "عميل / مالك منزل",
+      "agency_owner": "مالك مكتب هندسي",
+      "individual_engineer": "مهندس فردي"
+    },
+    "createAccount": "إنشاء حساب",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "noAccount": "ليس لديك حساب؟"
+  },
+  "client": {
+    "title": "بوابة العميل",
+    "newRequest": "طلب مشروع جديد",
+    "myRequests": "طلباتي",
+    "compareQuotes": "مقارنة العروض",
+    "activeProjects": "المشاريع النشطة"
+  },
+  "agency": {
+    "title": "بوابة المكتب الهندسي",
+    "register": "تسجيل المكتب",
+    "incomingRequests": "الطلبات الواردة",
+    "submitQuote": "تقديم عرض سعر",
+    "activeProjects": "المشاريع النشطة",
+    "financeLite": "المالية المبسطة"
+  },
+  "engineer": {
+    "title": "بوابة المهندس الفردي",
+    "profile": "الملف المهني",
+    "assignments": "مهامي",
+    "invitations": "دعوات المشاريع"
+  }
+}

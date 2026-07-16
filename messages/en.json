@@ -1,0 +1,86 @@
+{
+  "common": {
+    "appName": "ENGA",
+    "tagline": "Engineering Services Marketplace",
+    "getStarted": "Get Started",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard",
+    "services": "Services",
+    "packages": "Packages",
+    "agencies": "Agencies",
+    "requests": "Requests",
+    "quotations": "Quotations",
+    "projects": "Projects",
+    "finance": "Finance",
+    "settings": "Settings",
+    "admin": "Admin",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "search": "Search",
+    "language": "Language"
+  },
+  "landing": {
+    "heroTitle": "Connect with Licensed Engineering Offices in Saudi Arabia",
+    "heroSubtitle": "Submit your project request, compare quotations, sign agreements, and track execution — all in one platform.",
+    "ctaClient": "I Need Engineering Services",
+    "ctaAgency": "I'm an Engineering Office",
+    "ctaEngineer": "I'm an Individual Engineer",
+    "workflowTitle": "How It Works",
+    "workflowSteps": {
+      "submit": "Submit Request",
+      "float": "Float to Agencies",
+      "compare": "Compare Quotations",
+      "agree": "Sign Agreement",
+      "execute": "Track Execution",
+      "pay": "Confirm Payment",
+      "close": "Close & Archive"
+    },
+    "packagesTitle": "Service Packages",
+    "packagesSubtitle": "Choose a curated package or select individual services from our catalog of 147 engineering services.",
+    "catalogTitle": "Service Catalog",
+    "catalogSubtitle": "10 categories covering design, permits, supervision, inspections, and more.",
+    "stats": {
+      "services": "147 Services",
+      "categories": "10 Categories",
+      "packages": "7 Packages"
+    }
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full Name",
+    "phone": "Phone Number",
+    "role": "I am a",
+    "roles": {
+      "client": "Client / Homeowner",
+      "agency_owner": "Engineering Office Owner",
+      "individual_engineer": "Individual Engineer"
+    },
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?"
+  },
+  "client": {
+    "title": "Client Portal",
+    "newRequest": "New Project Request",
+    "myRequests": "My Requests",
+    "compareQuotes": "Compare Quotations",
+    "activeProjects": "Active Projects"
+  },
+  "agency": {
+    "title": "Engineering Office Portal",
+    "register": "Register Office",
+    "incomingRequests": "Incoming Requests",
+    "submitQuote": "Submit Quotation",
+    "activeProjects": "Active Projects",
+    "financeLite": "Finance Lite"
+  },
+  "engineer": {
+    "title": "Individual Engineer Portal",
+    "profile": "Professional Profile",
+    "assignments": "My Assignments",
+    "invitations": "Project Invitations"
+  }
+}
