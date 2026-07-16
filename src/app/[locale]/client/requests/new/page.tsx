@@ -62,14 +62,13 @@ export default function NewRequestPage() {
     if (!location.city || !title) return null;
 
     const pkg = SERVICE_PACKAGES.find((p) => p.name === selectedPackage);
-    const serviceIds = selectedServices.length > 0 ? selectedServices : packageServices;
     const result = await createProjectRequest({
       title,
       description,
       location_city: location.city,
       location_district: location.district,
       package_id: pkg ? SERVICE_PACKAGES.indexOf(pkg) + 1 : undefined,
-      service_ids: serviceIds,
+      service_ids: selectedServices,
     });
     if (result.error || !result.requestId) {
       setError(result.error ?? "Failed to save draft");
@@ -101,10 +100,6 @@ export default function NewRequestPage() {
     e.target.value = "";
   }
 
-  const packageServices = selectedPackage
-    ? ENGINEERING_SERVICES.filter((s) => s.packages.includes(selectedPackage)).map((s) => s.id)
-    : [];
-
   function toggleService(id: number) {
     setSelectedServices((prev) =>
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
@@ -113,17 +108,17 @@ export default function NewRequestPage() {
 
   function handlePackageSelect(pkgName: string) {
     setSelectedPackage(pkgName);
-    const svcIds = ENGINEERING_SERVICES
-      .filter((s) => s.packages.includes(pkgName))
-      .map((s) => s.id);
-    setSelectedServices(svcIds);
+    setSelectedServices([]);
   }
 
   function handleSaveAndFloat() {
     setError("");
+    if (selectedServices.length === 0) {
+      setError("Select at least one service before floating your request.");
+      return;
+    }
     startTransition(async () => {
       const pkg = SERVICE_PACKAGES.find((p) => p.name === selectedPackage);
-      const serviceIds = selectedServices.length > 0 ? selectedServices : packageServices;
 
       let id = requestId;
       if (!id) {
@@ -133,7 +128,7 @@ export default function NewRequestPage() {
           location_city: location.city,
           location_district: location.district,
           package_id: pkg ? SERVICE_PACKAGES.indexOf(pkg) + 1 : undefined,
-          service_ids: serviceIds,
+          service_ids: selectedServices,
         });
         if (result.error) {
           setError(result.error);
@@ -306,8 +301,16 @@ export default function NewRequestPage() {
           {step < 5 && (
             <button
               type="button"
-              onClick={() => setStep(step + 1)}
-              className="mt-6 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white"
+              onClick={() => {
+                if (step === 2 && selectedServices.length === 0) {
+                  setError("Select at least one service to continue.");
+                  return;
+                }
+                setError("");
+                setStep(step + 1);
+              }}
+              disabled={step === 2 && selectedServices.length === 0}
+              className="mt-6 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
               Continue
             </button>
