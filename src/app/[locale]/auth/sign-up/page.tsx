@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ROLE_PORTAL, type UserRole } from "@/types";
+import { formatAuthError } from "@/lib/auth-errors";
 import { Building2 } from "lucide-react";
 
 function SignUpForm() {
@@ -18,6 +19,7 @@ function SignUpForm() {
   const [fullName, setFullName] = useState("");
   const [role, setRole] = useState<UserRole>("client");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -31,9 +33,10 @@ function SignUpForm() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     const supabase = createClient();
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -43,7 +46,16 @@ function SignUpForm() {
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      setError(formatAuthError(signUpError.message));
+      setLoading(false);
+      return;
+    }
+
+    // No session = email confirmation required
+    if (!data.session) {
+      setSuccess(
+        "Account created! Check your email and click the confirmation link, then sign in."
+      );
       setLoading(false);
       return;
     }
@@ -109,6 +121,14 @@ function SignUpForm() {
             </select>
           </div>
           {error && <p className="text-sm text-danger">{error}</p>}
+          {success && (
+            <div className="rounded-lg border border-success/30 bg-success/5 px-4 py-3 text-sm text-success">
+              {success}
+              <Link href="/auth/sign-in" className="mt-2 block text-xs font-semibold underline">
+                Go to Sign In
+              </Link>
+            </div>
+          )}
           <button
             type="submit"
             disabled={loading}

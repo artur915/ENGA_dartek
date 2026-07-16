@@ -313,19 +313,43 @@ CREATE TRIGGER payments_updated_at BEFORE UPDATE ON payments FOR EACH ROW EXECUT
 CREATE TRIGGER engineer_profiles_updated_at BEFORE UPDATE ON engineer_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- Auto-create profile on signup
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  user_role_value public.user_role;
+  role_text TEXT;
 BEGIN
-  INSERT INTO profiles (id, email, full_name, role)
+  role_text := NEW.raw_user_meta_data->>'role';
+
+  IF role_text IN (
+    'client', 'agency_owner', 'agency_employee',
+    'individual_engineer', 'finance_user', 'admin'
+  ) THEN
+    user_role_value := role_text::public.user_role;
+  ELSE
+    user_role_value := 'client';
+  END IF;
+
+  INSERT INTO public.profiles (id, email, full_name, role)
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
-    COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'client')
-  );
+    user_role_value
+  )
+  ON CONFLICT (id) DO NOTHING;
+
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
+
+GRANT USAGE ON SCHEMA public TO supabase_auth_admin;
+GRANT ALL ON TABLE public.profiles TO supabase_auth_admin;
+GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users

@@ -42,8 +42,10 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
--- Profiles insert (for trigger fallback)
-CREATE POLICY profiles_insert_own ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+-- Profiles insert (signup trigger + own insert)
+DROP POLICY IF EXISTS profiles_insert_signup ON profiles;
+CREATE POLICY profiles_insert_signup ON profiles FOR INSERT TO supabase_auth_admin WITH CHECK (true);
+CREATE POLICY profiles_insert_own ON profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
 
 -- Agency members
 CREATE POLICY agency_members_select ON agency_members FOR SELECT USING (

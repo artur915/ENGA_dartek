@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { redirect } from "@/i18n/navigation";
+import { redirect } from "next/navigation";
 import { ROLE_PORTAL, type Profile, type UserRole } from "@/types";
 
 export async function getSession() {
@@ -38,7 +38,7 @@ export async function getProfile(): Promise<Profile | null> {
 export async function requireAuth(locale: string) {
   const profile = await getProfile();
   if (!profile) {
-    redirect({ href: "/auth/sign-in", locale });
+    redirect(`/${locale}/auth/sign-in`);
   }
   return profile!;
 }
@@ -46,7 +46,7 @@ export async function requireAuth(locale: string) {
 export async function requireRole(locale: string, roles: UserRole[]) {
   const profile = await requireAuth(locale);
   if (!roles.includes(profile.role)) {
-    redirect({ href: ROLE_PORTAL[profile.role], locale });
+    redirect(`/${locale}${ROLE_PORTAL[profile.role]}`);
   }
   return profile;
 }

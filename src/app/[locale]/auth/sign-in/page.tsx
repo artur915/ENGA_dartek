@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ROLE_PORTAL, type UserRole } from "@/types";
+import { formatAuthError } from "@/lib/auth-errors";
 import { Building2 } from "lucide-react";
 
 export default function SignInPage() {
@@ -28,7 +29,7 @@ export default function SignInPage() {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      setError(formatAuthError(signInError.message));
       setLoading(false);
       return;
     }
@@ -77,7 +78,16 @@ export default function SignInPage() {
               className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
-          {error && <p className="text-sm text-danger">{error}</p>}
+          {error && (
+            <div className="rounded-lg border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+              {error}
+              {error.includes("confirm your email") && (
+                <p className="mt-2 text-xs text-muted">
+                  Dev tip: In Supabase → Authentication → Providers → Email, turn off &quot;Confirm email&quot; for faster testing.
+                </p>
+              )}
+            </div>
+          )}
           <button
             type="submit"
             disabled={loading}
