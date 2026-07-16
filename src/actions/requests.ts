@@ -52,6 +52,51 @@ export async function createProjectRequest(input: CreateRequestInput) {
   return { success: true, requestId: request.id };
 }
 
+export async function uploadRequestDocument(requestId: string, formData: FormData) {
+  const profile = await getProfile();
+  if (!profile) return { error: "Not authenticated" };
+
+  const file = formData.get("file");
+  if (!file || !(file instanceof File) || file.size === 0) {
+    return { error: "No file provided" };
+  }
+
+  const supabase = await createClient();
+  const { data: request } = await supabase
+    .from("project_requests")
+    .select("client_id")
+    .eq("id", requestId)
+    .single();
+
+  if (!request || request.client_id !== profile.id) {
+    return { error: "Not authorized" };
+  }
+
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const filePath = `${profile.id}/${requestId}/${Date.now()}-${safeName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("request-documents")
+    .upload(filePath, file, { contentType: file.type, upsert: false });
+
+  if (uploadError) return { error: uploadError.message };
+
+  const { error: dbError } = await supabase.from("request_documents").insert({
+    request_id: requestId,
+    file_name: file.name,
+    file_path: filePath,
+    file_size: file.size,
+    mime_type: file.type,
+    uploaded_by: profile.id,
+  });
+
+  if (dbError) return { error: dbError.message };
+
+  revalidatePath("/client/requests");
+  revalidatePath("/agency/requests");
+  return { success: true };
+}
+
 export async function floatProjectRequest(requestId: string) {
   const profile = await getProfile();
   if (!profile) return { error: "Not authenticated" };

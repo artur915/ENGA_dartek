@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
+import { createDefaultMilestones } from "@/actions/milestones";
 
 export interface SubmitQuotationInput {
   request_id: string;
@@ -183,11 +184,22 @@ export async function acceptQuotation(quotationId: string) {
 
     revalidatePath("/client/quotations");
     revalidatePath("/client/projects");
+    if (agreement?.id) {
+      await createDefaultMilestones(quote.request_id);
+    }
     return { success: true, agreementId: agreement?.id };
   }
 
   revalidatePath("/client/quotations");
   revalidatePath("/client/projects");
+
+  const { data: quote } = await supabase
+    .from("quotations")
+    .select("request_id")
+    .eq("id", quotationId)
+    .single();
+  if (quote) await createDefaultMilestones(quote.request_id);
+
   return { success: true, agreementId: agreementId as string };
 }
 

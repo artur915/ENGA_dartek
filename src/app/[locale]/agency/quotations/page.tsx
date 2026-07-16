@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getAgencyQuotations } from "@/actions/quotations";
+import { getAgencyNav } from "@/lib/nav";
 
 export default async function AgencyQuotationsPage({
   params,
@@ -17,13 +18,7 @@ export default async function AgencyQuotationsPage({
   const tc = await getTranslations("common");
   const quotations = await getAgencyQuotations();
 
-  const nav = [
-    { href: "/agency", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/agency/register", label: t("register"), icon: "Building2" },
-    { href: "/agency/requests", label: t("incomingRequests"), icon: "ClipboardList" },
-    { href: "/agency/quotations", label: tc("quotations"), icon: "FileText" },
-    { href: "/agency/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getAgencyNav(t, tc);
 
   return (
     <div className="flex min-h-screen">

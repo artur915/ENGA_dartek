@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Link } from "@/i18n/navigation";
 import { getApprovedAgencies } from "@/actions/agency";
 import { Building2, MapPin } from "lucide-react";
 
@@ -40,7 +41,8 @@ export default async function AgenciesPage({
               service_areas: string[];
               indicative_price_from: number | null;
             }) => (
-              <Card key={agency.id} hover>
+              <Link key={agency.id} href={`/agencies/${agency.id}`}>
+              <Card hover className="h-full">
                 <div className="mb-4 flex items-start justify-between">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <Building2 className="h-6 w-6" />
@@ -66,6 +68,7 @@ export default async function AgenciesPage({
                   </p>
                 )}
               </Card>
+              </Link>
             ))}
           </div>
         )}

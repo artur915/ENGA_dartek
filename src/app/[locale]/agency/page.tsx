@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getMyAgency } from "@/actions/agency";
 import { getAgencyDashboardStats } from "@/actions/requests";
+import { getAgencyNav } from "@/lib/nav";
 
 export default async function AgencyDashboard({
   params,
@@ -19,13 +20,7 @@ export default async function AgencyDashboard({
   const stats = await getAgencyDashboardStats();
   const agency = await getMyAgency();
 
-  const nav = [
-    { href: "/agency", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/agency/register", label: t("register"), icon: "Building2" },
-    { href: "/agency/requests", label: t("incomingRequests"), icon: "ClipboardList" },
-    { href: "/agency/quotations", label: tc("quotations"), icon: "FileText" },
-    { href: "/agency/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getAgencyNav(t, tc);
 
   return (
     <div className="flex min-h-screen">

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { getPendingAgencies, approveAgency, rejectAgency } from "@/actions/agency";
 import { AdminAgencyActions } from "@/components/admin/AdminAgencyActions";
+import { getAdminNav } from "@/lib/nav";
 
 export default async function AdminPage({
   params,
@@ -16,10 +17,7 @@ export default async function AdminPage({
   const tc = await getTranslations("common");
   const pending = await getPendingAgencies();
 
-  const nav = [
-    { href: "/admin", label: tc("admin"), icon: "LayoutDashboard" },
-    { href: "/admin/agencies", label: tc("agencies"), icon: "Building2" },
-  ];
+  const nav = getAdminNav(tc);
 
   return (
     <div className="flex min-h-screen">

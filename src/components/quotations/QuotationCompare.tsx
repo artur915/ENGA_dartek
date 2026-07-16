@@ -41,7 +41,7 @@ export function QuotationCompare({
     startTransition(async () => {
       const result = await acceptQuotation(quotationId);
       if (result.success) {
-        router.push("/client/projects");
+        router.push(`/client/projects/${requestId}`);
         router.refresh();
       } else {
         alert(result.error);

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getClientRequests } from "@/actions/requests";
+import { getClientNav } from "@/lib/nav";
 
 const STATUS_VARIANT: Record<string, "default" | "success" | "warning" | "outline"> = {
   draft: "outline",
@@ -27,13 +28,7 @@ export default async function ClientRequestsPage({
   const tc = await getTranslations("common");
   const requests = await getClientRequests();
 
-  const nav = [
-    { href: "/client", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/client/requests", label: t("myRequests"), icon: "ClipboardList" },
-    { href: "/client/requests/new", label: t("newRequest"), icon: "Plus" },
-    { href: "/client/quotations", label: t("compareQuotes"), icon: "FileText" },
-    { href: "/client/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getClientNav(t, tc);
 
   return (
     <div className="flex min-h-screen">

@@ -6,6 +6,7 @@ import { getRequestById } from "@/actions/requests";
 import { SubmitQuotationForm } from "@/components/quotations/SubmitQuotationForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import { getAgencyNav } from "@/lib/nav";
 
 export default async function AgencyRequestDetailPage({
   params,
@@ -20,15 +21,10 @@ export default async function AgencyRequestDetailPage({
   const request = await getRequestById(id);
   if (!request) notFound();
 
-  const nav = [
-    { href: "/agency", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/agency/register", label: t("register"), icon: "Building2" },
-    { href: "/agency/requests", label: t("incomingRequests"), icon: "ClipboardList" },
-    { href: "/agency/quotations", label: tc("quotations"), icon: "FileText" },
-    { href: "/agency/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getAgencyNav(t, tc);
 
   const services = request.request_services as { engineering_services: { name: string } }[] | null;
+  const documents = (request.request_documents ?? []) as { id: string; file_name: string }[];
 
   return (
     <div className="flex min-h-screen">
@@ -61,6 +57,16 @@ export default async function AgencyRequestDetailPage({
                 ))}
               </ul>
             </div>
+            {documents.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs font-semibold uppercase text-muted">Client Documents</p>
+                <ul className="mt-2 space-y-1">
+                  {documents.map((d) => (
+                    <li key={d.id} className="text-sm text-muted">📎 {d.file_name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </Card>
 
           <SubmitQuotationForm requestId={id} />

@@ -5,12 +5,17 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { ENGINEERING_SERVICES, SERVICE_PACKAGES } from "@/data/catalog";
-import { createProjectRequest, floatProjectRequest } from "@/actions/requests";
+import { createProjectRequest, floatProjectRequest, getRequestById, uploadRequestDocument } from "@/actions/requests";
+import { getClientNav } from "@/lib/nav";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function NewRequestPage() {
   const t = useTranslations("client");
   const tc = useTranslations("common");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const draftId = searchParams.get("draft");
   const [step, setStep] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -21,14 +26,80 @@ export default function NewRequestPage() {
   const [location, setLocation] = useState({ city: "", district: "" });
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [documents, setDocuments] = useState<{ id: string; file_name: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
 
-  const nav = [
-    { href: "/client", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/client/requests", label: t("myRequests"), icon: "ClipboardList" },
-    { href: "/client/requests/new", label: t("newRequest"), icon: "Plus" },
-    { href: "/client/quotations", label: t("compareQuotes"), icon: "FileText" },
-    { href: "/client/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getClientNav(t, tc);
+
+  useEffect(() => {
+    if (!draftId) return;
+    (async () => {
+      const draft = await getRequestById(draftId);
+      if (!draft || draft.status !== "draft") return;
+      setRequestId(draft.id);
+      setTitle(draft.title ?? "");
+      setDescription(draft.description ?? "");
+      setLocation({
+        city: draft.location_city ?? "",
+        district: draft.location_district ?? "",
+      });
+      const pkg = draft.service_packages;
+      const pkgName = Array.isArray(pkg) ? pkg[0]?.name : pkg?.name;
+      if (pkgName) setSelectedPackage(pkgName);
+      const svcIds = (draft.request_services ?? []).map(
+        (rs: { service_id: number }) => rs.service_id
+      );
+      if (svcIds.length) setSelectedServices(svcIds);
+      setDocuments((draft.request_documents ?? []).map((d: { id: string; file_name: string }) => ({
+        id: d.id,
+        file_name: d.file_name,
+      })));
+    })();
+  }, [draftId]);
+
+  async function ensureDraft(): Promise<string | null> {
+    if (requestId) return requestId;
+    if (!location.city || !title) return null;
+
+    const pkg = SERVICE_PACKAGES.find((p) => p.name === selectedPackage);
+    const serviceIds = selectedServices.length > 0 ? selectedServices : packageServices;
+    const result = await createProjectRequest({
+      title,
+      description,
+      location_city: location.city,
+      location_district: location.district,
+      package_id: pkg ? SERVICE_PACKAGES.indexOf(pkg) + 1 : undefined,
+      service_ids: serviceIds,
+    });
+    if (result.error || !result.requestId) {
+      setError(result.error ?? "Failed to save draft");
+      return null;
+    }
+    setRequestId(result.requestId);
+    return result.requestId;
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError("");
+    setUploading(true);
+    const id = await ensureDraft();
+    if (!id) {
+      setUploading(false);
+      return;
+    }
+    const formData = new FormData();
+    formData.set("file", file);
+    const result = await uploadRequestDocument(id, formData);
+    setUploading(false);
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+    setDocuments((prev) => [...prev, { id: crypto.randomUUID(), file_name: file.name }]);
+    e.target.value = "";
+  }
 
   const packageServices = selectedPackage
     ? ENGINEERING_SERVICES.filter((s) => s.packages.includes(selectedPackage)).map((s) => s.id)
@@ -94,7 +165,7 @@ export default function NewRequestPage() {
         <h1 className="text-2xl font-bold">{t("newRequest")}</h1>
 
         <div className="mt-6 flex gap-2">
-          {["Package", "Services", "Location", "Review"].map((label, i) => (
+          {["Package", "Services", "Location", "Documents", "Review"].map((label, i) => (
             <button
               key={label}
               type="button"
@@ -189,12 +260,35 @@ export default function NewRequestPage() {
           )}
 
           {step === 4 && (
+            <div className="space-y-4">
+              <h2 className="font-semibold">Upload Documents</h2>
+              <p className="text-sm text-muted">PDF, images, or DWG files (max 50MB)</p>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.webp,.dwg,application/pdf,image/*"
+                onChange={handleFileUpload}
+                disabled={uploading || isPending}
+                className="block w-full text-sm"
+              />
+              {uploading && <p className="text-sm text-muted">Uploading...</p>}
+              {documents.length > 0 && (
+                <ul className="space-y-1 text-sm">
+                  {documents.map((d) => (
+                    <li key={d.id} className="text-muted">✓ {d.file_name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {step === 5 && (
             <div>
               <h2 className="font-semibold">Review & Float Request</h2>
               <dl className="mt-4 space-y-2 text-sm">
                 <div><dt className="text-muted">Package</dt><dd className="font-medium">{selectedPackage || "Custom selection"}</dd></div>
                 <div><dt className="text-muted">Services</dt><dd className="font-medium">{selectedServices.length} selected</dd></div>
                 <div><dt className="text-muted">Location</dt><dd className="font-medium">{location.city}{location.district ? `, ${location.district}` : ""}</dd></div>
+                <div><dt className="text-muted">Documents</dt><dd className="font-medium">{documents.length} uploaded</dd></div>
                 <div><dt className="text-muted">Title</dt><dd className="font-medium">{title}</dd></div>
               </dl>
               {error && <p className="mt-4 text-sm text-danger">{error}</p>}
@@ -209,7 +303,7 @@ export default function NewRequestPage() {
             </div>
           )}
 
-          {step < 4 && (
+          {step < 5 && (
             <button
               type="button"
               onClick={() => setStep(step + 1)}

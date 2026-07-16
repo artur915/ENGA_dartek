@@ -4,6 +4,7 @@ import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { Card } from "@/components/ui/Card";
 import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
+import { getClientNav } from "@/lib/nav";
 import { getClientDashboardStats } from "@/actions/requests";
 
 export default async function ClientDashboard({
@@ -17,13 +18,7 @@ export default async function ClientDashboard({
   const tc = await getTranslations("common");
   const stats = await getClientDashboardStats();
 
-  const nav = [
-    { href: "/client", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/client/requests", label: t("myRequests"), icon: "ClipboardList" },
-    { href: "/client/requests/new", label: t("newRequest"), icon: "Plus" },
-    { href: "/client/quotations", label: t("compareQuotes"), icon: "FileText" },
-    { href: "/client/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getClientNav(t, tc);
 
   return (
     <div className="flex min-h-screen">

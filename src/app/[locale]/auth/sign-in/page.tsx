@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "@/actions/auth";
 import { ROLE_PORTAL, type UserRole } from "@/types";
-import { formatAuthError } from "@/lib/auth-errors";
 import { Building2 } from "lucide-react";
 
 export default function SignInPage() {
@@ -22,26 +21,17 @@ export default function SignInPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const result = await signIn({ email, password });
 
-    if (signInError) {
-      setError(formatAuthError(signInError.message));
+    if ("error" in result) {
+      setError(result.error);
       setLoading(false);
       return;
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user!.id)
-      .maybeSingle();
-
-    const role = (profile?.role as UserRole) ?? (data.user?.user_metadata?.role as UserRole) ?? "client";
+    const role = (result.role ?? "client") as UserRole;
     router.push(ROLE_PORTAL[role] ?? "/client");
+    router.refresh();
   }
 
   return (

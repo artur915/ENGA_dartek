@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { registerAgency } from "@/actions/agency";
+import { getAgencyNav } from "@/lib/nav";
 import { Building2 } from "lucide-react";
 
 const DISCIPLINES = [
@@ -34,13 +35,7 @@ export default function AgencyRegisterPage() {
     indicative_price_from: "",
   });
 
-  const nav = [
-    { href: "/agency", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/agency/register", label: t("register"), icon: "Building2" },
-    { href: "/agency/requests", label: t("incomingRequests"), icon: "ClipboardList" },
-    { href: "/agency/quotations", label: tc("quotations"), icon: "FileText" },
-    { href: "/agency/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getAgencyNav(t, tc);
 
   function toggleItem(field: "disciplines" | "service_areas", value: string) {
     setForm((prev) => ({

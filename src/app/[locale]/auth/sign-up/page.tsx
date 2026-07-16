@@ -4,9 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { signUp } from "@/actions/auth";
 import { ROLE_PORTAL, type UserRole } from "@/types";
-import { formatAuthError } from "@/lib/auth-errors";
 import { Building2 } from "lucide-react";
 
 function SignUpForm() {
@@ -35,24 +34,21 @@ function SignUpForm() {
     setError("");
     setSuccess("");
 
-    const supabase = createClient();
-    const { data, error: signUpError } = await supabase.auth.signUp({
+    const result = await signUp({
       email,
       password,
-      options: {
-        data: { full_name: fullName, role },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+      fullName,
+      role,
+      redirectOrigin: window.location.origin,
     });
 
-    if (signUpError) {
-      setError(formatAuthError(signUpError.message));
+    if ("error" in result) {
+      setError(result.error);
       setLoading(false);
       return;
     }
 
-    // No session = email confirmation required
-    if (!data.session) {
+    if (result.needsConfirmation) {
       setSuccess(
         "Account created! Check your email and click the confirmation link, then sign in."
       );
@@ -60,7 +56,7 @@ function SignUpForm() {
       return;
     }
 
-    router.push(ROLE_PORTAL[role] ?? "/client");
+    router.push(ROLE_PORTAL[result.role ?? role] ?? "/client");
   }
 
   return (

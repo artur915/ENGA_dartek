@@ -5,6 +5,7 @@ import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { getRequestById } from "@/actions/requests";
 import { getQuotationsForRequest } from "@/actions/quotations";
 import { QuotationCompare } from "@/components/quotations/QuotationCompare";
+import { getClientNav } from "@/lib/nav";
 
 export default async function ClientQuotationsPage({
   params,
@@ -21,13 +22,7 @@ export default async function ClientQuotationsPage({
 
   const quotations = await getQuotationsForRequest(requestId);
 
-  const nav = [
-    { href: "/client", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/client/requests", label: t("myRequests"), icon: "ClipboardList" },
-    { href: "/client/requests/new", label: t("newRequest"), icon: "Plus" },
-    { href: "/client/quotations", label: t("compareQuotes"), icon: "FileText" },
-    { href: "/client/projects", label: t("activeProjects"), icon: "FolderKanban" },
-  ];
+  const nav = getClientNav(t, tc);
 
   return (
     <div className="flex min-h-screen">

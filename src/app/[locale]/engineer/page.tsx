@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { Card } from "@/components/ui/Card";
 import { Link } from "@/i18n/navigation";
+import { getEngineerProfile, getEngineerInvitations, getEngineerAssignments } from "@/actions/engineer";
+import { getEngineerNav } from "@/lib/nav";
 
 export default async function EngineerDashboard({
   params,
@@ -14,25 +16,22 @@ export default async function EngineerDashboard({
   const t = await getTranslations("engineer");
   const tc = await getTranslations("common");
 
-  const nav = [
-    { href: "/engineer", label: tc("dashboard"), icon: "LayoutDashboard" },
-    { href: "/engineer/profile", label: t("profile"), icon: "User" },
-    { href: "/engineer/invitations", label: t("invitations"), icon: "Briefcase" },
-    { href: "/engineer/assignments", label: t("assignments"), icon: "Star" },
-  ];
+  const profile = await getEngineerProfile();
+  const invitations = await getEngineerInvitations();
+  const assignments = await getEngineerAssignments();
 
   return (
     <div className="flex min-h-screen">
-      <PortalSidebar title={t("title")} items={nav} />
+      <PortalSidebar title={t("title")} items={getEngineerNav(t, tc)} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{tc("dashboard")}</h1>
-        <p className="mt-1 text-muted">Engineer journey: Verify → Position → Deliver → Build Reputation</p>
+        <p className="mt-1 text-muted">Verify → Position → Deliver → Build Reputation</p>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
           {[
-            { label: "Pending Invitations", value: "0" },
-            { label: "Active Assignments", value: "0" },
-            { label: "Completed Tasks", value: "0" },
+            { label: "Profile", value: profile ? "Complete" : "Incomplete" },
+            { label: "Invitations", value: invitations.length },
+            { label: "Assignments", value: assignments.length },
           ].map((stat) => (
             <Card key={stat.label}>
               <p className="text-sm text-muted">{stat.label}</p>
@@ -45,17 +44,20 @@ export default async function EngineerDashboard({
           <Card>
             <h2 className="font-semibold">{t("profile")}</h2>
             <p className="mt-2 text-sm text-muted">
-              Complete specialization, experience, council membership, portfolio, and service location.
+              {profile?.specialization ?? "Complete your professional profile and credentials."}
             </p>
-            <Link href="/engineer/profile" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">
+            <Link href="/engineer/profile" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("profile")} →
             </Link>
           </Card>
           <Card>
-            <h2 className="font-semibold">Join Engineering Office</h2>
+            <h2 className="font-semibold">{t("invitations")}</h2>
             <p className="mt-2 text-sm text-muted">
-              Optionally link to a licensed office or offer individual services where regulation permits.
+              {invitations.length} project invitation(s) from linked offices.
             </p>
+            <Link href="/engineer/invitations" className="mt-4 inline-block text-sm font-semibold text-primary">
+              {t("invitations")} →
+            </Link>
           </Card>
         </div>
       </div>
