@@ -364,13 +364,13 @@ ALTER TABLE agreements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
--- Profiles: users can read/update own profile; admins read all
-CREATE POLICY profiles_select_own ON profiles FOR SELECT USING (auth.uid() = id OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+-- Profiles: users can read/update own profile; admins read all (is_admin added in 002/005)
+CREATE POLICY profiles_select_own ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY profiles_update_own ON profiles FOR UPDATE USING (auth.uid() = id);
 
--- Public read for approved agencies
-CREATE POLICY agencies_public_read ON agencies FOR SELECT USING (status = 'approved' OR owner_id = auth.uid() OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
+-- Public read for approved agencies (admin check via is_admin() in migration 002/005)
+CREATE POLICY agencies_public_read ON agencies FOR SELECT USING (status = 'approved' OR owner_id = auth.uid());
 CREATE POLICY agencies_owner_write ON agencies FOR ALL USING (owner_id = auth.uid());
 
--- Clients manage own requests
-CREATE POLICY requests_client ON project_requests FOR ALL USING (client_id = auth.uid() OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'agency_owner', 'agency_employee')));
+-- Clients manage own requests (role checks via has_profile_role() in migration 002/005)
+CREATE POLICY requests_client ON project_requests FOR ALL USING (client_id = auth.uid());

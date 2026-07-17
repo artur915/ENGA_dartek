@@ -28,6 +28,8 @@ In the Supabase SQL Editor, run these files **in order** (paste file **contents*
 2. `supabase/migrations/002_rls_and_storage.sql` — complete RLS, storage buckets, RPC functions
 3. `supabase/migrations/003_seed_catalog.sql` — 147 services, 7 packages, 10 categories
 4. `supabase/migrations/004_fix_signup_trigger.sql` — fixes signup 500 (profile trigger + RLS)
+5. `supabase/migrations/005_fix_profiles_rls_recursion.sql` — fixes "infinite recursion" on profiles when floating requests
+6. `supabase/migrations/006_fix_project_requests_rls_recursion.sql` — fixes "infinite recursion" on project_requests when floating requests
 
 ## 4. Create Admin User
 
@@ -93,5 +95,7 @@ Created automatically by migration 002:
 | Issue | Fix |
 |-------|-----|
 | Signup returns 500 | Run migration `004_fix_signup_trigger.sql` |
+| Infinite recursion on profiles | Run migration `005_fix_profiles_rls_recursion.sql` |
+| Infinite recursion on project_requests | Run migration `006_fix_project_requests_rls_recursion.sql` |
 | Sign-in returns 400 | Confirm email or disable email confirmation in Supabase Auth |
 | Missing env vars | Create `.env.local` and restart dev server |
