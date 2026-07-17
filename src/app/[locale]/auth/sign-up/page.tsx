@@ -112,8 +112,8 @@ function SignUpForm() {
               className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               <option value="client">{t("roles.client")}</option>
-              {/* <option value="agency_owner">{t("roles.agency_owner")}</option> */}
-              {/* <option value="individual_engineer">{t("roles.individual_engineer")}</option> */}
+               <option value="agency_owner">{t("roles.agency_owner")}</option> 
+               <option value="individual_engineer">{t("roles.individual_engineer")}</option> 
             </select>
           </div>
           {error && <p className="text-sm text-danger">{error}</p>}
