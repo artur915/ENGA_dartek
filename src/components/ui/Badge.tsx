@@ -2,24 +2,32 @@ import { cn } from "@/lib/utils";
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: "default" | "success" | "warning" | "danger" | "outline";
+  variant?: "default" | "success" | "warning" | "danger" | "outline" | "accent";
+  size?: "sm" | "md";
   className?: string;
 }
 
 const variants = {
-  default: "bg-primary/10 text-primary",
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
-  danger: "bg-danger/10 text-danger",
-  outline: "border border-border text-muted",
+  default: "bg-primary/10 text-primary ring-1 ring-primary/15",
+  success: "bg-success/10 text-success ring-1 ring-success/15",
+  warning: "bg-warning/10 text-warning ring-1 ring-warning/15",
+  danger: "bg-danger/10 text-danger ring-1 ring-danger/15",
+  outline: "border border-border bg-surface text-muted-foreground",
+  accent: "bg-accent/15 text-primary-dark ring-1 ring-accent/20",
 };
 
-export function Badge({ children, variant = "default", className }: BadgeProps) {
+const sizes = {
+  sm: "px-2 py-0.5 text-[10px] uppercase tracking-wide",
+  md: "px-2.5 py-1 text-xs",
+};
+
+export function Badge({ children, variant = "default", size = "md", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full font-semibold",
         variants[variant],
+        sizes[size],
         className
       )}
     >

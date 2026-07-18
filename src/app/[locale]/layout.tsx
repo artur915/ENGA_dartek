@@ -37,7 +37,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <div className={`${inter.variable} ${notoArabic.variable} flex min-h-full flex-1 flex-col`}>
+    <div className={`${inter.variable} ${notoArabic.variable} flex min-h-full flex-1 flex-col font-sans antialiased`}>
       <LocaleHtmlAttributes locale={locale as Locale} />
       <NextIntlClientProvider messages={messages}>
         {children}

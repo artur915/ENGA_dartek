@@ -7,6 +7,10 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { signUp } from "@/actions/auth";
 import { ROLE_PORTAL, type UserRole } from "@/types";
 import { Building2 } from "lucide-react";
+import { AuthShell } from "@/components/layout/AuthShell";
+import { Button } from "@/components/ui/Button";
+import { FormField, Input, Select } from "@/components/ui/Input";
+import { Alert } from "@/components/ui/Alert";
 
 function SignUpForm() {
   const t = useTranslations("auth");
@@ -60,87 +64,69 @@ function SignUpForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-muted px-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-sm">
-        <div className="mb-8 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
-            <Building2 className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">{tc("signUp")}</h1>
-            <p className="text-sm text-muted">{tc("tagline")}</p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">{t("fullName")}</label>
-            <input
-              type="text"
-              required
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">{t("email")}</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">{t("password")}</label>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">{t("role")}</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as UserRole)}
-              className="w-full rounded-lg border border-border px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              <option value="client">{t("roles.client")}</option>
-               <option value="agency_owner">{t("roles.agency_owner")}</option> 
-               <option value="individual_engineer">{t("roles.individual_engineer")}</option> 
-            </select>
-          </div>
-          {error && <p className="text-sm text-danger">{error}</p>}
-          {success && (
-            <div className="rounded-lg border border-success/30 bg-success/5 px-4 py-3 text-sm text-success">
-              {success}
-              <Link href="/auth/sign-in" className="mt-2 block text-xs font-semibold underline">
-                Go to Sign In
-              </Link>
-            </div>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-primary py-3 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
-          >
-            {loading ? "..." : t("createAccount")}
-          </button>
-        </form>
-        <p className="mt-6 text-center text-sm text-muted">
+    <AuthShell
+      title={tc("signUp")}
+      subtitle={tc("tagline")}
+      icon={Building2}
+      footer={
+        <p className="text-center text-sm text-muted">
           {t("alreadyHaveAccount")}{" "}
-          <Link href="/auth/sign-in" className="font-semibold text-primary hover:underline">
+          <Link href="/auth/sign-in" className="link-primary">
             {tc("signIn")}
           </Link>
         </p>
-      </div>
-    </div>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <FormField label={t("fullName")} required>
+          <Input
+            type="text"
+            required
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            autoComplete="name"
+          />
+        </FormField>
+        <FormField label={t("email")} required>
+          <Input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+        </FormField>
+        <FormField label={t("password")} required hint="Minimum 8 characters">
+          <Input
+            type="password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+        </FormField>
+        <FormField label={t("role")} required>
+          <Select value={role} onChange={(e) => setRole(e.target.value as UserRole)}>
+            <option value="client">{t("roles.client")}</option>
+            <option value="agency_owner">{t("roles.agency_owner")}</option>
+            <option value="individual_engineer">{t("roles.individual_engineer")}</option>
+          </Select>
+        </FormField>
+        {error && <Alert variant="error">{error}</Alert>}
+        {success && (
+          <Alert variant="success" title="Account created">
+            {success}
+            <Link href="/auth/sign-in" className="link-primary mt-2 inline-block text-xs">
+              Go to Sign In →
+            </Link>
+          </Alert>
+        )}
+        <Button type="submit" fullWidth disabled={loading} size="lg">
+          {loading ? "Creating account…" : t("createAccount")}
+        </Button>
+      </form>
+    </AuthShell>
   );
 }
 

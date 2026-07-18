@@ -3,7 +3,14 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { PortalSidebar } from "@/components/layout/PortalSidebar";
+import { PortalShell } from "@/components/layout/PortalShell";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { StepWizard } from "@/components/ui/StepWizard";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { FormField, Input, Textarea } from "@/components/ui/Input";
+import { Alert } from "@/components/ui/Alert";
+import { cn } from "@/lib/utils";
 import { ENGINEERING_SERVICES, SERVICE_PACKAGES } from "@/data/catalog";
 import { createProjectRequest, floatProjectRequest, getRequestById, uploadRequestDocument } from "@/actions/requests";
 import { getClientNav } from "@/lib/nav";
@@ -153,46 +160,37 @@ export default function NewRequestPage() {
     });
   }
 
+  const WIZARD_STEPS = ["Package", "Services", "Location", "Documents", "Review"];
+
   return (
-    <div className="flex min-h-screen">
-      <PortalSidebar title={t("title")} items={nav} />
-      <div className="flex-1 bg-surface-muted p-8">
-        <h1 className="text-2xl font-bold">{t("newRequest")}</h1>
+    <PortalShell title={t("title")} nav={nav}>
+      <PageHeader
+        title={t("newRequest")}
+        description="Build your project request step by step, then float it to licensed engineering offices."
+      />
 
-        <div className="mt-6 flex gap-2">
-          {["Package", "Services", "Location", "Documents", "Review"].map((label, i) => (
-            <button
-              key={label}
-              type="button"
-              onClick={() => setStep(i + 1)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium ${
-                step === i + 1 ? "bg-primary text-white" : "border border-border bg-surface text-muted"
-              }`}
-            >
-              {i + 1}. {label}
-            </button>
-          ))}
-        </div>
+      <StepWizard steps={WIZARD_STEPS} currentStep={step} onStepClick={setStep} />
 
-        <div className="mt-8 rounded-xl border border-border bg-surface p-6">
+      <Card className="mt-8">
           {step === 1 && (
             <div>
-              <h2 className="font-semibold">Select Package</h2>
+              <h2 className="text-lg font-semibold tracking-tight">Select Package</h2>
               <p className="mt-1 text-sm text-muted">Choose a homeowner journey package or skip to select individual services</p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {SERVICE_PACKAGES.map((pkg) => (
                   <button
                     key={pkg.slug}
                     type="button"
                     onClick={() => handlePackageSelect(pkg.name)}
-                    className={`rounded-lg border p-4 text-start text-sm ${
+                    className={cn(
+                      "rounded-xl border p-5 text-start text-sm transition-all duration-200",
                       selectedPackage === pkg.name
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    }`}
+                        ? "border-primary bg-primary/5 shadow-sm ring-2 ring-primary/20"
+                        : "border-border-subtle hover:border-primary/30 hover:bg-surface-muted"
+                    )}
                   >
-                    <p className="font-semibold">{pkg.name}</p>
-                    <p className="mt-1 text-xs text-muted">{pkg.description}</p>
+                    <p className="font-semibold text-foreground">{pkg.name}</p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted">{pkg.description}</p>
                   </button>
                 ))}
               </div>
@@ -201,19 +199,30 @@ export default function NewRequestPage() {
 
           {step === 2 && (
             <div>
-              <h2 className="font-semibold">Select Services ({selectedServices.length} selected)</h2>
-              <div className="mt-4 max-h-96 space-y-2 overflow-y-auto">
+              <h2 className="text-lg font-semibold tracking-tight">
+                Select Services ({selectedServices.length} selected)
+              </h2>
+              <div className="mt-6 max-h-96 space-y-2 overflow-y-auto pe-1">
                 {(selectedPackage
                   ? ENGINEERING_SERVICES.filter((s) => s.packages.includes(selectedPackage))
                   : ENGINEERING_SERVICES
                 ).map((s) => (
-                  <label key={s.id} className="flex items-center gap-3 rounded-lg border border-border p-3 text-sm">
+                  <label
+                    key={s.id}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 text-sm transition-colors",
+                      selectedServices.includes(s.id)
+                        ? "border-primary/30 bg-primary/5"
+                        : "border-border-subtle hover:border-primary/20"
+                    )}
+                  >
                     <input
                       type="checkbox"
                       checked={selectedServices.includes(s.id)}
                       onChange={() => toggleService(s.id)}
+                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
                     />
-                    <span className="flex-1">{s.name}</span>
+                    <span className="flex-1 font-medium">{s.name}</span>
                     <span className="text-xs text-muted">{s.category}</span>
                   </label>
                 ))}
@@ -222,54 +231,61 @@ export default function NewRequestPage() {
           )}
 
           {step === 3 && (
-            <div className="space-y-4">
-              <h2 className="font-semibold">Project Location & Details</h2>
-              <input
-                placeholder="City *"
-                required
-                value={location.city}
-                onChange={(e) => setLocation({ ...location, city: e.target.value })}
-                className="w-full rounded-lg border border-border px-4 py-2.5 text-sm"
-              />
-              <input
-                placeholder="District"
-                value={location.district}
-                onChange={(e) => setLocation({ ...location, district: e.target.value })}
-                className="w-full rounded-lg border border-border px-4 py-2.5 text-sm"
-              />
-              <input
-                placeholder="Project title *"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-lg border border-border px-4 py-2.5 text-sm"
-              />
-              <textarea
-                placeholder="Project description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-                className="w-full rounded-lg border border-border px-4 py-2.5 text-sm"
-              />
+            <div className="grid gap-5 sm:grid-cols-2">
+              <FormField label="City" required className="sm:col-span-1">
+                <Input
+                  required
+                  value={location.city}
+                  onChange={(e) => setLocation({ ...location, city: e.target.value })}
+                  placeholder="Riyadh"
+                />
+              </FormField>
+              <FormField label="District" className="sm:col-span-1">
+                <Input
+                  value={location.district}
+                  onChange={(e) => setLocation({ ...location, district: e.target.value })}
+                  placeholder="Al Olaya"
+                />
+              </FormField>
+              <FormField label="Project title" required className="sm:col-span-2">
+                <Input
+                  required
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Villa structural design"
+                />
+              </FormField>
+              <FormField label="Description" className="sm:col-span-2">
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Describe your project requirements..."
+                />
+              </FormField>
             </div>
           )}
 
           {step === 4 && (
             <div className="space-y-4">
-              <h2 className="font-semibold">Upload Documents</h2>
+              <h2 className="text-lg font-semibold tracking-tight">Upload Documents</h2>
               <p className="text-sm text-muted">PDF, images, or DWG files (max 50MB)</p>
-              <input
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png,.webp,.dwg,application/pdf,image/*"
-                onChange={handleFileUpload}
-                disabled={uploading || isPending}
-                className="block w-full text-sm"
-              />
-              {uploading && <p className="text-sm text-muted">Uploading...</p>}
+              <div className="rounded-xl border-2 border-dashed border-border-subtle bg-surface-muted/50 p-8 text-center">
+                <input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.webp,.dwg,application/pdf,image/*"
+                  onChange={handleFileUpload}
+                  disabled={uploading || isPending}
+                  className="mx-auto block text-sm"
+                />
+              </div>
+              {uploading && <p className="text-sm text-muted">Uploading…</p>}
               {documents.length > 0 && (
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-2 text-sm">
                   {documents.map((d) => (
-                    <li key={d.id} className="text-muted">✓ {d.file_name}</li>
+                    <li key={d.id} className="flex items-center gap-2 text-muted-foreground">
+                      <span className="text-success">✓</span> {d.file_name}
+                    </li>
                   ))}
                 </ul>
               )}
@@ -278,28 +294,38 @@ export default function NewRequestPage() {
 
           {step === 5 && (
             <div>
-              <h2 className="font-semibold">Review & Float Request</h2>
-              <dl className="mt-4 space-y-2 text-sm">
-                <div><dt className="text-muted">Package</dt><dd className="font-medium">{selectedPackage || "Custom selection"}</dd></div>
-                <div><dt className="text-muted">Services</dt><dd className="font-medium">{selectedServices.length} selected</dd></div>
-                <div><dt className="text-muted">Location</dt><dd className="font-medium">{location.city}{location.district ? `, ${location.district}` : ""}</dd></div>
-                <div><dt className="text-muted">Documents</dt><dd className="font-medium">{documents.length} uploaded</dd></div>
-                <div><dt className="text-muted">Title</dt><dd className="font-medium">{title}</dd></div>
+              <h2 className="text-lg font-semibold tracking-tight">Review & Float Request</h2>
+              <dl className="mt-6 divide-y divide-border-subtle rounded-xl border border-border-subtle">
+                {[
+                  ["Package", selectedPackage || "Custom selection"],
+                  ["Services", `${selectedServices.length} selected`],
+                  ["Location", `${location.city}${location.district ? `, ${location.district}` : ""}`],
+                  ["Documents", `${documents.length} uploaded`],
+                  ["Title", title],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between gap-4 px-4 py-3 text-sm">
+                    <dt className="text-muted">{label}</dt>
+                    <dd className="font-medium text-foreground">{value}</dd>
+                  </div>
+                ))}
               </dl>
-              {error && <p className="mt-4 text-sm text-danger">{error}</p>}
-              <button
+              {error && <Alert variant="error" className="mt-4">{error}</Alert>}
+              <Button
                 type="button"
                 onClick={handleSaveAndFloat}
                 disabled={isPending || !location.city || !title}
-                className="mt-6 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
+                className="mt-6"
+                size="lg"
               >
-                {isPending ? "Floating..." : "Float Request to Agencies"}
-              </button>
+                {isPending ? "Floating…" : "Float Request to Agencies"}
+              </Button>
             </div>
           )}
 
+          {error && step !== 5 && <Alert variant="error" className="mt-4">{error}</Alert>}
+
           {step < 5 && (
-            <button
+            <Button
               type="button"
               onClick={() => {
                 if (step === 2 && selectedServices.length === 0) {
@@ -310,13 +336,12 @@ export default function NewRequestPage() {
                 setStep(step + 1);
               }}
               disabled={step === 2 && selectedServices.length === 0}
-              className="mt-6 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+              className="mt-6"
             >
               Continue
-            </button>
+            </Button>
           )}
-        </div>
-      </div>
-    </div>
+      </Card>
+    </PortalShell>
   );
 }

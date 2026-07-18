@@ -18,7 +18,7 @@ export default async function HomePage({
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 overflow-x-hidden bg-[#041612]">
         <HeroSection />
         <WorkflowSection />
         <PackagesSection />
