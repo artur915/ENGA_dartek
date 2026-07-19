@@ -50,6 +50,8 @@
   "auth": {
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين",
     "fullName": "الاسم الكامل",
     "phone": "رقم الجوال",
     "role": "أنا",

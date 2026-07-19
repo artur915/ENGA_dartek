@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ENGA — Engineering Services Marketplace",
@@ -12,11 +11,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
-        {children}
-      </body>
-    </html>
-  );
+  return children;
 }

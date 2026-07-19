@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { Suspense, useEffect, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { PortalShell } from "@/components/layout/PortalShell";
@@ -15,9 +15,8 @@ import { ENGINEERING_SERVICES, SERVICE_PACKAGES } from "@/data/catalog";
 import { createProjectRequest, floatProjectRequest, getRequestById, uploadRequestDocument } from "@/actions/requests";
 import { getClientNav } from "@/lib/nav";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 
-export default function NewRequestPage() {
+function NewRequestPageContent() {
   const t = useTranslations("client");
   const tc = useTranslations("common");
   const router = useRouter();
@@ -343,5 +342,13 @@ export default function NewRequestPage() {
           )}
       </Card>
     </PortalShell>
+  );
+}
+
+export default function NewRequestPage() {
+  return (
+    <Suspense fallback={null}>
+      <NewRequestPageContent />
+    </Suspense>
   );
 }

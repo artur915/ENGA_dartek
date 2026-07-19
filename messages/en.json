@@ -50,6 +50,8 @@
   "auth": {
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordsDoNotMatch": "Passwords do not match",
     "fullName": "Full Name",
     "phone": "Phone Number",
     "role": "I am a",
