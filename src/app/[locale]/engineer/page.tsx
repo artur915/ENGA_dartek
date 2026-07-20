@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { Card } from "@/components/ui/Card";
 import { Link } from "@/i18n/navigation";
-import { getEngineerProfile, getEngineerInvitations, getEngineerAssignments } from "@/actions/engineer";
+import { getEngineerProfile, getEngineerInvitations, getEngineerAssignments, requireEngineerRegistered } from "@/actions/engineer";
 import { getEngineerNav } from "@/lib/nav";
 
 export default async function EngineerDashboard({
@@ -13,6 +13,7 @@ export default async function EngineerDashboard({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireEngineerRegistered(locale);
   const t = await getTranslations("engineer");
   const tc = await getTranslations("common");
 
@@ -29,7 +30,7 @@ export default async function EngineerDashboard({
 
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
           {[
-            { label: "Profile", value: profile ? "Complete" : "Incomplete" },
+            { label: "Profile", value: profile?.registered_at ? "Active" : "Incomplete" },
             { label: "Invitations", value: invitations.length },
             { label: "Assignments", value: assignments.length },
           ].map((stat) => (
@@ -44,7 +45,7 @@ export default async function EngineerDashboard({
           <Card>
             <h2 className="font-semibold">{t("profile")}</h2>
             <p className="mt-2 text-sm text-muted">
-              {profile?.specialization ?? "Complete your professional profile and credentials."}
+              {profile?.specialization ?? "Update your professional profile and credentials."}
             </p>
             <Link href="/engineer/profile" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("profile")} →

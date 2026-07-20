@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { signUp } from "@/actions/auth";
-import { ROLE_PORTAL, type UserRole } from "@/types";
+import { ROLE_PORTAL, REGISTRATION_PORTAL, type UserRole } from "@/types";
 import { Building2 } from "lucide-react";
 import { AuthShell } from "@/components/layout/AuthShell";
 import { Button } from "@/components/ui/Button";
@@ -61,7 +61,8 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
       return;
     }
 
-    router.push(ROLE_PORTAL[result.role ?? role] ?? "/client");
+    const userRole = (result.role ?? role) as UserRole;
+    router.push(REGISTRATION_PORTAL[userRole] ?? ROLE_PORTAL[userRole] ?? "/client");
   }
 
   return (

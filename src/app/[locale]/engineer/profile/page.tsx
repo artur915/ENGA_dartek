@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { Card } from "@/components/ui/Card";
 import { EngineerProfileForm } from "@/components/engineer/EngineerProfileForm";
-import { getEngineerProfile } from "@/actions/engineer";
+import { getEngineerProfile, requireEngineerRegistered } from "@/actions/engineer";
 import { getEngineerNav } from "@/lib/nav";
 
 export default async function EngineerProfilePage({
@@ -13,6 +13,7 @@ export default async function EngineerProfilePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireEngineerRegistered(locale);
   const t = await getTranslations("engineer");
   const tc = await getTranslations("common");
   const profile = await getEngineerProfile();

@@ -1,8 +1,37 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
+
+const ALLOWED_CERT_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+
+async function uploadEngineerCertificate(
+  userId: string,
+  file: File
+): Promise<{ path: string; fileName: string } | { error: string }> {
+  if (!ALLOWED_CERT_TYPES.includes(file.type)) {
+    return { error: "Certificate must be PDF, JPEG, PNG, or WebP" };
+  }
+
+  const supabase = await createClient();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const filePath = `${userId}/certificate-${Date.now()}-${safeName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("engineer-documents")
+    .upload(filePath, file, { contentType: file.type, upsert: false });
+
+  if (uploadError) return { error: uploadError.message };
+
+  return { path: filePath, fileName: file.name };
+}
 
 export async function getEngineerProfile() {
   const profile = await getProfile();
@@ -16,6 +45,86 @@ export async function getEngineerProfile() {
     .maybeSingle();
 
   return data;
+}
+
+export async function isEngineerRegistered() {
+  const engineer = await getEngineerProfile();
+  return Boolean(engineer?.registered_at);
+}
+
+export async function requireEngineerRegistered(locale: string) {
+  const registered = await isEngineerRegistered();
+  if (!registered) {
+    redirect(`/${locale}/engineer/register`);
+  }
+}
+
+export async function registerEngineer(formData: FormData) {
+  const profile = await getProfile();
+  if (!profile) return { error: "Not authenticated" };
+  if (profile.role !== "individual_engineer" && profile.role !== "admin") {
+    return { error: "Only individual engineers can register" };
+  }
+
+  const specialization = String(formData.get("specialization") ?? "").trim();
+  const professional_license = String(formData.get("professional_license") ?? "").trim();
+  const council_membership = String(formData.get("council_membership") ?? "").trim();
+  const service_location = String(formData.get("service_location") ?? "").trim();
+  const experienceRaw = String(formData.get("experience_years") ?? "").trim();
+  const bio = String(formData.get("bio") ?? "").trim();
+  const certificate = formData.get("certificate");
+
+  if (!specialization) return { error: "Specialization is required" };
+  if (!professional_license) return { error: "Professional license number is required" };
+  if (!council_membership) return { error: "Engineering Council membership number is required" };
+  if (!certificate || !(certificate instanceof File) || certificate.size === 0) {
+    return { error: "Engineering Council certificate is required" };
+  }
+
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("engineer_profiles")
+    .select("id, registered_at")
+    .eq("user_id", profile.id)
+    .maybeSingle();
+
+  if (existing?.registered_at) {
+    return { error: "You have already completed registration" };
+  }
+
+  const upload = await uploadEngineerCertificate(profile.id, certificate);
+  if ("error" in upload) return { error: upload.error };
+
+  const payload = {
+    specialization,
+    professional_license,
+    council_membership,
+    service_location: service_location || null,
+    experience_years: experienceRaw ? parseInt(experienceRaw, 10) : null,
+    bio: bio || null,
+    certificate_path: upload.path,
+    certificate_file_name: upload.fileName,
+    registered_at: new Date().toISOString(),
+  };
+
+  if (existing) {
+    const { error } = await supabase
+      .from("engineer_profiles")
+      .update(payload)
+      .eq("user_id", profile.id);
+    if (error) return { error: error.message };
+  } else {
+    const { error } = await supabase.from("engineer_profiles").insert({
+      user_id: profile.id,
+      ...payload,
+    });
+    if (error) return { error: error.message };
+  }
+
+  revalidatePath("/engineer");
+  revalidatePath("/engineer/register");
+  revalidatePath("/engineer/profile");
+  return { success: true };
 }
 
 export async function saveEngineerProfile(input: {
@@ -33,23 +142,20 @@ export async function saveEngineerProfile(input: {
   const supabase = await createClient();
   const { data: existing } = await supabase
     .from("engineer_profiles")
-    .select("id")
+    .select("id, registered_at")
     .eq("user_id", profile.id)
     .maybeSingle();
 
-  if (existing) {
-    const { error } = await supabase
-      .from("engineer_profiles")
-      .update(input)
-      .eq("user_id", profile.id);
-    if (error) return { error: error.message };
-  } else {
-    const { error } = await supabase.from("engineer_profiles").insert({
-      user_id: profile.id,
-      ...input,
-    });
-    if (error) return { error: error.message };
+  if (!existing?.registered_at) {
+    return { error: "Complete registration before updating your profile" };
   }
+
+  const { error } = await supabase
+    .from("engineer_profiles")
+    .update(input)
+    .eq("user_id", profile.id);
+
+  if (error) return { error: error.message };
 
   revalidatePath("/engineer/profile");
   return { success: true };
@@ -62,11 +168,11 @@ export async function getEngineerInvitations() {
   const supabase = await createClient();
   const { data: engineer } = await supabase
     .from("engineer_profiles")
-    .select("linked_agency_id")
+    .select("linked_agency_id, registered_at")
     .eq("user_id", profile.id)
     .maybeSingle();
 
-  if (!engineer?.linked_agency_id) return [];
+  if (!engineer?.registered_at || !engineer.linked_agency_id) return [];
 
   const { data } = await supabase
     .from("request_invitations")
@@ -86,6 +192,14 @@ export async function getEngineerAssignments() {
   if (!profile) return [];
 
   const supabase = await createClient();
+  const { data: engineer } = await supabase
+    .from("engineer_profiles")
+    .select("registered_at")
+    .eq("user_id", profile.id)
+    .maybeSingle();
+
+  if (!engineer?.registered_at) return [];
+
   const { data } = await supabase
     .from("agency_members")
     .select(`

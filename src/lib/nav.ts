@@ -25,6 +25,7 @@ export function getAgencyNav(t: (key: string) => string, tc: (key: string) => st
 export function getEngineerNav(t: (key: string) => string, tc: (key: string) => string) {
   return [
     { href: "/engineer", label: tc("dashboard"), icon: "LayoutDashboard" },
+    { href: "/engineer/register", label: t("register"), icon: "UserPlus" },
     { href: "/engineer/profile", label: t("profile"), icon: "User" },
     { href: "/engineer/invitations", label: t("invitations"), icon: "Briefcase" },
     { href: "/engineer/assignments", label: t("assignments"), icon: "Star" },

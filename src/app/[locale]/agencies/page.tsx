@@ -29,7 +29,7 @@ export default async function AgenciesPage({
 
         {agencies.length === 0 ? (
           <Card className="mt-10 text-center">
-            <p className="text-muted">No approved agencies yet. Engineering offices can register and await admin approval.</p>
+            <p className="text-muted">No registered engineering offices yet.</p>
           </Card>
         ) : (
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

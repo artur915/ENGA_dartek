@@ -15,6 +15,7 @@ import {
   Settings,
   Star,
   User,
+  UserPlus,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -30,6 +31,7 @@ const iconMap: Record<string, LucideIcon> = {
   DollarSign,
   Settings,
   User,
+  UserPlus,
   Briefcase,
   Star,
 };

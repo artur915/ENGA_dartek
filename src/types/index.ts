@@ -38,3 +38,9 @@ export const ROLE_PORTAL: Record<UserRole, string> = {
   finance_user: "/agency/finance",
   admin: "/admin",
 };
+
+/** Post-sign-up onboarding for roles that require credential registration. */
+export const REGISTRATION_PORTAL: Partial<Record<UserRole, string>> = {
+  agency_owner: "/agency/register",
+  individual_engineer: "/engineer/register",
+};

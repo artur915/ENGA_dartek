@@ -36,10 +36,15 @@ export default async function AgencyRequestsPage({
               {t("register")} →
             </Link>
           </Card>
-        ) : agency.status !== "approved" ? (
+        ) : agency.status === "suspended" ? (
           <Card className="mt-8">
-            <Badge variant="warning" className="mb-3">Pending Approval</Badge>
-            <p className="text-muted">Your office registration is awaiting admin approval. You will receive requests once approved.</p>
+            <Badge variant="warning" className="mb-3">Suspended</Badge>
+            <p className="text-muted">{t("accountSuspended")}</p>
+          </Card>
+        ) : agency.status === "rejected" ? (
+          <Card className="mt-8">
+            <Badge variant="warning" className="mb-3">Rejected</Badge>
+            <p className="text-muted">{t("accountRejected")}</p>
           </Card>
         ) : incoming.length === 0 ? (
           <Card className="mt-8 text-center">

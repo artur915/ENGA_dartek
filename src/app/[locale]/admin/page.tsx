@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { getPendingAgencies, approveAgency, rejectAgency } from "@/actions/agency";
+import { getPendingAgencies } from "@/actions/agency";
 import { AdminAgencyActions } from "@/components/admin/AdminAgencyActions";
 import { getAdminNav } from "@/lib/nav";
 
@@ -24,10 +24,16 @@ export default async function AdminPage({
       <PortalSidebar title={tc("admin")} items={nav} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{tc("admin")}</h1>
-        <p className="mt-1 text-muted">Approve engineering offices and monitor platform activity</p>
+        <p className="mt-1 text-muted">
+          Monitor platform activity. New office and engineer registrations activate automatically;
+          use moderation tools for legacy pending records or post-registration review.
+        </p>
 
         <Card className="mt-8">
-          <h2 className="text-lg font-semibold">Pending Agency Approvals ({pending.length})</h2>
+          <h2 className="text-lg font-semibold">Legacy Pending Registrations ({pending.length})</h2>
+          <p className="mt-2 text-sm text-muted">
+            Registrations submitted before auto-activation may still appear here.
+          </p>
           {pending.length === 0 ? (
             <p className="mt-4 text-sm text-muted">No pending registrations</p>
           ) : (

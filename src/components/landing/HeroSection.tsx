@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -52,12 +51,14 @@ export function HeroSection() {
           <div className="relative overflow-hidden rounded-[1.75rem] border border-white/20 shadow-[0_25px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
             <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#041612] via-transparent to-transparent opacity-90" />
             <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#041612]/40 via-transparent to-[#041612]/40" />
-            <Image
+            {/* Native img avoids next/image SSR visibility:hidden hydration mismatch */}
+            <img
               src="/landing/hero-ceo-conversation.png"
               alt="ENGA CEO consulting with a professional team member"
               width={1280}
               height={720}
-              priority
+              fetchPriority="high"
+              decoding="async"
               className="aspect-[16/10] w-full object-cover object-center sm:aspect-[16/9]"
             />
             <div className="absolute bottom-0 start-0 end-0 z-20 p-6 sm:p-8">

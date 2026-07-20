@@ -31,7 +31,7 @@ export default async function AgencyDashboard({
         description="Office journey: Register → Win Work → Contract → Deliver → Grow"
         badge={
           agency ? (
-            <Badge variant={agency.status === "approved" ? "success" : "warning"}>
+            <Badge variant={agency.status === "approved" ? "success" : agency.status === "pending" ? "warning" : "outline"}>
               {agency.status}
             </Badge>
           ) : undefined
@@ -57,7 +57,7 @@ export default async function AgencyDashboard({
             description={
               agency
                 ? `${agency.name} — ${agency.status}`
-                : "Complete business verification, company profile, disciplines, and service packages."
+                : "Complete registration with license details and your Engineering Council certificate to activate your account."
             }
           />
           <Link href="/agency/register" className="link-primary text-sm">

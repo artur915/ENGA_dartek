@@ -2,7 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { Card } from "@/components/ui/Card";
-import { getEngineerAssignments, getEngineerProfile } from "@/actions/engineer";
+import { getEngineerAssignments, getEngineerProfile, requireEngineerRegistered } from "@/actions/engineer";
 import { getEngineerNav } from "@/lib/nav";
 
 export default async function EngineerAssignmentsPage({
@@ -12,6 +12,7 @@ export default async function EngineerAssignmentsPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireEngineerRegistered(locale);
   const t = await getTranslations("engineer");
   const tc = await getTranslations("common");
   const assignments = await getEngineerAssignments();
