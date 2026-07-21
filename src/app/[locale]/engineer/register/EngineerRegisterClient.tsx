@@ -6,7 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { registerEngineer } from "@/actions/engineer";
 import { getEngineerNav } from "@/lib/nav";
-import { FileUp, UserRound } from "lucide-react";
+import { UserRound } from "lucide-react";
 import { Alert } from "@/components/ui/Alert";
 
 export default function EngineerRegisterClient() {
@@ -15,7 +15,6 @@ export default function EngineerRegisterClient() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const [certificateName, setCertificateName] = useState("");
 
   const [form, setForm] = useState({
     specialization: "",
@@ -91,26 +90,6 @@ export default function EngineerRegisterClient() {
             </div>
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">{t("councilCertificate")} *</label>
-            <p className="mb-2 text-xs text-muted">{t("certificateHint")}</p>
-            <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-subtle bg-surface-muted/50 px-4 py-8 text-center transition-colors hover:border-primary/40">
-              <FileUp className="mb-2 h-8 w-8 text-primary" />
-              <span className="text-sm font-medium">
-                {certificateName || t("uploadCertificate")}
-              </span>
-              <span className="mt-1 text-xs text-muted">PDF, JPEG, PNG, or WebP (max 50MB)</span>
-              <input
-                type="file"
-                name="certificate"
-                required
-                accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*"
-                className="sr-only"
-                onChange={(e) => setCertificateName(e.target.files?.[0]?.name ?? "")}
-              />
-            </label>
-          </div>
-
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-sm font-medium">{t("serviceLocation")}</label>
@@ -150,7 +129,7 @@ export default function EngineerRegisterClient() {
 
           <button
             type="submit"
-            disabled={isPending || !certificateName}
+            disabled={isPending}
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
           >
             <UserRound className="h-4 w-4" />

@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
-import { getMyAgency } from "@/actions/agency";
+import { setRequestLocale } from "next-intl/server";
+import { getMyAgency, type AgencyRegistration } from "@/actions/agency";
+import { requireRole } from "@/lib/auth";
 import AgencyRegisterClient from "./AgencyRegisterClient";
 
 export default async function AgencyRegisterPage({
@@ -8,11 +9,18 @@ export default async function AgencyRegisterPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const agency = await getMyAgency();
+  setRequestLocale(locale);
 
-  if (agency) {
-    redirect(`/${locale}/agency`);
-  }
+  const profile = await requireRole(locale, [
+    "agency_owner",
+    "agency_employee",
+    "finance_user",
+    "admin",
+  ]);
+  const agency = (await getMyAgency()) as AgencyRegistration | null;
+  const canRegister = profile.role === "agency_owner" || profile.role === "admin";
 
-  return <AgencyRegisterClient />;
+  return (
+    <AgencyRegisterClient existingAgency={agency} canRegister={canRegister} />
+  );
 }

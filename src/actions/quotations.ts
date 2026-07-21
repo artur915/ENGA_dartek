@@ -182,6 +182,7 @@ export async function acceptQuotation(quotationId: string) {
       .select()
       .single();
 
+    revalidatePath("/client");
     revalidatePath("/client/quotations");
     revalidatePath("/client/projects");
     if (agreement?.id) {
@@ -190,6 +191,7 @@ export async function acceptQuotation(quotationId: string) {
     return { success: true, agreementId: agreement?.id };
   }
 
+  revalidatePath("/client");
   revalidatePath("/client/quotations");
   revalidatePath("/client/projects");
 
@@ -201,6 +203,43 @@ export async function acceptQuotation(quotationId: string) {
   if (quote) await createDefaultMilestones(quote.request_id);
 
   return { success: true, agreementId: agreementId as string };
+}
+
+export async function declineQuotation(quotationId: string) {
+  const profile = await getProfile();
+  if (!profile) return { error: "Not authenticated" };
+
+  const supabase = await createClient();
+  const { data: quote } = await supabase
+    .from("quotations")
+    .select("request_id, status")
+    .eq("id", quotationId)
+    .single();
+
+  if (!quote) return { error: "Quotation not found" };
+  if (quote.status !== "submitted") return { error: "Quotation cannot be declined" };
+
+  const { data: request } = await supabase
+    .from("project_requests")
+    .select("client_id")
+    .eq("id", quote.request_id)
+    .single();
+
+  if (!request || request.client_id !== profile.id) {
+    return { error: "Not authorized" };
+  }
+
+  const { error } = await supabase
+    .from("quotations")
+    .update({ status: "rejected" })
+    .eq("id", quotationId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/client");
+  revalidatePath("/client/quotations");
+  revalidatePath(`/client/quotations/${quote.request_id}`);
+  return { success: true };
 }
 
 export async function getAgencyQuotations() {

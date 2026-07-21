@@ -47,6 +47,17 @@ interface PortalSidebarProps {
   items: NavItem[];
 }
 
+function isNavActive(pathname: string, href: string): boolean {
+  if (pathname === href) return true;
+
+  const dashboardRoots = ["/client", "/agency", "/engineer", "/admin"];
+  if (dashboardRoots.includes(href)) {
+    return pathname === href;
+  }
+
+  return pathname.startsWith(`${href}/`);
+}
+
 function NavLinks({
   items,
   pathname,
@@ -59,15 +70,7 @@ function NavLinks({
   return (
     <>
       {items.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/client" &&
-            item.href !== "/agency" &&
-            item.href !== "/engineer" &&
-            item.href !== "/admin" &&
-            pathname.startsWith(item.href + "/")) ||
-          (["/client", "/agency", "/engineer", "/admin"].includes(item.href) &&
-            pathname === item.href);
+        const isActive = isNavActive(pathname, item.href);
         const Icon = iconMap[item.icon] ?? LayoutDashboard;
         return (
           <Link

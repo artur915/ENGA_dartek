@@ -5,34 +5,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
 
-const ALLOWED_CERT_TYPES = [
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-];
-
-async function uploadEngineerCertificate(
-  userId: string,
-  file: File
-): Promise<{ path: string; fileName: string } | { error: string }> {
-  if (!ALLOWED_CERT_TYPES.includes(file.type)) {
-    return { error: "Certificate must be PDF, JPEG, PNG, or WebP" };
-  }
-
-  const supabase = await createClient();
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const filePath = `${userId}/certificate-${Date.now()}-${safeName}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from("engineer-documents")
-    .upload(filePath, file, { contentType: file.type, upsert: false });
-
-  if (uploadError) return { error: uploadError.message };
-
-  return { path: filePath, fileName: file.name };
-}
-
 export async function getEngineerProfile() {
   const profile = await getProfile();
   if (!profile) return null;
@@ -72,14 +44,10 @@ export async function registerEngineer(formData: FormData) {
   const service_location = String(formData.get("service_location") ?? "").trim();
   const experienceRaw = String(formData.get("experience_years") ?? "").trim();
   const bio = String(formData.get("bio") ?? "").trim();
-  const certificate = formData.get("certificate");
 
   if (!specialization) return { error: "Specialization is required" };
   if (!professional_license) return { error: "Professional license number is required" };
   if (!council_membership) return { error: "Engineering Council membership number is required" };
-  if (!certificate || !(certificate instanceof File) || certificate.size === 0) {
-    return { error: "Engineering Council certificate is required" };
-  }
 
   const supabase = await createClient();
   const { data: existing } = await supabase
@@ -92,9 +60,6 @@ export async function registerEngineer(formData: FormData) {
     return { error: "You have already completed registration" };
   }
 
-  const upload = await uploadEngineerCertificate(profile.id, certificate);
-  if ("error" in upload) return { error: upload.error };
-
   const payload = {
     specialization,
     professional_license,
@@ -102,8 +67,6 @@ export async function registerEngineer(formData: FormData) {
     service_location: service_location || null,
     experience_years: experienceRaw ? parseInt(experienceRaw, 10) : null,
     bio: bio || null,
-    certificate_path: upload.path,
-    certificate_file_name: upload.fileName,
     registered_at: new Date().toISOString(),
   };
 

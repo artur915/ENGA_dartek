@@ -30,6 +30,16 @@ In the Supabase SQL Editor, run these files **in order** (paste file **contents*
 4. `supabase/migrations/004_fix_signup_trigger.sql` — fixes signup 500 (profile trigger + RLS)
 5. `supabase/migrations/005_fix_profiles_rls_recursion.sql` — fixes "infinite recursion" on profiles when floating requests
 6. `supabase/migrations/006_fix_project_requests_rls_recursion.sql` — fixes "infinite recursion" on project_requests when floating requests
+7. `supabase/migrations/007_auto_registration_certificates.sql` — optional certificate columns (if using auto-registration)
+8. `supabase/migrations/008_request_preferences.sql` — **required for New Project Request** (urgency, quotations, distribution, attachments category)
+
+After running migration 008, PostgREST reloads automatically via `NOTIFY pgrst, 'reload schema'`.
+
+**Alternative:** from the project root, add `DATABASE_URL` to `.env.local` (Supabase → Settings → Database → Connection string URI), then run:
+
+```bash
+npm run db:migrate-008
+```
 
 ## 4. Create Admin User
 

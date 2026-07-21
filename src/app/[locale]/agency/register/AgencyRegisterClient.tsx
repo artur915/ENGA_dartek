@@ -3,10 +3,10 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { PortalSidebar } from "@/components/layout/PortalSidebar";
-import { registerAgency } from "@/actions/agency";
+import { PortalShell } from "@/components/layout/PortalShell";
+import { registerAgency, type AgencyRegistration } from "@/actions/agency";
 import { getAgencyNav } from "@/lib/nav";
-import { Building2, FileUp } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { Alert } from "@/components/ui/Alert";
 
 const DISCIPLINES = [
@@ -18,25 +18,34 @@ const AREAS = [
   "Khobar", "Tabuk", "Abha", "Eastern Province",
 ];
 
-export default function AgencyRegisterClient() {
+function buildInitialForm(agency: AgencyRegistration | null) {
+  return {
+    name: agency?.name ?? "",
+    name_ar: agency?.name_ar ?? "",
+    commercial_registration: agency?.commercial_registration ?? "",
+    engineering_license: agency?.engineering_license ?? "",
+    description: agency?.description ?? "",
+    disciplines: agency?.disciplines ?? [],
+    service_areas: agency?.service_areas ?? [],
+    indicative_price_from: agency?.indicative_price_from?.toString() ?? "",
+  };
+}
+
+export default function AgencyRegisterClient({
+  existingAgency,
+  canRegister,
+}: {
+  existingAgency: AgencyRegistration | null;
+  canRegister: boolean;
+}) {
   const t = useTranslations("agency");
   const tc = useTranslations("common");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const [certificateName, setCertificateName] = useState("");
+  const [form, setForm] = useState(() => buildInitialForm(existingAgency));
 
-  const [form, setForm] = useState({
-    name: "",
-    name_ar: "",
-    commercial_registration: "",
-    engineering_license: "",
-    description: "",
-    disciplines: [] as string[],
-    service_areas: [] as string[],
-    indicative_price_from: "",
-  });
-
+  const isUpdate = Boolean(existingAgency);
   const nav = getAgencyNav(t, tc);
 
   function toggleItem(field: "disciplines" | "service_areas", value: string) {
@@ -68,19 +77,32 @@ export default function AgencyRegisterClient() {
         setError(result.error);
       } else {
         router.push("/agency");
+        router.refresh();
       }
     });
   }
 
   return (
-    <div className="flex min-h-screen">
-      <PortalSidebar title={t("title")} items={nav} />
-      <div className="flex-1 bg-surface-muted p-8">
-        <h1 className="text-2xl font-bold">{t("register")}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted">{t("registerDescription")}</p>
-        <p className="mt-2 max-w-2xl text-xs text-muted">{t("registerNote")}</p>
+    <PortalShell title={t("title")} nav={nav}>
+      <h1 className="text-2xl font-bold">{t("register")}</h1>
+      <p className="mt-1 max-w-2xl text-sm text-muted">{t("registerDescription")}</p>
+      <p className="mt-2 max-w-2xl text-xs text-muted">{t("registerNote")}</p>
 
-        <form onSubmit={handleSubmit} className="mt-8 max-w-2xl space-y-6 rounded-xl border border-border bg-surface p-6">
+      {!canRegister ? (
+        <Alert variant="warning" className="mt-8 max-w-2xl">
+          Only the engineering office owner can complete or update office registration.
+        </Alert>
+      ) : (
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 max-w-2xl space-y-6 rounded-xl border border-border bg-surface p-6"
+        >
+          {isUpdate && (
+            <Alert variant="info" title={`Office status: ${existingAgency?.status}`}>
+              Update your office details below. Your account remains active after saving.
+            </Alert>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-sm font-medium">{t("officeNameEn")} *</label>
@@ -127,26 +149,6 @@ export default function AgencyRegisterClient() {
                 placeholder={t("licenseNumberPlaceholder")}
               />
             </div>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">{t("councilCertificate")} *</label>
-            <p className="mb-2 text-xs text-muted">{t("certificateHint")}</p>
-            <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border-subtle bg-surface-muted/50 px-4 py-8 text-center transition-colors hover:border-primary/40">
-              <FileUp className="mb-2 h-8 w-8 text-primary" />
-              <span className="text-sm font-medium">
-                {certificateName || t("uploadCertificate")}
-              </span>
-              <span className="mt-1 text-xs text-muted">PDF, JPEG, PNG, or WebP (max 50MB)</span>
-              <input
-                type="file"
-                name="certificate"
-                required
-                accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*"
-                className="sr-only"
-                onChange={(e) => setCertificateName(e.target.files?.[0]?.name ?? "")}
-              />
-            </label>
           </div>
 
           <div>
@@ -219,16 +221,19 @@ export default function AgencyRegisterClient() {
             disabled={
               isPending ||
               form.disciplines.length === 0 ||
-              form.service_areas.length === 0 ||
-              !certificateName
+              form.service_areas.length === 0
             }
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
           >
             <Building2 className="h-4 w-4" />
-            {isPending ? t("submitting") : t("completeRegistration")}
+            {isPending
+              ? t("submitting")
+              : isUpdate
+                ? t("updateRegistration")
+                : t("completeRegistration")}
           </button>
         </form>
-      </div>
-    </div>
+      )}
+    </PortalShell>
   );
 }

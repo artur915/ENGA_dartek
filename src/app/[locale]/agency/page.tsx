@@ -57,7 +57,7 @@ export default async function AgencyDashboard({
             description={
               agency
                 ? `${agency.name} — ${agency.status}`
-                : "Complete registration with license details and your Engineering Council certificate to activate your account."
+                : "Complete registration with your license details to activate your account."
             }
           />
           <Link href="/agency/register" className="link-primary text-sm">

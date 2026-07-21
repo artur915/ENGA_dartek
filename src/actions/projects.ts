@@ -46,13 +46,52 @@ export async function getClientActiveProjects() {
     .select(`
       id, signed_at, created_at,
       agencies(name),
-      project_requests(id, title, status, location_city, created_at),
+      project_requests(
+        id, title, status, location_city, created_at,
+        milestones(id, title, status, sort_order, due_date, status_update),
+        payments(id, amount, status)
+      ),
       quotations(price, timeline_days)
     `)
     .eq("client_id", profile.id)
     .order("created_at", { ascending: false });
 
-  return data ?? [];
+  const activeStatuses = new Set(["accepted", "in_progress"]);
+
+  return (data ?? []).filter((agreement) => {
+    const request = Array.isArray(agreement.project_requests)
+      ? agreement.project_requests[0]
+      : agreement.project_requests;
+    return request && activeStatuses.has(request.status);
+  });
+}
+
+export async function getClientQuotationsInbox() {
+  const profile = await getProfile();
+  if (!profile) return [];
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("project_requests")
+    .select(`
+      id, title, status, location_city,
+      quotations(
+        id, status, price, scope, timeline_days,
+        agencies(id, name, service_areas, disciplines)
+      )
+    `)
+    .eq("client_id", profile.id)
+    .in("status", ["floating", "quoted"])
+    .order("created_at", { ascending: false });
+
+  return (data ?? [])
+    .map((request) => ({
+      ...request,
+      quotations: (request.quotations ?? []).filter(
+        (q: { status: string }) => q.status === "submitted"
+      ),
+    }))
+    .filter((request) => request.quotations.length > 0);
 }
 
 export async function getAgencyActiveProjects() {

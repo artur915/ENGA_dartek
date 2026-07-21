@@ -3,6 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
+import { regionMatchesServiceAreas } from "@/data/regions";
+
+export type RequestUrgency = "normal" | "urgent";
+export type DistributionType = "all" | "region" | "agencies";
+export type DocumentCategory = "drawings" | "documents" | "photos";
 
 export interface CreateRequestInput {
   title: string;
@@ -11,6 +16,27 @@ export interface CreateRequestInput {
   location_district?: string;
   package_id?: number;
   service_ids: number[];
+  urgency?: RequestUrgency;
+  required_quotations?: number | null;
+  quotation_deadline?: string | null;
+  distribution_type?: DistributionType;
+  distribution_region?: string | null;
+  selected_agency_ids?: string[];
+}
+
+export interface UpdateRequestInput {
+  title?: string;
+  description?: string;
+  location_city?: string;
+  location_district?: string;
+  package_id?: number | null;
+  service_ids?: number[];
+  urgency?: RequestUrgency;
+  required_quotations?: number | null;
+  quotation_deadline?: string | null;
+  distribution_type?: DistributionType;
+  distribution_region?: string | null;
+  selected_agency_ids?: string[];
 }
 
 export async function createProjectRequest(input: CreateRequestInput) {
@@ -32,6 +58,12 @@ export async function createProjectRequest(input: CreateRequestInput) {
       location_district: input.location_district ?? null,
       package_id: input.package_id ?? null,
       status: "draft",
+      urgency: input.urgency ?? "normal",
+      required_quotations: input.required_quotations ?? 5,
+      quotation_deadline: input.quotation_deadline ?? null,
+      distribution_type: input.distribution_type ?? "all",
+      distribution_region: input.distribution_region ?? null,
+      selected_agency_ids: input.selected_agency_ids ?? [],
     })
     .select()
     .single();
@@ -52,7 +84,72 @@ export async function createProjectRequest(input: CreateRequestInput) {
   return { success: true, requestId: request.id };
 }
 
-export async function uploadRequestDocument(requestId: string, formData: FormData) {
+export async function updateProjectRequest(requestId: string, input: UpdateRequestInput) {
+  const profile = await getProfile();
+  if (!profile) return { error: "Not authenticated" };
+
+  const supabase = await createClient();
+  const { data: existing } = await supabase
+    .from("project_requests")
+    .select("client_id, status")
+    .eq("id", requestId)
+    .single();
+
+  if (!existing || existing.client_id !== profile.id) {
+    return { error: "Not authorized" };
+  }
+  if (existing.status !== "draft" && existing.status !== "submitted") {
+    return { error: "Request cannot be edited in current status" };
+  }
+
+  const updates: Record<string, unknown> = {};
+  if (input.title !== undefined) updates.title = input.title;
+  if (input.description !== undefined) updates.description = input.description;
+  if (input.location_city !== undefined) updates.location_city = input.location_city;
+  if (input.location_district !== undefined) updates.location_district = input.location_district;
+  if (input.package_id !== undefined) updates.package_id = input.package_id;
+  if (input.urgency !== undefined) updates.urgency = input.urgency;
+  if (input.required_quotations !== undefined) updates.required_quotations = input.required_quotations;
+  if (input.quotation_deadline !== undefined) updates.quotation_deadline = input.quotation_deadline;
+  if (input.distribution_type !== undefined) updates.distribution_type = input.distribution_type;
+  if (input.distribution_region !== undefined) updates.distribution_region = input.distribution_region;
+  if (input.selected_agency_ids !== undefined) updates.selected_agency_ids = input.selected_agency_ids;
+
+  if (Object.keys(updates).length > 0) {
+    const { error } = await supabase.from("project_requests").update(updates).eq("id", requestId);
+    if (error) return { error: error.message };
+  }
+
+  if (input.service_ids) {
+    await supabase.from("request_services").delete().eq("request_id", requestId);
+    if (input.service_ids.length > 0) {
+      const { error: svcError } = await supabase.from("request_services").insert(
+        input.service_ids.map((service_id) => ({ request_id: requestId, service_id }))
+      );
+      if (svcError) return { error: svcError.message };
+    }
+  }
+
+  revalidatePath("/client/requests");
+  return { success: true };
+}
+
+export async function getApprovedAgencies() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("agencies")
+    .select("id, name, service_areas")
+    .eq("status", "approved")
+    .order("name");
+
+  return data ?? [];
+}
+
+export async function uploadRequestDocument(
+  requestId: string,
+  formData: FormData,
+  category: DocumentCategory = "documents"
+) {
   const profile = await getProfile();
   if (!profile) return { error: "Not authenticated" };
 
@@ -88,6 +185,7 @@ export async function uploadRequestDocument(requestId: string, formData: FormDat
     file_size: file.size,
     mime_type: file.type,
     uploaded_by: profile.id,
+    category,
   });
 
   if (dbError) return { error: dbError.message };
@@ -122,27 +220,46 @@ export async function floatProjectRequest(requestId: string) {
   });
 
   if (error) {
-    // Fallback if RPC not deployed: manual float
-    const { data: agencies } = await supabase
-      .from("agencies")
-      .select("id")
-      .eq("status", "approved");
+    const { data: requestDetails } = await supabase
+      .from("project_requests")
+      .select("distribution_type, distribution_region, selected_agency_ids")
+      .eq("id", requestId)
+      .single();
 
     await supabase
       .from("project_requests")
       .update({ status: "floating", floated_at: new Date().toISOString() })
       .eq("id", requestId);
 
-    if (agencies && agencies.length > 0) {
+    const { data: agencies } = await supabase
+      .from("agencies")
+      .select("id, service_areas")
+      .eq("status", "approved");
+
+    let targetAgencies = agencies ?? [];
+
+    if (requestDetails?.distribution_type === "region" && requestDetails.distribution_region) {
+      targetAgencies = targetAgencies.filter((a) =>
+        regionMatchesServiceAreas(requestDetails.distribution_region!, a.service_areas)
+      );
+    } else if (
+      requestDetails?.distribution_type === "agencies" &&
+      requestDetails.selected_agency_ids?.length
+    ) {
+      const selected = new Set(requestDetails.selected_agency_ids);
+      targetAgencies = targetAgencies.filter((a) => selected.has(a.id));
+    }
+
+    if (targetAgencies.length > 0) {
       await supabase.from("request_invitations").upsert(
-        agencies.map((a) => ({ request_id: requestId, agency_id: a.id })),
+        targetAgencies.map((a) => ({ request_id: requestId, agency_id: a.id })),
         { onConflict: "request_id,agency_id", ignoreDuplicates: true }
       );
     }
 
     revalidatePath("/client/requests");
     revalidatePath("/agency/requests");
-    return { success: true, inviteCount: agencies?.length ?? 0 };
+    return { success: true, inviteCount: targetAgencies.length };
   }
 
   revalidatePath("/client/requests");
