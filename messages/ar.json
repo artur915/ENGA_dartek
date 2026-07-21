@@ -386,6 +386,8 @@
       "allMilestonesComplete": "جميع المراحل مكتملة",
       "paymentStatus": "حالة الدفع",
       "overallProgress": "التقدم الإجمالي",
+      "showDetails": "عرض التفاصيل",
+      "hideDetails": "إخفاء التفاصيل",
       "viewSchedule": "عرض الجدول",
       "openWorkspace": "فتح مساحة العمل",
       "reviewNextItem": "راجع البند التالي ليتمكن فريق التسليم من المتابعة.",

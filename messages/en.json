@@ -386,6 +386,8 @@
       "allMilestonesComplete": "All milestones complete",
       "paymentStatus": "Payment status",
       "overallProgress": "Overall progress",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details",
       "viewSchedule": "View schedule",
       "openWorkspace": "Open workspace",
       "reviewNextItem": "Review the next item so the delivery team can continue.",

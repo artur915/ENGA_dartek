@@ -2,13 +2,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
-import {
-  FolderKanban,
-  Calendar,
-  ExternalLink,
-  AlertCircle,
-  LayoutGrid,
-} from "lucide-react";
+import { FolderKanban, LayoutGrid } from "lucide-react";
 import {
   computeProgress,
   formatPoRef,
@@ -21,6 +15,7 @@ import {
   PROJECT_KICKOFF,
 } from "@/lib/client-dashboard";
 import { formatCurrency } from "@/lib/format";
+import { ActiveProjectCard } from "@/components/client/ActiveProjectCard";
 
 type AgreementRow = {
   id: string;
@@ -126,126 +121,43 @@ export async function ActiveProjectsSection({
             const progress = computeProgress(milestones);
             const statusBadge = getProjectStatusBadge(milestones, payments, contractValue);
             const payment = getPaymentLabel(payments, contractValue);
-            const statusLabel = t(statusBadge.key);
-            const paymentLabel = t(payment.key);
             const currentPhaseRaw = getCurrentPhase(milestones);
             const currentPhase =
               currentPhaseRaw === PROJECT_KICKOFF ? ts("projectKickoff") : currentPhaseRaw;
             const nextItem = getNextItem(milestones);
-            const showAlert = needsClientReview(milestones);
 
             return (
-              <Card key={agreement.id} padding="none" className="overflow-hidden">
-                <div className="border-b border-border-subtle px-6 py-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant={
-                          statusBadge.variant === "success"
-                            ? "success"
-                            : statusBadge.variant === "warning"
-                              ? "warning"
-                              : "accent"
-                        }
-                      >
-                        {statusLabel}
-                      </Badge>
-                      <span className="text-xs text-muted">
-                        {formatProjectRef(request.id, request.created_at)} ·{" "}
-                        {formatPoRef(agreement.id, agreement.signed_at)}
-                      </span>
-                    </div>
-                    <div className="text-end">
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
-                        {t("contractValue")}
-                      </p>
-                      <p className="text-lg font-bold text-primary">
-                        {formatCurrency(contractValue, tc("currency"), locale)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <h3 className="mt-4 text-lg font-bold">{request.title}</h3>
-                  <p className="text-sm text-muted">{agency?.name}</p>
-                </div>
-
-                {showAlert && (
-                  <div className="mx-6 mt-4 flex items-start gap-2 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3 text-sm text-primary-dark">
-                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    <span>{t("reviewNextItem")}</span>
-                  </div>
-                )}
-
-                <div className="grid gap-4 px-6 py-5 sm:grid-cols-3">
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
-                      {t("currentPhase")}
-                    </p>
-                    <p className="mt-1 text-sm font-medium">{currentPhase}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
-                      {t("nextItem")}
-                    </p>
-                    <p className="mt-1 text-sm font-medium">
-                      {nextItem ? (
-                        <>
-                          {nextItem.title}
-                          {nextItem.dueDate && (
-                            <span className="mt-0.5 block text-xs text-muted">
-                              {t("due")}: {nextItem.dueDate}
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        t("allMilestonesComplete")
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
-                      {t("paymentStatus")}
-                    </p>
-                    <p
-                      className={`mt-1 text-sm font-medium ${
-                        payment.variant === "warning" ? "text-warning" : "text-success"
-                      }`}
-                    >
-                      {paymentLabel}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="border-t border-border-subtle px-6 py-4">
-                  <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-muted">
-                    <span>{t("overallProgress")}</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap justify-end gap-2">
-                    <Link
-                      href={`/client/projects/${request.id}`}
-                      className="inline-flex h-10 items-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:border-primary/20"
-                    >
-                      <Calendar className="h-4 w-4" />
-                      {t("viewSchedule")}
-                    </Link>
-                    <Link
-                      href={`/client/projects/${request.id}`}
-                      className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      {t("openWorkspace")}
-                    </Link>
-                  </div>
-                </div>
-              </Card>
+              <ActiveProjectCard
+                key={agreement.id}
+                projectId={request.id}
+                title={request.title}
+                contractValueLabel={t("contractValue")}
+                contractValueFormatted={formatCurrency(contractValue, tc("currency"), locale)}
+                progressLabel={t("overallProgress")}
+                progress={progress}
+                viewScheduleLabel={t("viewSchedule")}
+                openWorkspaceLabel={t("openWorkspace")}
+                showDetailsLabel={t("showDetails")}
+                hideDetailsLabel={t("hideDetails")}
+                expanded={{
+                  statusLabel: t(statusBadge.key),
+                  statusVariant: statusBadge.variant,
+                  projectRef: `${formatProjectRef(request.id, request.created_at)} · ${formatPoRef(agreement.id, agreement.signed_at)}`,
+                  agencyName: agency?.name ?? null,
+                  showAlert: needsClientReview(milestones),
+                  reviewNextItemLabel: t("reviewNextItem"),
+                  currentPhaseLabel: t("currentPhase"),
+                  currentPhase,
+                  nextItemLabel: t("nextItem"),
+                  nextItemTitle: nextItem?.title ?? null,
+                  nextItemDue: nextItem?.dueDate ?? null,
+                  dueLabel: t("due"),
+                  allMilestonesCompleteLabel: t("allMilestonesComplete"),
+                  paymentStatusLabel: t("paymentStatus"),
+                  paymentLabel: t(payment.key),
+                  paymentVariant: payment.variant,
+                }}
+              />
             );
           })}
         </div>
