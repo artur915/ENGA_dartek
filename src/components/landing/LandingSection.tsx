@@ -7,8 +7,8 @@ type LandingVariant = "light" | "muted" | "brand" | "dark";
 const variantStyles: Record<LandingVariant, string> = {
   light: "bg-landing-bg text-foreground",
   muted: "bg-landing-muted text-foreground",
-  brand: "bg-primary text-white",
-  dark: "bg-navy text-white",
+  brand: "gradient-primary text-white",
+  dark: "bg-primary text-white",
 };
 
 export function LandingSection({

@@ -25,7 +25,7 @@ export function AuthShell({
 }) {
   return (
     <div className="flex min-h-screen bg-landing-bg">
-      <div className="relative hidden w-[42%] flex-col justify-between bg-primary p-10 text-white lg:flex xl:p-14">
+      <div className="gradient-primary relative hidden w-[42%] flex-col justify-between p-10 text-white lg:flex xl:p-14">
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">

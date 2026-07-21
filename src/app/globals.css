@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f7f6;
-  --foreground: #0c1916;
-  --navy: #0f1f1c;
-  --primary: #0a5042;
-  --primary-light: #127a65;
-  --primary-dark: #063328;
-  --accent: #b8941f;
-  --accent-light: #d4af37;
+  --background: #ffffff;
+  --foreground: #1e293b;
+  --navy: #166534;
+  --primary: #22c55e;
+  --primary-light: #4ade80;
+  --primary-dark: #16a34a;
+  --accent: #f59e0b;
+  --accent-light: #fbbf24;
   --surface: #ffffff;
-  --surface-muted: #eef3f1;
+  --surface-muted: #f0fdf4;
   --surface-elevated: #ffffff;
-  --landing-bg: #f8faf9;
-  --landing-muted: #f0f4f2;
-  --border: #dce6e2;
-  --border-subtle: #e8efec;
-  --muted: #5c716a;
-  --muted-foreground: #3d524c;
-  --success: #15803d;
-  --warning: #b45309;
-  --danger: #b91c1c;
-  --ring: rgba(10, 80, 66, 0.25);
-  --shadow-sm: 0 1px 2px rgba(12, 25, 22, 0.05);
-  --shadow-md: 0 4px 16px rgba(12, 25, 22, 0.07);
-  --shadow-lg: 0 12px 40px rgba(12, 25, 22, 0.1);
-  --shadow-soft: 0 8px 30px rgba(12, 25, 22, 0.06);
+  --landing-bg: #ffffff;
+  --landing-muted: #ecfdf5;
+  --border: #bbf7d0;
+  --border-subtle: #dcfce7;
+  --muted: #64748b;
+  --muted-foreground: #475569;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --ring: rgba(34, 197, 94, 0.35);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.05);
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
@@ -40,7 +40,7 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
-  --info: #0369a1;
+  --info: #0ea5e9;
 }
 
 @theme inline {
@@ -138,12 +138,12 @@
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--primary) 18%, transparent);
-    color: var(--primary-dark);
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+    color: var(--navy);
   }
 
   :focus-visible {
-    outline: 2px solid var(--primary-light);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 }
@@ -166,7 +166,7 @@
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 45%, var(--primary-light) 100%);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 50%, var(--primary-dark) 100%);
   }
 
   .gradient-subtle {
@@ -186,7 +186,7 @@
   }
 
   .link-primary {
-    @apply font-semibold text-primary transition-colors hover:text-primary-light;
+    @apply font-semibold text-primary transition-colors hover:text-primary-dark;
   }
 
   .status-green {
