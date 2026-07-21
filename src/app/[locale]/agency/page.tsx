@@ -11,6 +11,7 @@ import { getAgencyNav } from "@/lib/nav";
 import { getAgencyDashboardStats } from "@/actions/requests";
 import { getAgencyActiveProjects } from "@/actions/projects";
 import { AgencyActiveProjectsSection } from "@/components/agency/AgencyActiveProjectsSection";
+import { formatNumber } from "@/lib/format";
 import { ClipboardList, FileText, FolderKanban, TrendingUp } from "lucide-react";
 
 export default async function AgencyDashboard({
@@ -49,7 +50,7 @@ export default async function AgencyDashboard({
         <StatCard label={t("activeProjects")} value={stats.active} icon={FolderKanban} accent="success" />
         <StatCard
           label={t("dashboard.revenue")}
-          value={stats.revenue.toLocaleString()}
+          value={formatNumber(stats.revenue)}
           icon={TrendingUp}
           accent="accent"
         />

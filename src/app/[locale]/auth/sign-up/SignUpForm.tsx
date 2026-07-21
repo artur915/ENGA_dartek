@@ -127,7 +127,6 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
           <Select value={role} onChange={(e) => setRole(e.target.value as UserRole)}>
             <option value="client">{t("roles.client")}</option>
             <option value="agency_owner">{t("roles.agency_owner")}</option>
-            <option value="individual_engineer">{t("roles.individual_engineer")}</option>
           </Select>
         </FormField>
         {error && <Alert variant="error">{error}</Alert>}

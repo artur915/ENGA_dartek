@@ -1,7 +1,7 @@
 import { SignUpForm } from "./SignUpForm";
 import { type UserRole } from "@/types";
 
-const VALID_ROLES = ["client", "agency_owner", "individual_engineer"] as const;
+const VALID_ROLES = ["client", "agency_owner"] as const;
 
 function parseRole(role?: string): UserRole {
   if (role && VALID_ROLES.includes(role as (typeof VALID_ROLES)[number])) {

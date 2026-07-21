@@ -14,6 +14,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
+import { formatNumber } from "@/lib/format";
 
 interface QuotationRow {
   id: string;
@@ -123,7 +124,7 @@ export function QuotationInboxRow({
 
         <div className="flex shrink-0 flex-col items-end gap-2 lg:min-w-[140px]">
           <p className="text-2xl font-bold text-primary">
-            {Number(quotation.price).toLocaleString()} SAR
+            {formatNumber(Number(quotation.price))} SAR
           </p>
           <Link
             href={`/client/quotations/${requestId}`}

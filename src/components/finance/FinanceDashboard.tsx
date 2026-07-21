@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { addFinanceRecord } from "@/actions/finance";
+import { formatNumber } from "@/lib/format";
 
 export function FinanceDashboard({
   summary,
@@ -58,7 +59,7 @@ export function FinanceDashboard({
           <Card key={s.label}>
             <p className="text-sm text-muted">{s.label}</p>
             <p className="mt-2 text-2xl font-bold text-primary">
-              SAR {s.value.toLocaleString()}
+              SAR {formatNumber(s.value)}
             </p>
           </Card>
         ))}
@@ -114,7 +115,7 @@ export function FinanceDashboard({
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">{r.record_type}</Badge>
-                  <span className="font-medium">SAR {Number(r.amount).toLocaleString()}</span>
+                  <span className="font-medium">SAR {formatNumber(Number(r.amount))}</span>
                 </div>
               </div>
             ))}

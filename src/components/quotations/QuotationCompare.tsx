@@ -13,6 +13,7 @@ import {
   type QuotationDisplayData,
 } from "@/lib/quotation-display";
 import { Building2, Clock, CheckCircle } from "lucide-react";
+import { formatNumber } from "@/lib/format";
 
 interface Quotation extends QuotationDisplayData {
   id: string;
@@ -90,7 +91,7 @@ export function QuotationCompare({
             </div>
 
             <p className="text-3xl font-bold text-primary">
-              SAR {Number(q.price).toLocaleString()}
+              SAR {formatNumber(Number(q.price))}
             </p>
 
             {duration && (

@@ -18,6 +18,10 @@ export async function signUp(input: {
   redirectOrigin: string;
 }): Promise<AuthActionResult> {
   try {
+    if (input.role === "individual_engineer") {
+      return { error: "Individual engineer registration is not available at this time." };
+    }
+
     const supabase = await createClient();
     const origin = input.redirectOrigin.replace(/\/+$/, "");
 

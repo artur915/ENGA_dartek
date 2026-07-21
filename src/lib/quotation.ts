@@ -1,3 +1,5 @@
+import { formatNumber } from "@/lib/format";
+
 export type PaymentTermsType = "full_on_completion" | "advance_balance" | "milestones";
 
 export interface PaymentMilestone {
@@ -74,7 +76,7 @@ export function formatPaymentTermsLabel(
   if (type === "advance_balance") return "50% upfront, 50% on delivery";
   if (!milestones.length) return "Milestone-based payments";
   return milestones
-    .map((m) => `${m.name}: ${m.percentage}% (SAR ${Math.round((price * m.percentage) / 100).toLocaleString()})`)
+    .map((m) => `${m.name}: ${m.percentage}% (SAR ${formatNumber(Math.round((price * m.percentage) / 100))})`)
     .join("; ");
 }
 

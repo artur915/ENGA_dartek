@@ -9,6 +9,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, error, ...props }, ref) => (
     <input
       ref={ref}
+      suppressHydrationWarning
       className={cn(
         "h-11 w-full rounded-xl border bg-surface px-4 text-sm text-foreground",
         "placeholder:text-muted/70",
@@ -30,6 +31,7 @@ export const Textarea = forwardRef<
 >(({ className, error, ...props }, ref) => (
   <textarea
     ref={ref}
+    suppressHydrationWarning
     className={cn(
       "w-full rounded-xl border bg-surface px-4 py-3 text-sm text-foreground",
       "placeholder:text-muted/70",
@@ -50,6 +52,7 @@ export const Select = forwardRef<
 >(({ className, error, children, ...props }, ref) => (
   <select
     ref={ref}
+    suppressHydrationWarning
     className={cn(
       "h-11 w-full rounded-xl border bg-surface px-4 text-sm text-foreground",
       "transition-colors duration-200",

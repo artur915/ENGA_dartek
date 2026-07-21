@@ -19,6 +19,7 @@ import {
   getProjectStatusBadge,
   needsClientReview,
 } from "@/lib/client-dashboard";
+import { formatNumber } from "@/lib/format";
 
 type AgreementRow = {
   id: string;
@@ -165,7 +166,7 @@ export async function ActiveProjectsSection({
                         {t("contractValue")}
                       </p>
                       <p className="text-lg font-bold text-primary">
-                        {contractValue.toLocaleString()} SAR
+                        {formatNumber(contractValue)} SAR
                       </p>
                     </div>
                   </div>
