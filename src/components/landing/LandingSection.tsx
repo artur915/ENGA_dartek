@@ -1,16 +1,19 @@
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
+import { ArrowRight } from "lucide-react";
 
-type LandingVariant = "dark" | "mid" | "glow";
+type LandingVariant = "light" | "muted" | "brand" | "dark";
 
 const variantStyles: Record<LandingVariant, string> = {
-  dark: "bg-[#041612] text-white",
-  mid: "bg-[#071f19] text-white",
-  glow: "bg-[#041612] text-white",
+  light: "bg-landing-bg text-foreground",
+  muted: "bg-landing-muted text-foreground",
+  brand: "bg-primary text-white",
+  dark: "bg-navy text-white",
 };
 
 export function LandingSection({
   children,
-  variant = "dark",
+  variant = "light",
   className,
   id,
 }: {
@@ -20,7 +23,10 @@ export function LandingSection({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("relative overflow-hidden py-20 sm:py-24 lg:py-28", variantStyles[variant], className)}>
+    <section
+      id={id}
+      className={cn("relative overflow-hidden section-padding", variantStyles[variant], className)}
+    >
       <LandingBackground variant={variant} />
       <div className="container-app relative z-10">{children}</div>
     </section>
@@ -28,35 +34,28 @@ export function LandingSection({
 }
 
 function LandingBackground({ variant }: { variant: LandingVariant }) {
+  const isLight = variant === "light" || variant === "muted";
+
   return (
     <div className="pointer-events-none absolute inset-0">
+      {isLight && (
+        <>
+          <div className="absolute -end-32 top-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute -start-24 bottom-0 h-80 w-80 rounded-full bg-primary-light/8 blur-3xl" />
+        </>
+      )}
+      {variant === "brand" && (
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.08)_0%,_transparent_55%)]" />
+      )}
       {variant === "dark" && (
-        <>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(18,122,101,0.12)_0%,_transparent_70%)]" />
-          <div className="absolute -end-40 top-0 h-80 w-80 rounded-full bg-primary-light/10 blur-[100px]" />
-        </>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(18,122,101,0.15)_0%,_transparent_70%)]" />
       )}
-      {variant === "mid" && (
-        <>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(212,175,55,0.08)_0%,_transparent_50%)]" />
-          <div className="absolute -start-32 bottom-0 h-96 w-96 rounded-full bg-primary/15 blur-[120px]" />
-        </>
+      {isLight && (
+        <div
+          className="absolute end-0 top-1/2 hidden h-[520px] w-[520px] -translate-y-1/2 translate-x-1/4 rounded-full border border-primary/10 lg:block"
+          aria-hidden
+        />
       )}
-      {variant === "glow" && (
-        <>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(18,122,101,0.2)_0%,_transparent_60%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(212,175,55,0.12)_0%,_transparent_45%)]" />
-          <div className="absolute start-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-[100px]" />
-        </>
-      )}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
-      />
     </div>
   );
 }
@@ -67,32 +66,51 @@ export function LandingSectionHeader({
   badge,
   action,
   align = "center",
+  inverted = false,
 }: {
   title: string;
   description?: string;
   badge?: string;
   action?: React.ReactNode;
   align?: "center" | "start";
+  inverted?: boolean;
 }) {
   const centered = align === "center";
+
   return (
     <div
       className={cn(
-        "mb-12 flex flex-col gap-4",
+        "mb-12 flex flex-col gap-4 lg:mb-14",
         centered ? "items-center text-center" : "sm:flex-row sm:items-end sm:justify-between"
       )}
     >
       <div className={cn("max-w-2xl", centered && "mx-auto")}>
         {badge && (
-          <span className="mb-4 inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-accent-light">
+          <span
+            className={cn(
+              "eyebrow mb-3 inline-flex items-center rounded-full px-3 py-1",
+              inverted ? "bg-white/10 text-white" : "bg-primary/8 text-primary"
+            )}
+          >
             {badge}
           </span>
         )}
-        <h2 className="text-balance bg-gradient-to-b from-white to-white/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
+        <h2
+          className={cn(
+            "text-balance text-3xl font-bold tracking-tight sm:text-4xl",
+            inverted ? "text-white" : "text-navy"
+          )}
+        >
           {title}
         </h2>
         {description && (
-          <p className={cn("mt-4 text-base leading-relaxed text-white/65 sm:text-lg", centered && "mx-auto")}>
+          <p
+            className={cn(
+              "mt-4 text-base leading-relaxed sm:text-lg",
+              inverted ? "text-white/75" : "text-muted",
+              centered && "mx-auto"
+            )}
+          >
             {description}
           </p>
         )}
@@ -105,18 +123,18 @@ export function LandingSectionHeader({
 export function LandingCard({
   children,
   className,
-  glow = false,
+  highlight = false,
 }: {
   children: React.ReactNode;
   className?: string;
-  glow?: boolean;
+  highlight?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "group relative rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300",
-        "hover:-translate-y-1 hover:border-accent/25 hover:bg-white/[0.07] hover:shadow-[0_20px_50px_rgba(0,0,0,0.35)]",
-        glow && "shadow-[0_0_40px_rgba(18,122,101,0.15)]",
+        "group rounded-2xl border border-border-subtle bg-surface p-6 shadow-soft transition-all duration-200",
+        "hover:-translate-y-0.5 hover:border-primary/15 hover:shadow-card-hover",
+        highlight && "border-primary/20 ring-1 ring-primary/10",
         className
       )}
     >
@@ -127,12 +145,12 @@ export function LandingCard({
 
 export function LandingViewAllLink({ href, label }: { href: string; label: string }) {
   return (
-    <a
+    <Link
       href={href}
-      className="inline-flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-5 py-2.5 text-sm font-semibold text-accent-light transition-all hover:border-accent/50 hover:bg-accent/20"
+      className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:border-primary/35 hover:bg-primary/10"
     >
       {label}
-      <span aria-hidden>→</span>
-    </a>
+      <ArrowRight className="h-4 w-4" />
+    </Link>
   );
 }

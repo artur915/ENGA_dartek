@@ -3,140 +3,156 @@ import { Link } from "@/i18n/navigation";
 import {
   ArrowRight,
   Building2,
-  FileCheck,
-  ShieldCheck,
+  Layers,
+  MapPin,
+  Network,
   Sparkles,
-  Star,
   Users,
 } from "lucide-react";
 
 export function HeroSection() {
   const t = useTranslations("landing");
-  const tc = useTranslations("common");
 
-  const stats = [
-    { value: "147+", label: t("stats.services") },
-    { value: "10", label: t("stats.categories") },
-    { value: "7", label: t("stats.packages") },
+  const floatingCards = [
+    {
+      icon: Building2,
+      title: t("heroCards.kafd"),
+      subtitle: t("heroCards.kafdSub"),
+      tone: "primary" as const,
+      className: "start-0 top-8 lg:-start-6",
+    },
+    {
+      icon: Sparkles,
+      title: t("heroCards.murabba"),
+      subtitle: t("heroCards.murabbaSub"),
+      tone: "accent" as const,
+      className: "end-4 top-16 lg:end-0",
+    },
+    {
+      icon: Network,
+      title: t("heroCards.network"),
+      subtitle: t("heroCards.networkSub"),
+      tone: "violet" as const,
+      className: "start-8 bottom-28 lg:start-4",
+    },
+    {
+      icon: MapPin,
+      title: t("heroCards.qiddiya"),
+      subtitle: t("heroCards.qiddiyaSub"),
+      tone: "amber" as const,
+      className: "end-0 bottom-12 lg:-end-4",
+    },
   ];
 
+  const toneStyles = {
+    primary: "bg-primary/10 text-primary",
+    accent: "bg-accent/15 text-primary-dark",
+    violet: "bg-violet-100 text-violet-700",
+    amber: "bg-amber-100 text-amber-800",
+  };
+
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#041612] text-white lg:min-h-[calc(100vh-4.5rem)]">
-      {/* Animated background */}
+    <section className="relative overflow-hidden bg-landing-bg pt-8 lg:pt-12">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(18,122,101,0.35)_0%,_transparent_55%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(212,175,55,0.18)_0%,_transparent_45%)]" />
-        <div className="absolute -start-32 top-1/4 h-96 w-96 animate-pulse rounded-full bg-primary-light/20 blur-[100px]" />
-        <div className="absolute -end-24 bottom-0 h-[32rem] w-[32rem] rounded-full bg-accent/15 blur-[120px]" />
-        <div
-          className="absolute inset-0 opacity-[0.12]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-        />
+        <div className="absolute -end-20 top-20 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute start-0 bottom-0 h-96 w-96 rounded-full bg-primary-light/5 blur-3xl" />
       </div>
 
-      <div className="container-app relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-12 lg:min-h-[calc(100vh-4.5rem)] lg:py-16">
-        {/* Top badge */}
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-5 py-2 text-sm font-semibold text-accent-light shadow-[0_0_30px_rgba(212,175,55,0.25)] backdrop-blur-md">
-          <Sparkles className="h-4 w-4" />
-          Saudi Arabia&apos;s Engineering Services Marketplace
-        </div>
+      <div className="container-app relative grid items-center gap-12 pb-16 pt-4 lg:grid-cols-2 lg:gap-16 lg:pb-24 lg:pt-8">
+        <div className="max-w-xl">
+          <p className="eyebrow">{t("heroEyebrow")}</p>
 
-        {/* Center hero image — CEO & team */}
-        <div className="relative mx-auto w-full max-w-4xl px-2">
-          <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-r from-primary-light/40 via-accent/30 to-primary-light/40 opacity-70 blur-2xl" />
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-white/20 shadow-[0_25px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/10">
-            <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#041612] via-transparent to-transparent opacity-90" />
-            <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#041612]/40 via-transparent to-[#041612]/40" />
-            {/* Native img avoids next/image SSR visibility:hidden hydration mismatch */}
-            <img
-              src="/landing/hero-ceo-conversation.png"
-              alt="ENGA CEO consulting with a professional team member"
-              width={1280}
-              height={720}
-              fetchPriority="high"
-              decoding="async"
-              className="aspect-[16/10] w-full object-cover object-center sm:aspect-[16/9]"
-            />
-            <div className="absolute bottom-0 start-0 end-0 z-20 p-6 sm:p-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-medium backdrop-blur-md">
-                <Users className="h-3.5 w-3.5 text-accent-light" />
-                Leadership-led service · Trusted engineering partnerships
-              </div>
-            </div>
-          </div>
-
-          {/* Floating accent cards */}
-          <div className="absolute -start-2 top-8 z-30 hidden rounded-2xl border border-white/15 bg-white/10 p-4 shadow-elevated backdrop-blur-xl lg:block">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/20 text-accent-light">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs text-white/60">Licensed Offices</p>
-                <p className="text-sm font-bold">Verified & Approved</p>
-              </div>
-            </div>
-          </div>
-          <div className="absolute -end-2 bottom-16 z-30 hidden rounded-2xl border border-white/15 bg-white/10 p-4 shadow-elevated backdrop-blur-xl lg:block">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-light/30 text-white">
-                <Building2 className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs text-white/60">End-to-end</p>
-                <p className="text-sm font-bold">Request → Delivery</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Headline below image */}
-        <div className="relative z-10 mt-10 max-w-4xl text-center">
-          <h1 className="text-balance bg-gradient-to-b from-white via-white to-white/75 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl lg:text-5xl">
-            {t("heroTitle")}
+          <h1 className="mt-4 text-balance text-4xl font-bold leading-[1.1] tracking-tight text-navy sm:text-5xl lg:text-[3.25rem]">
+            {t("heroTitleLine1")}{" "}
+            <span className="text-primary">{t("heroTitleHighlight")}</span>
+            {t("heroTitleLine2") ? <> {t("heroTitleLine2")}</> : null}
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">
-            {t("heroSubtitle")}
-          </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <p className="mt-3 text-xl font-semibold text-navy/80">{t("heroRegion")}</p>
+
+          <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">{t("heroSubtitle")}</p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/auth/sign-up?role=client"
-              className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-r from-accent to-accent-light px-7 text-base font-bold text-primary-dark shadow-[0_8px_32px_rgba(212,175,55,0.45)] transition-all hover:scale-[1.03] hover:shadow-[0_12px_40px_rgba(212,175,55,0.55)] active:scale-[0.98] sm:h-[3.25rem]"
+              className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark sm:h-[3.25rem] sm:px-7 sm:text-base"
             >
-              {t("ctaClient")}
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+              {t("ctaStartProject")}
+              <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="/services"
-              className="inline-flex h-12 items-center gap-2 rounded-2xl border border-white/25 bg-white/5 px-7 text-base font-semibold text-white backdrop-blur-sm transition-all hover:border-white/40 hover:bg-white/10 sm:h-[3.25rem]"
+              href="/auth/sign-up?role=agency_owner"
+              className="inline-flex h-12 items-center gap-2 rounded-xl border border-border bg-surface px-6 text-sm font-semibold text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5 sm:h-[3.25rem] sm:px-7 sm:text-base"
             >
-              <FileCheck className="h-5 w-5" />
-              {tc("learnMore")}
+              {t("ctaJoinProfessional")}
             </Link>
+          </div>
+
+          <div className="mt-10 flex items-center gap-4">
+            <div className="flex -space-x-2 rtl:space-x-reverse">
+              {[Users, Layers, Building2, Sparkles].map((Icon, i) => (
+                <div
+                  key={i}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-surface bg-surface-muted text-primary"
+                >
+                  <Icon className="h-4 w-4" />
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted">
+              <span className="font-bold text-foreground">{t("heroSocialProofCount")}</span>{" "}
+              {t("heroSocialProofText")}
+            </p>
           </div>
         </div>
 
-        {/* Stats strip */}
-        <div className="relative z-10 mt-12 grid w-full max-w-3xl grid-cols-3 gap-3 sm:gap-6">
-          {stats.map((stat) => (
+        <div className="relative mx-auto min-h-[420px] w-full max-w-lg lg:min-h-[480px]">
+          <div className="absolute inset-0 rounded-[2rem] border border-primary/10 bg-gradient-to-br from-primary/5 via-surface to-landing-muted" />
+
+          {floatingCards.map(({ icon: Icon, title, subtitle, tone, className }) => (
             <div
-              key={stat.label}
-              className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center backdrop-blur-md transition-colors hover:border-accent/30 hover:bg-white/10 sm:px-6 sm:py-5"
+              key={title}
+              className={`absolute z-10 w-[min(100%,14rem)] rounded-xl border border-border-subtle bg-surface p-4 shadow-soft ${className}`}
             >
-              <div className="flex items-center justify-center gap-1">
-                <Star className="hidden h-4 w-4 text-accent-light sm:block" />
-                <p className="text-2xl font-bold text-accent-light sm:text-3xl">{stat.value}</p>
+              <div className="flex items-start gap-3">
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${toneStyles[tone]}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">{title}</p>
+                  <p className="mt-0.5 text-xs text-muted">{subtitle}</p>
+                </div>
               </div>
-              <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-white/60 sm:text-xs">
-                {stat.label}
-              </p>
             </div>
           ))}
+
+          <div className="absolute bottom-6 start-6 end-6 z-20 rounded-2xl border border-border-subtle bg-surface p-5 shadow-elevated">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">{t("heroLiveProjects")}</p>
+                <p className="mt-1 text-2xl font-bold text-navy">{t("heroLiveProjectsCount")}</p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
+                <span className="h-2 w-2 rounded-full bg-success" />
+                {t("heroActiveLabel")}
+              </span>
+            </div>
+            <div className="mt-4 rounded-xl bg-primary/5 p-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                  <Building2 className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">{t("heroFeaturedProject")}</p>
+                  <p className="text-xs text-muted">{t("heroFeaturedPhase")}</p>
+                </div>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-border-subtle">
+                <div className="h-full w-[65%] rounded-full bg-primary" />
+              </div>
+              <p className="mt-2 text-xs font-medium text-primary">{t("heroFeaturedProgress")}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

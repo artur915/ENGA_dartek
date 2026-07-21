@@ -72,17 +72,7 @@ export default function SignInPage() {
             autoComplete="current-password"
           />
         </FormField>
-        {error && (
-          <Alert variant="error">
-            {error}
-            {error.includes("confirm your email") && (
-              <p className="mt-2 text-xs text-muted">
-                Dev tip: In Supabase → Authentication → Providers → Email, turn off
-                &quot;Confirm email&quot; for faster testing.
-              </p>
-            )}
-          </Alert>
-        )}
+        {error && <Alert variant="error">{error}</Alert>}
         <Button type="submit" fullWidth disabled={loading} size="lg">
           {loading ? "Signing in…" : tc("signIn")}
         </Button>

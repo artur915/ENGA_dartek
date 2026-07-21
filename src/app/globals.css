@@ -3,6 +3,7 @@
 :root {
   --background: #f4f7f6;
   --foreground: #0c1916;
+  --navy: #0f1f1c;
   --primary: #0a5042;
   --primary-light: #127a65;
   --primary-dark: #063328;
@@ -11,6 +12,8 @@
   --surface: #ffffff;
   --surface-muted: #eef3f1;
   --surface-elevated: #ffffff;
+  --landing-bg: #f8faf9;
+  --landing-muted: #f0f4f2;
   --border: #dce6e2;
   --border-subtle: #e8efec;
   --muted: #5c716a;
@@ -22,6 +25,7 @@
   --shadow-sm: 0 1px 2px rgba(12, 25, 22, 0.05);
   --shadow-md: 0 4px 16px rgba(12, 25, 22, 0.07);
   --shadow-lg: 0 12px 40px rgba(12, 25, 22, 0.1);
+  --shadow-soft: 0 8px 30px rgba(12, 25, 22, 0.06);
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
@@ -47,11 +51,15 @@
   --color-warning: var(--warning);
   --color-danger: var(--danger);
   --color-ring: var(--ring);
+  --color-navy: var(--navy);
+  --color-landing-bg: var(--landing-bg);
+  --color-landing-muted: var(--landing-muted);
   --font-sans: var(--font-inter);
   --font-arabic: var(--font-noto-arabic);
   --shadow-card: var(--shadow-sm);
   --shadow-card-hover: var(--shadow-md);
   --shadow-elevated: var(--shadow-lg);
+  --shadow-soft: var(--shadow-soft);
 }
 
 @layer base {
@@ -153,5 +161,25 @@
 
   .link-primary {
     @apply font-semibold text-primary transition-colors hover:text-primary-light;
+  }
+
+  .status-green {
+    @apply bg-success text-white;
+  }
+
+  .status-amber {
+    @apply bg-warning text-white;
+  }
+
+  .status-red {
+    @apply bg-danger text-white;
+  }
+
+  .surface-card {
+    @apply rounded-2xl border border-border-subtle bg-surface shadow-card;
+  }
+
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.18em] text-primary;
   }
 }

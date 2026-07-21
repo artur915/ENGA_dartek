@@ -3,8 +3,10 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { WorkflowSection } from "@/components/landing/WorkflowSection";
-import { PackagesSection } from "@/components/landing/PackagesSection";
 import { CatalogSection } from "@/components/landing/CatalogSection";
+import { PackagesSection } from "@/components/landing/PackagesSection";
+import { BenefitsSection } from "@/components/landing/BenefitsSection";
+import { AgenciesPreviewSection } from "@/components/landing/AgenciesPreviewSection";
 import { RoleCTASection } from "@/components/landing/RoleCTASection";
 
 export default async function HomePage({
@@ -18,11 +20,13 @@ export default async function HomePage({
   return (
     <>
       <Header />
-      <main className="flex-1 overflow-x-hidden bg-[#041612]">
+      <main className="flex-1 overflow-x-hidden bg-landing-bg">
         <HeroSection />
         <WorkflowSection />
-        <PackagesSection />
         <CatalogSection />
+        <PackagesSection />
+        <BenefitsSection />
+        <AgenciesPreviewSection />
         <RoleCTASection />
       </main>
       <Footer />

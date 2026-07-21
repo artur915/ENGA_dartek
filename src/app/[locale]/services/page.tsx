@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { PublicPageHeader } from "@/components/ui/PublicPageHeader";
 import { ServicesBrowser } from "@/components/services/ServicesBrowser";
 
 export default async function ServicesPage({
@@ -15,14 +16,20 @@ export default async function ServicesPage({
   const { category, q } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("common");
+  const tl = await getTranslations("landing");
 
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-foreground">{t("services")}</h1>
-        <p className="mt-2 text-muted">147 engineering services across 10 categories</p>
-        <ServicesBrowser initialCategory={category} initialQuery={q} />
+      <main className="container-app flex-1 py-10 sm:py-12">
+        <PublicPageHeader
+          eyebrow={tl("catalogBadge")}
+          title={t("services")}
+          description={tl("catalogSubtitle")}
+        />
+        <div className="mt-10">
+          <ServicesBrowser initialCategory={category} initialQuery={q} />
+        </div>
       </main>
       <Footer />
     </>

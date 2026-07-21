@@ -1,11 +1,15 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
-import { PortalSidebar } from "@/components/layout/PortalSidebar";
+import { PortalPageLayout } from "@/components/layout/PortalPageLayout";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Link } from "@/i18n/navigation";
 import { getClientActiveProjects } from "@/actions/projects";
 import { getClientNav } from "@/lib/nav";
+import { formatNumber } from "@/lib/format";
+import { FolderKanban } from "lucide-react";
 
 export default async function ClientProjectsPage({
   params,
@@ -19,60 +23,60 @@ export default async function ClientProjectsPage({
   const projects = await getClientActiveProjects();
 
   return (
-    <div className="flex min-h-screen">
-      <PortalSidebar title={t("title")} items={getClientNav(t, tc)} />
-      <div className="flex-1 bg-surface-muted p-8">
-        <h1 className="text-2xl font-bold">{t("activeProjects")}</h1>
-        <p className="mt-1 text-muted">Track execution, payments, and archive completed projects</p>
-
-        {!projects?.length ? (
-          <Card className="mt-8 text-center">
-            <p className="text-muted">No active projects yet. Accept a quotation to start a project.</p>
-            <Link href="/client/quotations" className="mt-4 inline-block text-sm font-semibold text-primary">
-              {t("compareQuotes")} →
+    <PortalPageLayout
+      title={t("title")}
+      nav={getClientNav(t, tc)}
+      pageTitle={t("activeProjects")}
+      pageDescription={t("dashboard.activeProjectsDescription")}
+    >
+      {!projects?.length ? (
+        <EmptyState
+          icon={FolderKanban}
+          title={t("dashboard.noActiveProjects")}
+          action={
+            <Link href="/client/quotations">
+              <Button variant="outline">{t("dashboard.browseQuotations")}</Button>
             </Link>
-          </Card>
-        ) : (
-          <div className="mt-8 space-y-4">
-            {projects.map((a: {
-              id: string;
-              signed_at: string | null;
-              agencies: { name: string } | { name: string }[] | null;
-              project_requests: { id: string; title: string; status: string; location_city: string | null } | { id: string; title: string; status: string; location_city: string | null }[] | null;
-              quotations: { price: number } | { price: number }[] | null;
-            }) => {
-              const agency = Array.isArray(a.agencies) ? a.agencies[0] : a.agencies;
-              const request = Array.isArray(a.project_requests) ? a.project_requests[0] : a.project_requests;
-              const quote = Array.isArray(a.quotations) ? a.quotations[0] : a.quotations;
-              if (!request) return null;
-              return (
-                <Card key={a.id} hover>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold">{request.title}</h3>
-                      <p className="text-sm text-muted">{agency?.name} · {request.location_city}</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <Badge variant={request.status === "archived" ? "outline" : "success"}>
-                          {request.status}
-                        </Badge>
-                        <span className="text-sm font-medium text-primary">
-                          SAR {Number(quote?.price ?? 0).toLocaleString()}
-                        </span>
-                      </div>
+          }
+        />
+      ) : (
+        <div className="space-y-4">
+          {projects.map((a: {
+            id: string;
+            agencies: { name: string } | { name: string }[] | null;
+            project_requests: { id: string; title: string; status: string; location_city: string | null } | { id: string; title: string; status: string; location_city: string | null }[] | null;
+            quotations: { price: number } | { price: number }[] | null;
+          }) => {
+            const agency = Array.isArray(a.agencies) ? a.agencies[0] : a.agencies;
+            const request = Array.isArray(a.project_requests) ? a.project_requests[0] : a.project_requests;
+            const quote = Array.isArray(a.quotations) ? a.quotations[0] : a.quotations;
+            if (!request) return null;
+            return (
+              <Card key={a.id} hover>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-foreground">{request.title}</h3>
+                    <p className="text-sm text-muted">
+                      {agency?.name} · {request.location_city}
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <Badge variant={request.status === "archived" ? "outline" : "success"}>
+                        {request.status}
+                      </Badge>
+                      <span className="text-sm font-semibold text-primary">
+                        SAR {formatNumber(Number(quote?.price ?? 0))}
+                      </span>
                     </div>
-                    <Link
-                      href={`/client/projects/${request.id}`}
-                      className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      Open
-                    </Link>
                   </div>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
+                  <Link href={`/client/projects/${request.id}`}>
+                    <Button size="sm">{t("dashboard.openWorkspace")}</Button>
+                  </Link>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </PortalPageLayout>
   );
 }

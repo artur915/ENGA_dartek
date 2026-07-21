@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import {
   Briefcase,
@@ -100,6 +101,7 @@ function NavLinks({
 
 export function PortalSidebar({ title, items }: PortalSidebarProps) {
   const pathname = usePathname();
+  const tc = useTranslations("common");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -159,7 +161,7 @@ export function PortalSidebar({ title, items }: PortalSidebarProps) {
             </div>
             <div>
               <p className="text-sm font-bold text-foreground">{title}</p>
-              <p className="text-xs text-muted">ENGA Platform</p>
+              <p className="text-xs text-muted">{tc("platform")}</p>
             </div>
           </div>
         </div>
@@ -171,7 +173,7 @@ export function PortalSidebar({ title, items }: PortalSidebarProps) {
             href="/"
             className="flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-surface-muted hover:text-foreground"
           >
-            ← Back to site
+            {tc("backToSite")}
           </Link>
         </div>
       </aside>
