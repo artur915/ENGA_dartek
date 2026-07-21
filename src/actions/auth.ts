@@ -2,8 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { formatAuthError } from "@/lib/auth-errors";
-import { getSupabaseConfigError } from "@/lib/supabase/env";
+import { resolveAuthError } from "@/lib/auth-errors";
 import { type UserRole } from "@/types";
 
 export type AuthActionResult =
@@ -19,7 +18,7 @@ export async function signUp(input: {
 }): Promise<AuthActionResult> {
   try {
     if (input.role === "individual_engineer") {
-      return { error: "Individual engineer registration is not available at this time." };
+      return { error: "engineerUnavailable" };
     }
 
     const supabase = await createClient();
@@ -34,7 +33,7 @@ export async function signUp(input: {
       },
     });
 
-    if (error) return { error: formatAuthError(error.message) };
+    if (error) return { error: resolveAuthError(error.message) };
 
     if (!data.session) {
       return { success: true, needsConfirmation: true, role: input.role };
@@ -42,7 +41,7 @@ export async function signUp(input: {
 
     return { success: true, role: input.role };
   } catch (err) {
-    return { error: getSupabaseConfigError(err) };
+    return { error: "authUnavailable" };
   }
 }
 
@@ -57,7 +56,7 @@ export async function signIn(input: {
       password: input.password,
     });
 
-    if (error) return { error: formatAuthError(error.message) };
+    if (error) return { error: resolveAuthError(error.message) };
 
     const { data: profile } = await supabase
       .from("profiles")
@@ -72,7 +71,7 @@ export async function signIn(input: {
 
     return { success: true, role };
   } catch (err) {
-    return { error: getSupabaseConfigError(err) };
+    return { error: "authUnavailable" };
   }
 }
 

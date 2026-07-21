@@ -1,6 +1,10 @@
-/** Fixed-locale formatting so SSR and client hydration produce the same string. */
-export function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString("en-GB", {
+/** Locale-aware formatting; pass locale for Arabic UI labels and numerals. */
+function resolveLocale(locale?: string): string {
+  return locale === "ar" ? "ar-SA" : "en-GB";
+}
+
+export function formatDateTime(iso: string, locale?: string): string {
+  return new Date(iso).toLocaleString(resolveLocale(locale), {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -10,8 +14,8 @@ export function formatDateTime(iso: string): string {
   });
 }
 
-export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-GB", {
+export function formatDate(iso: string, locale?: string): string {
+  return new Date(iso).toLocaleDateString(resolveLocale(locale), {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -19,7 +23,11 @@ export function formatDate(iso: string): string {
   });
 }
 
-/** Stable numeric formatting for currency display. */
-export function formatNumber(value: number): string {
-  return new Intl.NumberFormat("en-GB").format(value);
+export function formatNumber(value: number, locale?: string): string {
+  return new Intl.NumberFormat(resolveLocale(locale)).format(value);
+}
+
+export function formatCurrency(value: number, currencyLabel: string, locale?: string): string {
+  const formatted = formatNumber(value, locale);
+  return locale === "ar" ? `${formatted} ${currencyLabel}` : `${currencyLabel} ${formatted}`;
 }

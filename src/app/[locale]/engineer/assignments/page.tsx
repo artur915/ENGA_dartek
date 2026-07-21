@@ -14,6 +14,7 @@ export default async function EngineerAssignmentsPage({
   setRequestLocale(locale);
   await requireEngineerRegistered(locale);
   const t = await getTranslations("engineer");
+  const ta = await getTranslations("engineer.assignmentsPage");
   const tc = await getTranslations("common");
   const assignments = await getEngineerAssignments();
   const profile = await getEngineerProfile();
@@ -23,11 +24,11 @@ export default async function EngineerAssignmentsPage({
       <PortalSidebar title={t("title")} items={getEngineerNav(t, tc)} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{t("assignments")}</h1>
-        <p className="mt-1 text-muted">Your active engineering assignments and office links</p>
+        <p className="mt-1 text-muted">{ta("description")}</p>
 
         {profile && (
           <Card className="mt-8">
-            <h2 className="font-semibold">Professional Profile</h2>
+            <h2 className="font-semibold">{ta("professionalProfile")}</h2>
             <p className="mt-2 text-sm">{profile.specialization} · {profile.experience_years} years</p>
             <p className="text-sm text-muted">{profile.service_location}</p>
           </Card>
@@ -35,7 +36,7 @@ export default async function EngineerAssignmentsPage({
 
         {assignments.length === 0 ? (
           <Card className="mt-4 text-center">
-            <p className="text-muted">No office assignments yet.</p>
+            <p className="text-muted">{ta("noAssignments")}</p>
           </Card>
         ) : (
           <div className="mt-4 space-y-3">
@@ -48,7 +49,7 @@ export default async function EngineerAssignmentsPage({
               return (
                 <Card key={a.agency_id}>
                   <h3 className="font-semibold">{agency?.name}</h3>
-                  <p className="text-sm text-muted">{a.title ?? "Team member"}</p>
+                  <p className="text-sm text-muted">{a.title ?? ta("teamMember")}</p>
                 </Card>
               );
             })}

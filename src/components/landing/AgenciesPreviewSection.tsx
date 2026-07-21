@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getApprovedAgencies } from "@/actions/agency";
 import { Building2, MapPin } from "lucide-react";
@@ -9,11 +9,12 @@ import {
   LandingSectionHeader,
   LandingViewAllLink,
 } from "@/components/landing/LandingSection";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 
 export async function AgenciesPreviewSection() {
   const t = await getTranslations("landing");
   const tc = await getTranslations("common");
+  const locale = await getLocale();
   const agencies = await getApprovedAgencies();
   const preview = agencies.slice(0, 6);
 
@@ -59,7 +60,8 @@ export async function AgenciesPreviewSection() {
                 </div>
                 {agency.indicative_price_from != null && (
                   <p className="mt-3 text-sm font-semibold text-primary">
-                    {t("agenciesFrom")} SAR {formatNumber(Number(agency.indicative_price_from))}
+                    {t("agenciesFrom")}{" "}
+                    {formatCurrency(Number(agency.indicative_price_from), tc("currency"), locale)}
                   </p>
                 )}
               </LandingCard>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -15,7 +15,7 @@ import {
   getQuotationTerms,
   type QuotationDisplayData,
 } from "@/lib/quotation-display";
-import { formatDate, formatDateTime, formatNumber } from "@/lib/format";
+import { formatDate, formatDateTime, formatNumber, formatCurrency } from "@/lib/format";
 import { TrafficCone, CreditCard, Archive, CheckCircle } from "lucide-react";
 
 interface Milestone {
@@ -76,6 +76,8 @@ export function ProjectWorkspace({
 }) {
   const t = useTranslations("projectWorkspace");
   const ts = useTranslations("status");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [newMilestone, setNewMilestone] = useState("");
@@ -115,7 +117,7 @@ export function ProjectWorkspace({
         request_id: requestId,
         amount: parseFloat(paymentAmount),
         method: paymentMethod,
-        notes: "Client recorded bank transfer",
+        notes: t("paymentNote"),
       });
       router.refresh();
     });
@@ -161,7 +163,7 @@ export function ProjectWorkspace({
             <div>
               <p className="text-sm text-muted">{t("contractValue")}</p>
               <p className="text-xl font-bold text-primary">
-                SAR {formatNumber(Number(quote?.price ?? 0))}
+                {formatCurrency(Number(quote?.price ?? 0), tc("currency"), locale)}
               </p>
             </div>
             {quote?.scope && (
@@ -213,7 +215,7 @@ export function ProjectWorkspace({
           </div>
           {agreement.signed_at && (
             <p className="mt-3 text-xs text-muted">
-              {t("signed", { date: formatDateTime(agreement.signed_at) })}
+              {t("signed", { date: formatDateTime(agreement.signed_at, locale) })}
             </p>
           )}
         </Card>
@@ -257,7 +259,7 @@ export function ProjectWorkspace({
                           m.status === s ? STATUS_COLORS[s] : "border border-border text-muted"
                         }`}
                       >
-                        {s}
+                        {ts(`traffic.${s}`)}
                       </button>
                     ))}
                   </div>
@@ -272,7 +274,7 @@ export function ProjectWorkspace({
             <input
               value={newMilestone}
               onChange={(e) => setNewMilestone(e.target.value)}
-              placeholder="Add milestone..."
+              placeholder={t("addMilestonePlaceholder")}
               className="flex-1 rounded-lg border border-border px-3 py-2 text-sm"
             />
             <button
@@ -281,7 +283,7 @@ export function ProjectWorkspace({
               disabled={isPending}
               className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white"
             >
-              Add
+              {t("add")}
             </button>
           </div>
         )}
@@ -290,21 +292,34 @@ export function ProjectWorkspace({
       <Card>
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <CreditCard className="h-5 w-5 text-primary" />
-          Manual Payment Tracking
+          {t("paymentsTitle")}
         </h2>
 
         {payments.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">No payments recorded yet.</p>
+          <p className="mt-3 text-sm text-muted">{t("noPayments")}</p>
         ) : (
           <div className="mt-4 space-y-2">
             {payments.map((p) => (
               <div key={p.id} className="flex items-center justify-between rounded-lg border border-border p-3">
                 <div>
-                  <p className="font-medium">SAR {formatNumber(Number(p.amount))}</p>
-                  <p className="text-xs text-muted">{p.method} · {formatDate(p.created_at)}</p>
+                  <p className="font-medium">
+                    {formatCurrency(Number(p.amount), tc("currency"), locale)}
+                  </p>
+                  <p className="text-xs text-muted">
+                    {p.method === "bank_transfer"
+                      ? t("bankTransfer")
+                      : p.method === "cash"
+                        ? t("cash")
+                        : p.method === "cheque"
+                          ? t("cheque")
+                          : p.method}{" "}
+                    · {formatDate(p.created_at, locale)}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={PAYMENT_VARIANT[p.status]}>{p.status}</Badge>
+                  <Badge variant={PAYMENT_VARIANT[p.status]}>
+                    {ts.has(`payment.${p.status}`) ? ts(`payment.${p.status}`) : p.status}
+                  </Badge>
                   {mode === "agency" && p.status === "pending" && (
                     <button
                       type="button"
@@ -312,7 +327,7 @@ export function ProjectWorkspace({
                       disabled={isPending}
                       className="rounded bg-success px-3 py-1 text-xs font-medium text-white"
                     >
-                      Confirm
+                      {t("confirm")}
                     </button>
                   )}
                 </div>
@@ -327,7 +342,7 @@ export function ProjectWorkspace({
               type="number"
               value={paymentAmount}
               onChange={(e) => setPaymentAmount(e.target.value)}
-              placeholder="Amount (SAR)"
+              placeholder={t("amountPlaceholder")}
               className="rounded-lg border border-border px-3 py-2 text-sm"
             />
             <select
@@ -335,9 +350,9 @@ export function ProjectWorkspace({
               onChange={(e) => setPaymentMethod(e.target.value)}
               className="rounded-lg border border-border px-3 py-2 text-sm"
             >
-              <option value="bank_transfer">Bank Transfer</option>
-              <option value="cash">Cash</option>
-              <option value="cheque">Cheque</option>
+              <option value="bank_transfer">{t("bankTransfer")}</option>
+              <option value="cash">{t("cash")}</option>
+              <option value="cheque">{t("cheque")}</option>
             </select>
             <button
               type="button"
@@ -345,7 +360,7 @@ export function ProjectWorkspace({
               disabled={isPending || !paymentAmount}
               className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white"
             >
-              Record Payment
+              {t("recordPayment")}
             </button>
           </div>
         )}
@@ -355,17 +370,19 @@ export function ProjectWorkspace({
         <Card>
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <Archive className="h-5 w-5" />
-            Close & Archive
+            {t("closeTitle")}
           </h2>
-          <p className="mt-2 text-sm text-muted">
-            Complete when all milestones are green and payment is confirmed.
-          </p>
+          <p className="mt-2 text-sm text-muted">{t("closeHint")}</p>
           <div className="mt-2 flex gap-4 text-xs text-muted">
             <span className={allGreen ? "text-success" : ""}>
-              Milestones: {allGreen ? "✓ All green" : "In progress"}
+              {t("milestonesProgress", {
+                status: allGreen ? t("milestonesAllGreen") : t("milestonesInProgress"),
+              })}
             </span>
             <span className={hasConfirmedPayment ? "text-success" : ""}>
-              Payment: {hasConfirmedPayment ? "✓ Confirmed" : "Pending"}
+              {t("paymentProgress", {
+                status: hasConfirmedPayment ? t("paymentConfirmed") : t("paymentPending"),
+              })}
             </span>
           </div>
           <div className="mt-4 flex gap-3">
@@ -376,7 +393,7 @@ export function ProjectWorkspace({
                 disabled={isPending || !allGreen || !hasConfirmedPayment}
                 className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
               >
-                Mark Completed
+                {t("markCompleted")}
               </button>
             )}
             {requestStatus === "completed" && mode === "client" && (
@@ -386,7 +403,7 @@ export function ProjectWorkspace({
                 disabled={isPending}
                 className="rounded-lg border border-border px-4 py-2 text-sm font-medium"
               >
-                Archive Project
+                {t("archiveProject")}
               </button>
             )}
           </div>

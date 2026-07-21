@@ -1,21 +1,51 @@
-export function formatAuthError(message: string): string {
+export type AuthErrorCode =
+  | "emailNotConfirmed"
+  | "invalidCredentials"
+  | "alreadyRegistered"
+  | "engineerUnavailable"
+  | "authUnavailable"
+  | "unknown";
+
+const AUTH_ERROR_CODES = new Set<string>([
+  "emailNotConfirmed",
+  "invalidCredentials",
+  "alreadyRegistered",
+  "engineerUnavailable",
+  "authUnavailable",
+]);
+
+export function getAuthErrorCode(message: string): AuthErrorCode {
   const lower = message.toLowerCase();
 
   if (lower.includes("email not confirmed")) {
-    return "Please confirm your email first. Check your inbox (and spam folder), then try signing in again.";
+    return "emailNotConfirmed";
   }
 
   if (lower.includes("invalid login credentials") || lower.includes("invalid credentials")) {
-    return "Invalid email or password. If you just signed up, confirm your email first or use the exact password from signup.";
+    return "invalidCredentials";
   }
 
   if (lower.includes("user already registered")) {
-    return "This email is already registered. Try signing in instead.";
+    return "alreadyRegistered";
   }
 
-  if (lower.includes("password")) {
-    return message;
-  }
+  return "unknown";
+}
 
-  return message;
+/** Returns a translation key under auth.errors, or the raw message for unknown errors. */
+export function resolveAuthError(message: string): string {
+  const code = getAuthErrorCode(message);
+  if (code === "unknown") return message;
+  return code;
+}
+
+export function translateAuthError(
+  error: string,
+  t: (key: string) => string,
+  has: (key: string) => boolean
+): string {
+  if (AUTH_ERROR_CODES.has(error) && has(`errors.${error}`)) {
+    return t(`errors.${error}`);
+  }
+  return error;
 }

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getAgencyActiveProjects } from "@/actions/projects";
+import { formatCurrency } from "@/lib/format";
 import { getAgencyNav } from "@/lib/nav";
 
 export default async function AgencyProjectsPage({
@@ -15,7 +16,9 @@ export default async function AgencyProjectsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("agency");
+  const tp = await getTranslations("agency.projectsPage");
   const tc = await getTranslations("common");
+  const ts = await getTranslations("status.request");
   const projects = await getAgencyActiveProjects();
 
   return (
@@ -23,11 +26,11 @@ export default async function AgencyProjectsPage({
       <PortalSidebar title={t("title")} items={getAgencyNav(t, tc)} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{t("activeProjects")}</h1>
-        <p className="mt-1 text-muted">Projects with signed agreements — manage execution & payments</p>
+        <p className="mt-1 text-muted">{tp("description")}</p>
 
         {projects.length === 0 ? (
           <Card className="mt-8 text-center">
-            <p className="text-muted">No active projects yet. Submit quotations on incoming requests.</p>
+            <p className="text-muted">{tp("noProjects")}</p>
             <Link href="/agency/requests" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("incomingRequests")} →
             </Link>
@@ -53,9 +56,9 @@ export default async function AgencyProjectsPage({
                         {client?.full_name} · {req.location_city}
                       </p>
                       <div className="mt-2 flex gap-2">
-                        <Badge>{req.status}</Badge>
+                        <Badge>{ts.has(req.status) ? ts(req.status) : req.status}</Badge>
                         <span className="text-sm font-medium text-primary">
-                          SAR {Number(quote?.price ?? 0).toLocaleString()}
+                          {formatCurrency(Number(quote?.price ?? 0), tc("currency"), locale)}
                         </span>
                       </div>
                     </div>
@@ -63,7 +66,7 @@ export default async function AgencyProjectsPage({
                       href={`/agency/projects/${req.id}`}
                       className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white"
                     >
-                      Manage
+                      {tp("manage")}
                     </Link>
                   </div>
                 </Card>

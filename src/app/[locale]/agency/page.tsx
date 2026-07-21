@@ -51,7 +51,7 @@ export default async function AgencyDashboard({
         <StatCard label={t("activeProjects")} value={stats.active} icon={FolderKanban} accent="success" />
         <StatCard
           label={t("dashboard.revenue")}
-          value={formatNumber(stats.revenue)}
+          value={formatNumber(stats.revenue, locale)}
           icon={TrendingUp}
           accent="accent"
         />

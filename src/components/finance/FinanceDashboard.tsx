@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { addFinanceRecord } from "@/actions/finance";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 
 export function FinanceDashboard({
   summary,
@@ -28,6 +28,8 @@ export function FinanceDashboard({
   }[];
 }) {
   const t = useTranslations("financePage");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState({
@@ -62,7 +64,9 @@ export function FinanceDashboard({
         {statCards.map((s) => (
           <Card key={s.label}>
             <p className="text-sm text-muted">{s.label}</p>
-            <p className="mt-2 text-2xl font-bold text-primary">SAR {formatNumber(s.value)}</p>
+            <p className="mt-2 text-2xl font-bold text-primary">
+              {formatCurrency(s.value, tc("currency"), locale)}
+            </p>
           </Card>
         ))}
       </div>
@@ -122,7 +126,9 @@ export function FinanceDashboard({
                   <Badge variant="outline">
                     {t(`recordTypes.${r.record_type as "external_income" | "expense" | "invoice"}`)}
                   </Badge>
-                  <span className="font-medium">SAR {formatNumber(Number(r.amount))}</span>
+                  <span className="font-medium">
+                    {formatCurrency(Number(r.amount), tc("currency"), locale)}
+                  </span>
                 </div>
               </div>
             ))}

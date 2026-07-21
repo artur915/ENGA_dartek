@@ -15,6 +15,7 @@ export default async function EngineerDashboard({
   setRequestLocale(locale);
   await requireEngineerRegistered(locale);
   const t = await getTranslations("engineer");
+  const td = await getTranslations("engineer.dashboard");
   const tc = await getTranslations("common");
 
   const profile = await getEngineerProfile();
@@ -26,13 +27,16 @@ export default async function EngineerDashboard({
       <PortalSidebar title={t("title")} items={getEngineerNav(t, tc)} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{tc("dashboard")}</h1>
-        <p className="mt-1 text-muted">Verify → Position → Deliver → Build Reputation</p>
+        <p className="mt-1 text-muted">{td("subtitle")}</p>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
           {[
-            { label: "Profile", value: profile?.registered_at ? "Active" : "Incomplete" },
-            { label: "Invitations", value: invitations.length },
-            { label: "Assignments", value: assignments.length },
+            {
+              label: td("profileStatus"),
+              value: profile?.registered_at ? td("profileActive") : td("profileIncomplete"),
+            },
+            { label: td("invitationsLabel"), value: invitations.length },
+            { label: td("assignmentsLabel"), value: assignments.length },
           ].map((stat) => (
             <Card key={stat.label}>
               <p className="text-sm text-muted">{stat.label}</p>
@@ -45,7 +49,7 @@ export default async function EngineerDashboard({
           <Card>
             <h2 className="font-semibold">{t("profile")}</h2>
             <p className="mt-2 text-sm text-muted">
-              {profile?.specialization ?? "Update your professional profile and credentials."}
+              {profile?.specialization ?? td("updateProfilePrompt")}
             </p>
             <Link href="/engineer/profile" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("profile")} →
@@ -54,7 +58,7 @@ export default async function EngineerDashboard({
           <Card>
             <h2 className="font-semibold">{t("invitations")}</h2>
             <p className="mt-2 text-sm text-muted">
-              {invitations.length} project invitation(s) from linked offices.
+              {td("invitationsSummary", { count: invitations.length })}
             </p>
             <Link href="/engineer/invitations" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("invitations")} →

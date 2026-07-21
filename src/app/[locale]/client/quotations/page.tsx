@@ -15,6 +15,7 @@ export default async function ClientQuotationsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("client");
+  const tq = await getTranslations("client.quotationsListPage");
   const tc = await getTranslations("common");
   const requests = await getQuotableRequests();
 
@@ -23,11 +24,11 @@ export default async function ClientQuotationsPage({
       <PortalSidebar title={t("title")} items={getClientNav(t, tc)} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{t("compareQuotes")}</h1>
-        <p className="mt-1 text-muted">Requests with quotations from engineering offices</p>
+        <p className="mt-1 text-muted">{tq("description")}</p>
 
         {requests.length === 0 ? (
           <Card className="mt-8 text-center">
-            <p className="text-muted">No open quotations yet. Float a request to receive quotes.</p>
+            <p className="text-muted">{tq("noOpenQuotations")}</p>
             <Link href="/client/requests/new" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("newRequest")} →
             </Link>
@@ -49,7 +50,7 @@ export default async function ClientQuotationsPage({
                     <div>
                       <h3 className="font-semibold">{req.title}</h3>
                       <p className="text-sm text-muted">{req.location_city}</p>
-                      <Badge className="mt-2">{submitted.length} quote(s)</Badge>
+                      <Badge className="mt-2">{tq("quoteCount", { count: submitted.length })}</Badge>
                     </div>
                     <Link
                       href={`/client/quotations/${req.id}`}

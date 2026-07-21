@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { createClient } from "@/lib/supabase/server";
+import { formatCurrency } from "@/lib/format";
 import { Building2, MapPin } from "lucide-react";
 
 export default async function AgencyDetailPage({
@@ -16,6 +17,8 @@ export default async function AgencyDetailPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
   const tc = await getTranslations("common");
+  const ta = await getTranslations("agenciesPage");
+  const ts = await getTranslations("status.agency");
 
   const supabase = await createClient();
   const { data: agency } = await supabase
@@ -38,7 +41,7 @@ export default async function AgencyDetailPage({
           <div>
             <h1 className="text-3xl font-bold">{agency.name}</h1>
             {agency.name_ar && <p className="text-muted" dir="rtl">{agency.name_ar}</p>}
-            <Badge variant="success" className="mt-2">Approved</Badge>
+            <Badge variant="success" className="mt-2">{ta("approved")}</Badge>
           </div>
         </div>
 
@@ -48,7 +51,7 @@ export default async function AgencyDetailPage({
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           <Card>
-            <h2 className="font-semibold">Disciplines</h2>
+            <h2 className="font-semibold">{ta("disciplines")}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {agency.disciplines?.map((d: string) => (
                 <Badge key={d} variant="outline">{d}</Badge>
@@ -56,22 +59,26 @@ export default async function AgencyDetailPage({
             </div>
           </Card>
           <Card>
-            <h2 className="font-semibold">Service Areas</h2>
+            <h2 className="font-semibold">{ta("serviceAreas")}</h2>
             <div className="mt-3 flex items-center gap-1.5 text-sm text-muted">
               <MapPin className="h-4 w-4" />
               {agency.service_areas?.join(", ")}
             </div>
           </Card>
           <Card>
-            <h2 className="font-semibold">Licenses</h2>
-            <p className="mt-2 text-sm">CR: {agency.commercial_registration}</p>
-            <p className="text-sm">Engineering: {agency.engineering_license}</p>
+            <h2 className="font-semibold">{ta("licenses")}</h2>
+            <p className="mt-2 text-sm">
+              {ta("crLabel")}: {agency.commercial_registration}
+            </p>
+            <p className="text-sm">
+              {ta("engineeringLabel")}: {agency.engineering_license}
+            </p>
           </Card>
           {agency.indicative_price_from && (
             <Card>
-              <h2 className="font-semibold">Starting Price</h2>
+              <h2 className="font-semibold">{ta("startingPrice")}</h2>
               <p className="mt-2 text-2xl font-bold text-primary">
-                SAR {Number(agency.indicative_price_from).toLocaleString()}
+                {formatCurrency(Number(agency.indicative_price_from), tc("currency"), locale)}
               </p>
             </Card>
           )}

@@ -81,7 +81,7 @@ export default async function ClientRequestsPage({
                     {req.location_city}
                     {req.service_packages?.name && ` · ${req.service_packages.name}`}
                   </p>
-                  <p className="mt-1 text-xs text-muted">{formatDate(req.created_at)}</p>
+                  <p className="mt-1 text-xs text-muted">{formatDate(req.created_at, locale)}</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   {(req.status === "quoted" || req.status === "floating") && (

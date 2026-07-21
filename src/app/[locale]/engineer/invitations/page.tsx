@@ -15,7 +15,9 @@ export default async function EngineerInvitationsPage({
   setRequestLocale(locale);
   await requireEngineerRegistered(locale);
   const t = await getTranslations("engineer");
+  const ti = await getTranslations("engineer.invitationsPage");
   const tc = await getTranslations("common");
+  const ts = await getTranslations("status.request");
   const invitations = await getEngineerInvitations();
 
   return (
@@ -23,11 +25,11 @@ export default async function EngineerInvitationsPage({
       <PortalSidebar title={t("title")} items={getEngineerNav(t, tc)} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{t("invitations")}</h1>
-        <p className="mt-1 text-muted">Project invitations from your linked engineering office</p>
+        <p className="mt-1 text-muted">{ti("description")}</p>
 
         {invitations.length === 0 ? (
           <Card className="mt-8 text-center">
-            <p className="text-muted">No invitations. Link to an engineering office in your profile.</p>
+            <p className="text-muted">{ti("noInvitations")}</p>
           </Card>
         ) : (
           <div className="mt-8 space-y-4">
@@ -42,7 +44,7 @@ export default async function EngineerInvitationsPage({
                 <Card key={inv.id}>
                   <h3 className="font-semibold">{req.title}</h3>
                   <p className="text-sm text-muted">{req.location_city}</p>
-                  <Badge className="mt-2">{req.status}</Badge>
+                  <Badge className="mt-2">{ts.has(req.status) ? ts(req.status) : req.status}</Badge>
                 </Card>
               );
             })}

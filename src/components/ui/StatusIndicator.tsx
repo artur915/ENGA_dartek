@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 export type TrafficStatus = "green" | "amber" | "red";
@@ -8,17 +11,21 @@ const statusStyles: Record<TrafficStatus, string> = {
   red: "bg-danger ring-danger/20",
 };
 
-const statusLabels: Record<TrafficStatus, string> = {
-  green: "On track",
-  amber: "Attention needed",
-  red: "Blocked",
-};
+function useTrafficLabels() {
+  const t = useTranslations("status.traffic");
+  return {
+    green: t("green"),
+    amber: t("amber"),
+    red: t("red"),
+  } satisfies Record<TrafficStatus, string>;
+}
 
 export function StatusDot({ status, className }: { status: TrafficStatus; className?: string }) {
+  const labels = useTrafficLabels();
   return (
     <span
       className={cn("inline-block h-2.5 w-2.5 shrink-0 rounded-full ring-2", statusStyles[status], className)}
-      aria-label={statusLabels[status]}
+      aria-label={labels[status]}
     />
   );
 }
@@ -32,6 +39,7 @@ export function StatusBadge({
   label?: string;
   className?: string;
 }) {
+  const labels = useTrafficLabels();
   return (
     <span
       className={cn(
@@ -41,7 +49,7 @@ export function StatusBadge({
       )}
     >
       <StatusDot status={status} className="h-2 w-2 bg-white/90 ring-white/30" />
-      {label ?? statusLabels[status]}
+      {label ?? labels[status]}
     </span>
   );
 }
@@ -55,6 +63,7 @@ export function StatusToggle({
   onChange: (status: TrafficStatus) => void;
   disabled?: boolean;
 }) {
+  const labels = useTrafficLabels();
   const options: TrafficStatus[] = ["green", "amber", "red"];
 
   return (
@@ -66,13 +75,13 @@ export function StatusToggle({
           disabled={disabled}
           onClick={() => onChange(status)}
           className={cn(
-            "rounded-md px-2.5 py-1 text-xs font-semibold capitalize transition-colors",
+            "rounded-md px-2.5 py-1 text-xs font-semibold transition-colors",
             value === status
               ? cn("text-white shadow-sm", statusStyles[status].split(" ")[0])
               : "text-muted hover:bg-surface hover:text-foreground"
           )}
         >
-          {status}
+          {labels[status]}
         </button>
       ))}
     </div>

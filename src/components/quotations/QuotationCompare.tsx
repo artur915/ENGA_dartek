@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -14,7 +14,7 @@ import {
   type QuotationDisplayData,
 } from "@/lib/quotation-display";
 import { Building2, Clock, CheckCircle } from "lucide-react";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 
 interface Quotation extends QuotationDisplayData {
   id: string;
@@ -38,6 +38,8 @@ export function QuotationCompare({
   requestStatus: string;
 }) {
   const t = useTranslations("quotationsPage");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -90,7 +92,9 @@ export function QuotationCompare({
               </div>
             </div>
 
-            <p className="text-3xl font-bold text-primary">SAR {formatNumber(Number(q.price))}</p>
+            <p className="text-3xl font-bold text-primary">
+              {formatCurrency(Number(q.price), tc("currency"), locale)}
+            </p>
 
             {duration && (
               <div className="mt-3 flex items-center gap-1.5 text-sm text-muted">

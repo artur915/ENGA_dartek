@@ -1,6 +1,7 @@
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { SERVICE_PACKAGES } from "@/data/catalog";
+import { getPackageField } from "@/lib/catalog-i18n";
 import { Package } from "lucide-react";
 import {
   LandingCard,
@@ -13,6 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 export function PackagesSection() {
   const t = useTranslations("landing");
   const tc = useTranslations("common");
+  const locale = useLocale();
 
   return (
     <LandingSection variant="muted" id="packages">
@@ -36,9 +38,13 @@ export function PackagesSection() {
                 </Badge>
               )}
             </div>
-            <h3 className="text-lg font-bold text-navy">{pkg.name}</h3>
-            <p className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed text-muted">{pkg.description}</p>
-            <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-primary">{pkg.categories}</p>
+            <h3 className="text-lg font-bold text-navy">{getPackageField(pkg, "name", locale)}</h3>
+            <p className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed text-muted">
+              {getPackageField(pkg, "description", locale)}
+            </p>
+            <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-primary">
+              {getPackageField(pkg, "categories", locale)}
+            </p>
           </LandingCard>
         ))}
       </div>

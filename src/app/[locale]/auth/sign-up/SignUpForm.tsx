@@ -9,6 +9,7 @@ import { Building2 } from "lucide-react";
 import { AuthShell } from "@/components/layout/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { FormField, Input, Select } from "@/components/ui/Input";
+import { translateAuthError } from "@/lib/auth-errors";
 import { Alert } from "@/components/ui/Alert";
 
 export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
@@ -48,15 +49,13 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
     });
 
     if ("error" in result) {
-      setError(result.error);
+      setError(translateAuthError(result.error, t, t.has.bind(t)));
       setLoading(false);
       return;
     }
 
     if (result.needsConfirmation) {
-      setSuccess(
-        "Account created! Check your email and click the confirmation link, then sign in."
-      );
+      setSuccess(t("accountCreatedMessage"));
       setLoading(false);
       return;
     }
@@ -70,6 +69,7 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
       title={tc("signUp")}
       subtitle={tc("tagline")}
       icon={Building2}
+      appName={tc("appName")}
       footer={
         <p className="text-center text-sm text-muted">
           {t("alreadyHaveAccount")}{" "}
@@ -98,7 +98,7 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
             autoComplete="email"
           />
         </FormField>
-        <FormField label={t("password")} required hint="Minimum 8 characters">
+        <FormField label={t("password")} required hint={t("passwordHint")}>
           <Input
             type="password"
             required
@@ -131,10 +131,10 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
         </FormField>
         {error && <Alert variant="error">{error}</Alert>}
         {success && (
-          <Alert variant="success" title="Account created">
+          <Alert variant="success" title={t("accountCreated")}>
             {success}
             <Link href="/auth/sign-in" className="link-primary mt-2 inline-block text-xs">
-              Go to Sign In →
+              {tc("goToSignIn")}
             </Link>
           </Alert>
         )}
@@ -144,7 +144,7 @@ export function SignUpForm({ initialRole }: { initialRole: UserRole }) {
           disabled={loading || showPasswordMismatch}
           size="lg"
         >
-          {loading ? "Creating account…" : t("createAccount")}
+          {loading ? t("creatingAccount") : t("createAccount")}
         </Button>
       </form>
     </AuthShell>

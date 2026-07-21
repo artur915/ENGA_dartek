@@ -9,6 +9,7 @@ import { Building2 } from "lucide-react";
 import { AuthShell } from "@/components/layout/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { FormField, Input } from "@/components/ui/Input";
+import { translateAuthError } from "@/lib/auth-errors";
 import { Alert } from "@/components/ui/Alert";
 
 export default function SignInPage() {
@@ -29,7 +30,7 @@ export default function SignInPage() {
     const result = await signIn({ email, password });
 
     if ("error" in result) {
-      setError(result.error);
+      setError(translateAuthError(result.error, t, t.has.bind(t)));
       setLoading(false);
       return;
     }
@@ -48,6 +49,7 @@ export default function SignInPage() {
       shellTitle={t("shellTitle")}
       shellSubtitle={t("shellSubtitle")}
       shellRegion={tf("region")}
+      appName={tc("appName")}
       footer={
         <p className="text-center text-sm text-muted">
           {t("noAccount")}{" "}

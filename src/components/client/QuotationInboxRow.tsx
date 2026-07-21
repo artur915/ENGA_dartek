@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { acceptQuotation, declineQuotation } from "@/actions/quotations";
 import { Badge } from "@/components/ui/Badge";
@@ -14,7 +14,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 
 interface QuotationRow {
   id: string;
@@ -45,6 +45,9 @@ export function QuotationInboxRow({
   locationCity: string | null;
 }) {
   const t = useTranslations("client.dashboard");
+  const tq = useTranslations("quotationsPage");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const agency = quotation.agencies;
@@ -55,10 +58,11 @@ export function QuotationInboxRow({
     "—";
   const duration =
     quotation.estimated_duration ??
-    (quotation.timeline_days ? `${quotation.timeline_days} days` : null);
+    (quotation.timeline_days ? tq("daysCount", { count: quotation.timeline_days }) : null);
 
   function handleAccept() {
-    if (!confirm(`Accept quotation from ${agency?.name ?? "this provider"}?`)) return;
+    const name = agency?.name ?? tq("thisProvider");
+    if (!confirm(tq("acceptConfirmNamed", { name }))) return;
     startTransition(async () => {
       const result = await acceptQuotation(quotation.id);
       if (result.success) {
@@ -71,7 +75,8 @@ export function QuotationInboxRow({
   }
 
   function handleDecline() {
-    if (!confirm(`Decline quotation from ${agency?.name ?? "this provider"}?`)) return;
+    const name = agency?.name ?? tq("thisProvider");
+    if (!confirm(tq("declineConfirmNamed", { name }))) return;
     startTransition(async () => {
       const result = await declineQuotation(quotation.id);
       if (result.success) {
@@ -87,7 +92,7 @@ export function QuotationInboxRow({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h4 className="font-semibold">{agency?.name ?? "Engineering office"}</h4>
+            <h4 className="font-semibold">{agency?.name ?? tq("engineeringOffice")}</h4>
             {match !== null && (
               <Badge variant="success" size="sm">
                 {t("matchScore", { score: match })}
@@ -124,7 +129,7 @@ export function QuotationInboxRow({
 
         <div className="flex shrink-0 flex-col items-end gap-2 lg:min-w-[140px]">
           <p className="text-2xl font-bold text-primary">
-            {formatNumber(Number(quotation.price))} SAR
+            {formatCurrency(Number(quotation.price), tc("currency"), locale)}
           </p>
           <Link
             href={`/client/quotations/${requestId}`}

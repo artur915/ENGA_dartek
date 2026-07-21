@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
@@ -20,7 +20,7 @@ import {
   needsClientReview,
   PROJECT_KICKOFF,
 } from "@/lib/client-dashboard";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 
 type AgreementRow = {
   id: string;
@@ -74,6 +74,8 @@ export async function ActiveProjectsSection({
 }) {
   const t = await getTranslations("client.dashboard");
   const ts = await getTranslations("status");
+  const tc = await getTranslations("common");
+  const locale = await getLocale();
 
   return (
     <section className="mt-10">
@@ -158,7 +160,7 @@ export async function ActiveProjectsSection({
                         {t("contractValue")}
                       </p>
                       <p className="text-lg font-bold text-primary">
-                        {formatNumber(contractValue)} SAR
+                        {formatCurrency(contractValue, tc("currency"), locale)}
                       </p>
                     </div>
                   </div>

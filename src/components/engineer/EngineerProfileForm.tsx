@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { saveEngineerProfile } from "@/actions/engineer";
 
@@ -16,6 +17,8 @@ export function EngineerProfileForm({
     bio?: string | null;
   } | null;
 }) {
+  const t = useTranslations("engineer");
+  const tp = useTranslations("engineer.profileForm");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState({
@@ -39,30 +42,32 @@ export function EngineerProfileForm({
         service_location: form.service_location || undefined,
         bio: form.bio || undefined,
       });
-      setMessage(result.error ? result.error : "Profile saved!");
+      setMessage(result.error ? result.error : tp("saved"));
       router.refresh();
     });
   }
 
+  const fields = [
+    { key: "specialization", label: tp("specialization") },
+    { key: "council_membership", label: tp("councilMembership") },
+    { key: "professional_license", label: tp("professionalLicense") },
+    { key: "service_location", label: tp("serviceLocation") },
+  ] as const;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {[
-        { key: "specialization", label: "Specialization" },
-        { key: "council_membership", label: "Engineering Council Membership" },
-        { key: "professional_license", label: "Professional License" },
-        { key: "service_location", label: "Service Location" },
-      ].map((f) => (
+      {fields.map((f) => (
         <div key={f.key}>
           <label className="mb-1.5 block text-sm font-medium">{f.label}</label>
           <input
-            value={form[f.key as keyof typeof form]}
+            value={form[f.key]}
             onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
             className="w-full rounded-lg border border-border px-4 py-2.5 text-sm"
           />
         </div>
       ))}
       <div>
-        <label className="mb-1.5 block text-sm font-medium">Experience (years)</label>
+        <label className="mb-1.5 block text-sm font-medium">{t("experienceYears")}</label>
         <input
           type="number"
           value={form.experience_years}
@@ -71,7 +76,7 @@ export function EngineerProfileForm({
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium">Bio</label>
+        <label className="mb-1.5 block text-sm font-medium">{tp("bio")}</label>
         <textarea
           rows={4}
           value={form.bio}
@@ -85,7 +90,7 @@ export function EngineerProfileForm({
         disabled={isPending}
         className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white"
       >
-        {isPending ? "Saving..." : "Save Profile"}
+        {isPending ? tp("saving") : tp("saveProfile")}
       </button>
     </form>
   );

@@ -74,7 +74,7 @@ export default async function AdminAgenciesPage({
                       </Badge>
                     </div>
                     <p className="text-xs text-muted">
-                      CR: {agency.commercial_registration} · {agency.service_areas?.join(", ")}
+                      {ta("crPrefix")}: {agency.commercial_registration} · {agency.service_areas?.join(", ")}
                     </p>
                   </div>
                   {section.showActions && <AdminAgencyActions agencyId={agency.id} />}

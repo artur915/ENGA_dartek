@@ -26,7 +26,9 @@
     "approved": "Approved",
     "openNav": "Open navigation",
     "closeNav": "Close navigation",
-    "toggleMenu": "Toggle menu"
+    "toggleMenu": "Toggle menu",
+    "currency": "SAR",
+    "goToSignIn": "Go to Sign In →"
   },
   "landing": {
     "heroEyebrow": "The Kingdom's trusted marketplace",
@@ -152,7 +154,16 @@
     "shellSubtitle": "Built for Saudi Arabia's engineering services ecosystem with verified offices and structured workflows.",
     "shellEyebrow": "Engineering marketplace",
     "accountCreated": "Account created",
-    "accountCreatedMessage": "Account created! Check your email and click the confirmation link, then sign in."
+    "accountCreatedMessage": "Account created! Check your email and click the confirmation link, then sign in.",
+    "passwordHint": "Minimum 8 characters",
+    "creatingAccount": "Creating account…",
+    "errors": {
+      "emailNotConfirmed": "Please confirm your email first. Check your inbox (and spam folder), then try signing in again.",
+      "invalidCredentials": "Invalid email or password. If you just signed up, confirm your email first or use the exact password from signup.",
+      "alreadyRegistered": "This email is already registered. Try signing in instead.",
+      "engineerUnavailable": "Individual engineer registration is not available at this time.",
+      "authUnavailable": "Authentication service is unavailable. Please try again later."
+    }
   },
   "status": {
     "request": {
@@ -237,7 +248,8 @@
     "paymentPending": "Pending",
     "markCompleted": "Mark completed",
     "archiveProject": "Archive project",
-    "statusUpdated": "Status updated"
+    "statusUpdated": "Status updated",
+    "paymentNote": "Client recorded bank transfer"
   },
   "quotationsPage": {
     "acceptConfirm": "Accept this quotation and generate agreement?",
@@ -250,7 +262,11 @@
     "accept": "Accept quotation",
     "processing": "Processing…",
     "engineeringOffice": "Engineering office",
-    "viewRevise": "View / revise"
+    "viewRevise": "View / revise",
+    "acceptConfirmNamed": "Accept quotation from {name}?",
+    "declineConfirmNamed": "Decline quotation from {name}?",
+    "thisProvider": "this provider",
+    "daysCount": "{count} days"
   },
   "financePage": {
     "projectIncome": "Project income",
@@ -273,7 +289,13 @@
     "manageAgencies": "Manage all engineering offices on the platform",
     "pendingApproval": "Pending approval",
     "approved": "Approved",
-    "suspendedRejected": "Suspended / rejected"
+    "suspendedRejected": "Suspended / rejected",
+    "crPrefix": "CR",
+    "licensePrefix": "License",
+    "description": "Monitor platform activity. New office and engineer registrations activate automatically; use moderation tools for legacy pending records or post-registration review.",
+    "legacyPendingTitle": "Legacy Pending Registrations ({count})",
+    "legacyPendingDesc": "Registrations submitted before auto-activation may still appear here.",
+    "noPendingRegistrations": "No pending registrations"
   },
   "client": {
     "title": "Client Portal",
@@ -281,6 +303,11 @@
     "myRequests": "My Requests",
     "compareQuotes": "Compare Quotations",
     "activeProjects": "Active Projects",
+    "quotationsListPage": {
+      "description": "Requests with quotations from engineering offices",
+      "noOpenQuotations": "No open quotations yet. Float a request to receive quotes.",
+      "quoteCount": "{count, plural, one {# quote} other {# quotes}}"
+    },
     "requestsPage": {
       "description": "View and manage all your project requests in one place."
     },
@@ -346,9 +373,9 @@
       "upload": "Upload",
       "uploading": "Uploading…",
       "attachment": {
-        "drawings": { "title": "Drawings & Plans" },
-        "documents": { "title": "Documents" },
-        "photos": { "title": "Site Photos" }
+        "drawings": { "title": "Drawings & Plans", "formats": "DWG, PDF, RVT" },
+        "documents": { "title": "Documents", "formats": "PDF, DOC, XLS" },
+        "photos": { "title": "Site Photos", "formats": "JPG, PNG, HEIC" }
       },
       "preferences": "Preferences",
       "urgency": "Urgency",
@@ -428,6 +455,20 @@
     "accountRejected": "Your office registration was rejected. Contact platform support.",
     "requestsPage": {
       "description": "Review matched project requests and submit structured quotations."
+    },
+    "requestDetail": {
+      "projectDetails": "Project Details",
+      "package": "Package",
+      "servicesRequested": "Services Requested",
+      "clientDocuments": "Client Documents"
+    },
+    "quotationsPage": {
+      "noQuotations": "No quotations submitted yet."
+    },
+    "projectsPage": {
+      "noProjects": "No active projects yet. Submit quotations on incoming requests.",
+      "description": "Projects with signed agreements — manage execution & payments",
+      "manage": "Manage"
     },
     "dashboard": {
       "subtitle": "Track delivery progress, win new work, and manage your active contracts.",
@@ -513,6 +554,45 @@
     "submitting": "Submitting…",
     "profile": "Professional Profile",
     "assignments": "My Assignments",
-    "invitations": "Project Invitations"
+    "invitations": "Project Invitations",
+    "dashboard": {
+      "profileStatus": "Profile",
+      "profileActive": "Active",
+      "profileIncomplete": "Incomplete",
+      "invitationsLabel": "Invitations",
+      "assignmentsLabel": "Assignments",
+      "updateProfilePrompt": "Update your professional profile and credentials.",
+      "subtitle": "Verify → Position → Deliver → Build Reputation",
+      "invitationsSummary": "{count, plural, one {# project invitation} other {# project invitations}} from linked offices."
+    },
+    "assignmentsPage": {
+      "description": "Your active engineering assignments and office links",
+      "professionalProfile": "Professional Profile",
+      "noAssignments": "No office assignments yet.",
+      "teamMember": "Team member"
+    },
+    "invitationsPage": {
+      "description": "Project invitations from your linked engineering office",
+      "noInvitations": "No invitations. Link to an engineering office in your profile."
+    },
+    "profileForm": {
+      "bio": "Bio",
+      "specialization": "Specialization",
+      "councilMembership": "Engineering Council Membership",
+      "professionalLicense": "Professional License",
+      "serviceLocation": "Service Location",
+      "saved": "Profile saved!",
+      "saving": "Saving...",
+      "saveProfile": "Save Profile"
+    }
+  },
+  "agenciesPage": {
+    "approved": "Approved",
+    "disciplines": "Disciplines",
+    "serviceAreas": "Service Areas",
+    "licenses": "Licenses",
+    "startingPrice": "Starting Price",
+    "crLabel": "CR",
+    "engineeringLabel": "Engineering"
   }
 }

@@ -10,6 +10,7 @@ export function AuthShell({
   shellTitle,
   shellSubtitle,
   shellRegion,
+  appName = "ENGA",
 }: {
   title: string;
   subtitle: string;
@@ -20,6 +21,7 @@ export function AuthShell({
   shellTitle?: string;
   shellSubtitle?: string;
   shellRegion?: string;
+  appName?: string;
 }) {
   return (
     <div className="flex min-h-screen bg-landing-bg">
@@ -29,7 +31,7 @@ export function AuthShell({
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
               <Icon className="h-5 w-5" />
             </div>
-            <span className="text-lg font-bold">ENGA</span>
+            <span className="text-lg font-bold">{appName}</span>
           </Link>
           <div className="mt-16 max-w-md">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">

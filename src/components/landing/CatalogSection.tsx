@@ -1,6 +1,7 @@
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { SERVICE_CATEGORIES } from "@/data/catalog";
+import { getCategoryLabel } from "@/lib/catalog-i18n";
 import { Layers } from "lucide-react";
 import {
   LandingCard,
@@ -12,6 +13,7 @@ import {
 export function CatalogSection() {
   const t = useTranslations("landing");
   const tc = useTranslations("common");
+  const locale = useLocale();
 
   return (
     <LandingSection variant="light" id="catalog">
@@ -33,7 +35,7 @@ export function CatalogSection() {
                 <Layers className="h-4 w-4 text-muted/50 transition-colors group-hover:text-primary" />
               </div>
               <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary">
-                {cat.name}
+                {getCategoryLabel(cat, locale)}
               </h3>
             </LandingCard>
           </Link>

@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PublicPageHeader } from "@/components/ui/PublicPageHeader";
 import { SERVICE_PACKAGES } from "@/data/catalog";
+import { getPackageField } from "@/lib/catalog-i18n";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Package } from "lucide-react";
@@ -39,10 +40,12 @@ export default async function PackagesPage({
                   </Badge>
                 )}
               </div>
-              <h2 className="text-xl font-bold text-foreground">{pkg.name}</h2>
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{pkg.description}</p>
+              <h2 className="text-xl font-bold text-foreground">{getPackageField(pkg, "name", locale)}</h2>
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
+                {getPackageField(pkg, "description", locale)}
+              </p>
               <p className="mt-5 rounded-xl bg-surface-muted px-4 py-3 text-sm font-medium text-primary">
-                {pkg.categories}
+                {getPackageField(pkg, "categories", locale)}
               </p>
             </Card>
           ))}

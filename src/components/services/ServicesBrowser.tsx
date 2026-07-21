@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { ENGINEERING_SERVICES, SERVICE_CATEGORIES } from "@/data/catalog";
+import { getCategoryLabel, getProviderLabel, getPackageNameByEnglishName } from "@/lib/catalog-i18n";
 import { Badge } from "@/components/ui/Badge";
 import { Search } from "lucide-react";
 
@@ -50,7 +51,7 @@ export function ServicesBrowser({ initialCategory, initialQuery }: ServicesBrows
           <option value="">{t("allCategories")}</option>
           {SERVICE_CATEGORIES.map((c) => (
             <option key={c.name} value={c.name}>
-              {c.name} ({c.count})
+              {getCategoryLabel(c, locale)} ({c.count})
             </option>
           ))}
         </select>
@@ -66,12 +67,12 @@ export function ServicesBrowser({ initialCategory, initialQuery }: ServicesBrows
                 <span className="font-mono text-xs text-muted">#{service.id}</span>
                 <h3 className="font-medium text-foreground">{service.name}</h3>
               </div>
-              <p className="mt-1 text-xs text-muted">{service.provider}</p>
+              <p className="mt-1 text-xs text-muted">{getProviderLabel(service.provider, locale)}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">{service.category}</Badge>
+              <Badge variant="outline">{getCategoryLabel(service.category, locale)}</Badge>
               {service.packages.slice(0, 2).map((p) => (
-                <Badge key={p}>{p}</Badge>
+                <Badge key={p}>{getPackageNameByEnglishName(p, locale)}</Badge>
               ))}
               {service.packages.length > 2 && <Badge>+{service.packages.length - 2}</Badge>}
             </div>

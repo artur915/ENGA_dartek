@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Link } from "@/i18n/navigation";
 import { getClientActiveProjects } from "@/actions/projects";
 import { getClientNav } from "@/lib/nav";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 import { FolderKanban } from "lucide-react";
 
 export default async function ClientProjectsPage({
@@ -20,6 +20,7 @@ export default async function ClientProjectsPage({
   setRequestLocale(locale);
   const t = await getTranslations("client");
   const tc = await getTranslations("common");
+  const ts = await getTranslations("status.request");
   const projects = await getClientActiveProjects();
 
   return (
@@ -61,10 +62,10 @@ export default async function ClientProjectsPage({
                     </p>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <Badge variant={request.status === "archived" ? "outline" : "success"}>
-                        {request.status}
+                        {ts.has(request.status) ? ts(request.status) : request.status}
                       </Badge>
                       <span className="text-sm font-semibold text-primary">
-                        SAR {formatNumber(Number(quote?.price ?? 0))}
+                        {formatCurrency(Number(quote?.price ?? 0), tc("currency"), locale)}
                       </span>
                     </div>
                   </div>

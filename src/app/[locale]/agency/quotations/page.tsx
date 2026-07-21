@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getAgencyQuotations } from "@/actions/quotations";
+import { formatCurrency } from "@/lib/format";
 import { getAgencyNav } from "@/lib/nav";
 
 export default async function AgencyQuotationsPage({
@@ -15,7 +16,9 @@ export default async function AgencyQuotationsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("agency");
+  const tq = await getTranslations("agency.quotationsPage");
   const tc = await getTranslations("common");
+  const ts = await getTranslations("status.quotation");
   const quotations = await getAgencyQuotations();
 
   const nav = getAgencyNav(t, tc);
@@ -28,7 +31,7 @@ export default async function AgencyQuotationsPage({
 
         {quotations.length === 0 ? (
           <Card className="mt-8 text-center">
-            <p className="text-muted">No quotations submitted yet.</p>
+            <p className="text-muted">{tq("noQuotations")}</p>
             <Link href="/agency/requests" className="mt-4 inline-block text-sm font-semibold text-primary">
               {t("incomingRequests")} →
             </Link>
@@ -50,8 +53,10 @@ export default async function AgencyQuotationsPage({
                     <p className="text-sm text-muted">{q.project_requests?.location_city}</p>
                   </div>
                   <div className="text-end">
-                    <p className="text-xl font-bold text-primary">SAR {Number(q.price).toLocaleString()}</p>
-                    <Badge className="mt-1">{q.status}</Badge>
+                    <p className="text-xl font-bold text-primary">
+                      {formatCurrency(Number(q.price), tc("currency"), locale)}
+                    </p>
+                    <Badge className="mt-1">{ts.has(q.status) ? ts(q.status) : q.status}</Badge>
                   </div>
                 </div>
               </Card>

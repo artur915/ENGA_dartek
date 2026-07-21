@@ -26,7 +26,9 @@
     "approved": "معتمد",
     "openNav": "فتح القائمة",
     "closeNav": "إغلاق القائمة",
-    "toggleMenu": "تبديل القائمة"
+    "toggleMenu": "تبديل القائمة",
+    "currency": "ريال",
+    "goToSignIn": "الانتقال لتسجيل الدخول ←"
   },
   "landing": {
     "heroEyebrow": "سوق المملكة الموثوق",
@@ -152,7 +154,16 @@
     "shellSubtitle": "مصممة لمنظومة الخدمات الهندسية في المملكة مع مكاتب معتمدة وسير عمل منظم.",
     "shellEyebrow": "سوق الخدمات الهندسية",
     "accountCreated": "تم إنشاء الحساب",
-    "accountCreatedMessage": "تم إنشاء الحساب! تحقق من بريدك واضغط رابط التأكيد، ثم سجّل الدخول."
+    "accountCreatedMessage": "تم إنشاء الحساب! تحقق من بريدك واضغط رابط التأكيد، ثم سجّل الدخول.",
+    "passwordHint": "8 أحرف على الأقل",
+    "creatingAccount": "جارٍ إنشاء الحساب…",
+    "errors": {
+      "emailNotConfirmed": "يرجى تأكيد بريدك الإلكتروني أولاً. تحقق من صندوق الوارد (ومجلد الرسائل غير المرغوب فيها)، ثم حاول تسجيل الدخول مرة أخرى.",
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة. إذا سجّلت للتو، أكّد بريدك أولاً أو استخدم كلمة المرور نفسها من التسجيل.",
+      "alreadyRegistered": "هذا البريد مسجّل بالفعل. جرّب تسجيل الدخول بدلاً من ذلك.",
+      "engineerUnavailable": "تسجيل المهندس الفردي غير متاح حالياً.",
+      "authUnavailable": "خدمة المصادقة غير متاحة. يرجى المحاولة لاحقاً."
+    }
   },
   "status": {
     "request": {
@@ -237,7 +248,8 @@
     "paymentPending": "معلق",
     "markCompleted": "تحديد كمكتمل",
     "archiveProject": "أرشفة المشروع",
-    "statusUpdated": "تم تحديث الحالة"
+    "statusUpdated": "تم تحديث الحالة",
+    "paymentNote": "سجّل العميل تحويلاً بنكياً"
   },
   "quotationsPage": {
     "acceptConfirm": "قبول هذا العرض وإنشاء الاتفاقية؟",
@@ -250,7 +262,11 @@
     "accept": "قبول العرض",
     "processing": "جارٍ المعالجة…",
     "engineeringOffice": "مكتب هندسي",
-    "viewRevise": "عرض / تعديل"
+    "viewRevise": "عرض / تعديل",
+    "acceptConfirmNamed": "قبول عرض {name}؟",
+    "declineConfirmNamed": "رفض عرض {name}؟",
+    "thisProvider": "هذا المزود",
+    "daysCount": "{count} يوم"
   },
   "financePage": {
     "projectIncome": "دخل المشاريع",
@@ -273,7 +289,13 @@
     "manageAgencies": "إدارة جميع المكاتب الهندسية على المنصة",
     "pendingApproval": "بانتظار الموافقة",
     "approved": "معتمد",
-    "suspendedRejected": "موقوف / مرفوض"
+    "suspendedRejected": "موقوف / مرفوض",
+    "crPrefix": "س.ت",
+    "licensePrefix": "الترخيص",
+    "description": "راقب نشاط المنصة. تُفعَّل تسجيلات المكاتب والمهندسين الجديدة تلقائياً؛ استخدم أدوات الإشراف للسجلات المعلقة القديمة أو المراجعة بعد التسجيل.",
+    "legacyPendingTitle": "تسجيلات معلقة قديمة ({count})",
+    "legacyPendingDesc": "قد تظهر هنا تسجيلات أُرسلت قبل التفعيل التلقائي.",
+    "noPendingRegistrations": "لا توجد تسجيلات معلقة"
   },
   "client": {
     "title": "بوابة العميل",
@@ -281,6 +303,11 @@
     "myRequests": "طلباتي",
     "compareQuotes": "مقارنة العروض",
     "activeProjects": "المشاريع النشطة",
+    "quotationsListPage": {
+      "description": "طلبات بعروض أسعار من المكاتب الهندسية",
+      "noOpenQuotations": "لا توجد عروض مفتوحة بعد. اطرح طلباً لاستقبال العروض.",
+      "quoteCount": "{count, plural, one {عرض واحد} other {# عروض}}"
+    },
     "requestsPage": {
       "description": "اعرض وأدر جميع طلبات مشروعك في مكان واحد."
     },
@@ -346,9 +373,9 @@
       "upload": "رفع",
       "uploading": "جاري الرفع…",
       "attachment": {
-        "drawings": { "title": "المخططات والرسوم" },
-        "documents": { "title": "المستندات" },
-        "photos": { "title": "صور الموقع" }
+        "drawings": { "title": "المخططات والرسوم", "formats": "DWG, PDF, RVT" },
+        "documents": { "title": "المستندات", "formats": "PDF, DOC, XLS" },
+        "photos": { "title": "صور الموقع", "formats": "JPG, PNG, HEIC" }
       },
       "preferences": "التفضيلات",
       "urgency": "الاستعجال",
@@ -428,6 +455,20 @@
     "accountRejected": "تم رفض تسجيل مكتبك. تواصل مع دعم المنصة.",
     "requestsPage": {
       "description": "راجع الطلبات المتطابقة وقدّم عروض أسعار منظمة."
+    },
+    "requestDetail": {
+      "projectDetails": "تفاصيل المشروع",
+      "package": "الباقة",
+      "servicesRequested": "الخدمات المطلوبة",
+      "clientDocuments": "مستندات العميل"
+    },
+    "quotationsPage": {
+      "noQuotations": "لم تُقدَّم عروض بعد."
+    },
+    "projectsPage": {
+      "noProjects": "لا توجد مشاريع نشطة بعد. قدّم عروضاً على الطلبات الواردة.",
+      "description": "مشاريع باتفاقيات موقّعة — أدر التنفيذ والمدفوعات",
+      "manage": "إدارة"
     },
     "dashboard": {
       "subtitle": "تابع تقدم التسليم، واكسب أعمالاً جديدة، وأدر عقودك النشطة.",
@@ -513,6 +554,45 @@
     "submitting": "جاري الإرسال…",
     "profile": "الملف المهني",
     "assignments": "مهامي",
-    "invitations": "دعوات المشاريع"
+    "invitations": "دعوات المشاريع",
+    "dashboard": {
+      "profileStatus": "الملف",
+      "profileActive": "نشط",
+      "profileIncomplete": "غير مكتمل",
+      "invitationsLabel": "الدعوات",
+      "assignmentsLabel": "المهام",
+      "updateProfilePrompt": "حدّث ملفك المهني وبيانات اعتمادك.",
+      "subtitle": "تحقق ← تموضع ← تسليم ← بناء السمعة",
+      "invitationsSummary": "{count, plural, one {دعوة مشروع واحدة} other {# دعوات مشروع}} من المكاتب المرتبطة."
+    },
+    "assignmentsPage": {
+      "description": "مهامك الهندسية النشطة وارتباطاتك بالمكاتب",
+      "professionalProfile": "الملف المهني",
+      "noAssignments": "لا توجد مهام مكتبية بعد.",
+      "teamMember": "عضو فريق"
+    },
+    "invitationsPage": {
+      "description": "دعوات المشاريع من مكتبك الهندسي المرتبط",
+      "noInvitations": "لا توجد دعوات. اربط مكتباً هندسياً من ملفك."
+    },
+    "profileForm": {
+      "bio": "نبذة",
+      "specialization": "التخصص",
+      "councilMembership": "عضوية هيئة المهندسين",
+      "professionalLicense": "الترخيص المهني",
+      "serviceLocation": "موقع الخدمة",
+      "saved": "تم حفظ الملف!",
+      "saving": "جارٍ الحفظ...",
+      "saveProfile": "حفظ الملف"
+    }
+  },
+  "agenciesPage": {
+    "approved": "معتمد",
+    "disciplines": "التخصصات",
+    "serviceAreas": "مناطق الخدمة",
+    "licenses": "التراخيص",
+    "startingPrice": "السعر الابتدائي",
+    "crLabel": "س.ت",
+    "engineeringLabel": "هندسي"
   }
 }

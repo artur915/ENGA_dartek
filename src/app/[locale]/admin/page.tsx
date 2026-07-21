@@ -15,6 +15,7 @@ export default async function AdminPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const tc = await getTranslations("common");
+  const ta = await getTranslations("adminPage");
   const pending = await getPendingAgencies();
 
   const nav = getAdminNav(tc);
@@ -24,18 +25,15 @@ export default async function AdminPage({
       <PortalSidebar title={tc("admin")} items={nav} />
       <div className="flex-1 bg-surface-muted p-8">
         <h1 className="text-2xl font-bold">{tc("admin")}</h1>
-        <p className="mt-1 text-muted">
-          Monitor platform activity. New office and engineer registrations activate automatically;
-          use moderation tools for legacy pending records or post-registration review.
-        </p>
+        <p className="mt-1 text-muted">{ta("description")}</p>
 
         <Card className="mt-8">
-          <h2 className="text-lg font-semibold">Legacy Pending Registrations ({pending.length})</h2>
-          <p className="mt-2 text-sm text-muted">
-            Registrations submitted before auto-activation may still appear here.
-          </p>
+          <h2 className="text-lg font-semibold">
+            {ta("legacyPendingTitle", { count: pending.length })}
+          </h2>
+          <p className="mt-2 text-sm text-muted">{ta("legacyPendingDesc")}</p>
           {pending.length === 0 ? (
-            <p className="mt-4 text-sm text-muted">No pending registrations</p>
+            <p className="mt-4 text-sm text-muted">{ta("noPendingRegistrations")}</p>
           ) : (
             <div className="mt-4 divide-y divide-border">
               {pending.map((agency: {
@@ -51,7 +49,8 @@ export default async function AdminPage({
                   <div>
                     <h3 className="font-semibold">{agency.name}</h3>
                     <p className="mt-1 text-xs text-muted">
-                      CR: {agency.commercial_registration} · License: {agency.engineering_license}
+                      {ta("crPrefix")}: {agency.commercial_registration} · {ta("licensePrefix")}:{" "}
+                      {agency.engineering_license}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {agency.disciplines?.map((d: string) => (

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Link } from "@/i18n/navigation";
 import { getApprovedAgencies } from "@/actions/agency";
-import { formatNumber } from "@/lib/format";
+import { formatCurrency } from "@/lib/format";
 import { Building2, MapPin } from "lucide-react";
 
 export default async function AgenciesPage({
@@ -73,7 +73,8 @@ export default async function AgenciesPage({
                   </div>
                   {agency.indicative_price_from != null && (
                     <p className="mt-3 text-sm font-semibold text-primary">
-                      {tl("agenciesFrom")} SAR {formatNumber(Number(agency.indicative_price_from))}
+                      {tl("agenciesFrom")}{" "}
+                      {formatCurrency(Number(agency.indicative_price_from), t("currency"), locale)}
                     </p>
                   )}
                 </Card>

@@ -31,11 +31,11 @@ const QUOTATION_OPTIONS = [3, 5, 10] as const;
 
 const UPLOAD_CONFIG: Record<
   DocumentCategory,
-  { icon: typeof Paperclip; accept: string; formats: string }
+  { icon: typeof Paperclip; accept: string }
 > = {
-  drawings: { icon: Paperclip, accept: ".dwg,.pdf,.rvt", formats: "DWG, PDF, RVT" },
-  documents: { icon: FileText, accept: ".pdf,.doc,.docx,.xls,.xlsx", formats: "PDF, DOC, XLS" },
-  photos: { icon: ImageIcon, accept: ".jpg,.jpeg,.png,.heic,.webp,image/*", formats: "JPG, PNG, HEIC" },
+  drawings: { icon: Paperclip, accept: ".dwg,.pdf,.rvt" },
+  documents: { icon: FileText, accept: ".pdf,.doc,.docx,.xls,.xlsx" },
+  photos: { icon: ImageIcon, accept: ".jpg,.jpeg,.png,.heic,.webp,image/*" },
 };
 
 function DistributionCard({
@@ -259,7 +259,9 @@ export function RequestDetailsStep({
                     }}
                   />
                 </label>
-                <p className="mt-1 text-[10px] text-muted">{config.formats}</p>
+                <p className="mt-1 text-[10px] text-muted">
+                  {t(`attachment.${category}.formats`)}
+                </p>
                 {items.length > 0 && (
                   <ul className="mt-3 w-full space-y-1 text-start text-xs text-muted-foreground">
                     {items.map((d) => (
