@@ -95,3 +95,81 @@ export async function generateRequestDescription(
   }
   return { description: buildTemplateDescription(input), source: "template" };
 }
+
+export interface GenerateScopeInput {
+  requestTitle: string;
+  requestDescription?: string;
+  serviceNames: string[];
+  location: string;
+  packageName?: string;
+  agencyName?: string;
+}
+
+function buildTemplateScope(input: GenerateScopeInput): string {
+  const services =
+    input.serviceNames.length > 0
+      ? input.serviceNames.join(", ")
+      : "the requested engineering services";
+  const location = input.location.trim() || "the project location";
+  const office = input.agencyName?.trim() || "Our engineering office";
+
+  return `${office} proposes to deliver ${services} for "${input.requestTitle}" at ${location}.
+
+Scope includes site review, technical coordination, preparation of required documentation, authority submissions where applicable, and structured client review cycles for each deliverable stage.
+
+${input.requestDescription?.trim() ? `Client requirements summary:\n${input.requestDescription.trim()}\n\n` : ""}We will align deliverables, milestones, and payment stages with the project schedule and Saudi Building Code requirements.`;
+}
+
+async function generateScopeWithOpenAI(input: GenerateScopeInput): Promise<string | null> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+
+  const prompt = `Write a professional "Scope of Work" section for an engineering office quotation in Saudi Arabia.
+Project: ${input.requestTitle}
+Location: ${input.location}
+Services: ${input.serviceNames.join(", ") || "engineering services"}
+${input.packageName ? `Package: ${input.packageName}` : ""}
+Client request notes: ${input.requestDescription || "none"}
+Office: ${input.agencyName || "Engineering office"}
+
+Write 2-3 paragraphs covering methodology, deliverables approach, coordination, and compliance. Do not include pricing or payment terms.`;
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You write precise engineering scope-of-work sections for licensed offices in Saudi Arabia.",
+          },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 600,
+      }),
+    });
+
+    if (!response.ok) return null;
+    const data = (await response.json()) as {
+      choices?: { message?: { content?: string } }[];
+    };
+    return data.choices?.[0]?.message?.content?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function generateQuotationScope(
+  input: GenerateScopeInput
+): Promise<{ scope: string; source: "ai" | "template" }> {
+  const aiResult = await generateScopeWithOpenAI(input);
+  if (aiResult) return { scope: aiResult, source: "ai" };
+  return { scope: buildTemplateScope(input), source: "template" };
+}

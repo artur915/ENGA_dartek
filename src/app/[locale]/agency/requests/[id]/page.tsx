@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { PortalSidebar } from "@/components/layout/PortalSidebar";
 import { getRequestById } from "@/actions/requests";
+import { getMyAgency } from "@/actions/agency";
 import { SubmitQuotationForm } from "@/components/quotations/SubmitQuotationForm";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -18,13 +19,17 @@ export default async function AgencyRequestDetailPage({
   const t = await getTranslations("agency");
   const tc = await getTranslations("common");
 
-  const request = await getRequestById(id);
+  const [request, agency] = await Promise.all([getRequestById(id), getMyAgency()]);
   if (!request) notFound();
 
   const nav = getAgencyNav(t, tc);
 
   const services = request.request_services as { engineering_services: { name: string } }[] | null;
   const documents = (request.request_documents ?? []) as { id: string; file_name: string }[];
+  const serviceNames =
+    services?.map((rs) => rs.engineering_services?.name).filter(Boolean) ?? [];
+  const pkg = request.service_packages as { name: string } | { name: string }[] | null;
+  const packageName = Array.isArray(pkg) ? pkg[0]?.name : pkg?.name;
 
   return (
     <div className="flex min-h-screen">
@@ -35,18 +40,19 @@ export default async function AgencyRequestDetailPage({
           <Badge>{request.status}</Badge>
         </div>
         <p className="mt-1 text-muted">
-          {request.location_city}{request.location_district ? `, ${request.location_district}` : ""}
+          {request.location_city}
+          {request.location_district ? `, ${request.location_district}` : ""}
         </p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="mt-8 grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
           <Card>
             <h2 className="font-semibold">Project Details</h2>
             {request.description && (
               <p className="mt-3 text-sm text-muted">{request.description}</p>
             )}
-            {request.service_packages && (
+            {packageName && (
               <p className="mt-3 text-sm">
-                <span className="font-medium">Package:</span> {(request.service_packages as { name: string }).name}
+                <span className="font-medium">Package:</span> {packageName}
               </p>
             )}
             <div className="mt-4">
@@ -69,7 +75,17 @@ export default async function AgencyRequestDetailPage({
             )}
           </Card>
 
-          <SubmitQuotationForm requestId={id} />
+          <SubmitQuotationForm
+            context={{
+              requestId: id,
+              requestTitle: request.title,
+              requestDescription: request.description ?? undefined,
+              location: [request.location_city, request.location_district].filter(Boolean).join(", "),
+              packageName,
+              serviceNames,
+              agencyName: agency?.name,
+            }}
+          />
         </div>
       </div>
     </div>

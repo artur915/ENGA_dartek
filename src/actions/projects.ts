@@ -15,7 +15,7 @@ export async function getProjectDetail(requestId: string) {
       agreements(
         id, signed_at, document_path,
         agencies(id, name, commercial_registration, engineering_license),
-        quotations(price, scope, deliverables, timeline_days, payment_terms)
+        quotations(price, scope, deliverables, deliverables_items, estimated_duration, payment_terms, payment_terms_type, payment_milestones, terms_and_conditions)
       )
     `)
     .eq("id", requestId)
@@ -51,7 +51,7 @@ export async function getClientActiveProjects() {
         milestones(id, title, status, sort_order, due_date, status_update),
         payments(id, amount, status)
       ),
-      quotations(price, timeline_days)
+      quotations(price, estimated_duration)
     `)
     .eq("client_id", profile.id)
     .order("created_at", { ascending: false });
@@ -76,7 +76,7 @@ export async function getClientQuotationsInbox() {
     .select(`
       id, title, status, location_city,
       quotations(
-        id, status, price, scope, timeline_days,
+        id, status, price, scope, estimated_duration,
         agencies(id, name, service_areas, disciplines)
       )
     `)
@@ -111,14 +111,25 @@ export async function getAgencyActiveProjects() {
     .from("agreements")
     .select(`
       id, signed_at, created_at,
-      project_requests(id, title, status, location_city, description),
-      quotations(price, timeline_days),
+      project_requests(
+        id, title, status, location_city, created_at,
+        milestones(id, title, status, sort_order, due_date, status_update),
+        payments(id, amount, status)
+      ),
+      quotations(price),
       profiles!agreements_client_id_fkey(full_name, email)
     `)
     .eq("agency_id", agency.id)
     .order("created_at", { ascending: false });
 
-  return data ?? [];
+  const activeStatuses = new Set(["accepted", "in_progress"]);
+
+  return (data ?? []).filter((agreement) => {
+    const request = Array.isArray(agreement.project_requests)
+      ? agreement.project_requests[0]
+      : agreement.project_requests;
+    return request && activeStatuses.has(request.status);
+  });
 }
 
 export async function getQuotableRequests() {
@@ -147,7 +158,7 @@ export async function getAgreementDetail(agreementId: string) {
       *,
       agencies(name, commercial_registration, engineering_license, disciplines),
       project_requests(id, title, description, location_city, status),
-      quotations(price, scope, deliverables, timeline_days, payment_terms),
+      quotations(price, scope, deliverables, deliverables_items, estimated_duration, payment_terms, payment_terms_type, payment_milestones, terms_and_conditions),
       profiles!agreements_client_id_fkey(full_name, email)
     `)
     .eq("id", agreementId)

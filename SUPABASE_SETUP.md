@@ -32,6 +32,7 @@ In the Supabase SQL Editor, run these files **in order** (paste file **contents*
 6. `supabase/migrations/006_fix_project_requests_rls_recursion.sql` — fixes "infinite recursion" on project_requests when floating requests
 7. `supabase/migrations/007_auto_registration_certificates.sql` — optional certificate columns (if using auto-registration)
 8. `supabase/migrations/008_request_preferences.sql` — **required for New Project Request** (urgency, quotations, distribution, attachments category)
+9. `supabase/migrations/009_quotation_structured_fields.sql` — **required for agency quotation form** (deliverables list, payment milestones, terms, estimated duration)
 
 After running migration 008, PostgREST reloads automatically via `NOTIFY pgrst, 'reload schema'`.
 

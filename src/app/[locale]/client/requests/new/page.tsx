@@ -183,7 +183,10 @@ function NewRequestPageContent() {
         setError(isSchemaMigrationError(result.error) ? tf("migrationRequired") : result.error);
         return;
       }
-    setDocuments((prev) => [...prev, { id: crypto.randomUUID(), file_name: file.name, category }]);
+    setDocuments((prev) => [
+      ...prev,
+      { id: `upload-${prev.length}-${file.name}`, file_name: file.name, category },
+    ]);
   }
 
   async function handleGenerateDescription() {

@@ -12,7 +12,8 @@ type InboxRequest = {
     id: string;
     price: number;
     scope: string | null;
-    timeline_days: number | null;
+    estimated_duration: string | null;
+    timeline_days?: number | null;
     agencies: {
       id: string;
       name: string;

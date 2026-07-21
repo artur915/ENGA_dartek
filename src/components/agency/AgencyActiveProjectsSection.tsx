@@ -2,13 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
-import {
-  FolderKanban,
-  Calendar,
-  ExternalLink,
-  AlertCircle,
-  LayoutGrid,
-} from "lucide-react";
+import { FolderKanban, Calendar, ExternalLink, AlertCircle } from "lucide-react";
 import {
   computeProgress,
   formatPoRef,
@@ -24,7 +18,7 @@ type AgreementRow = {
   id: string;
   signed_at: string | null;
   created_at: string;
-  agencies: { name: string } | { name: string }[] | null;
+  profiles: { full_name: string | null; email: string | null } | { full_name: string | null; email: string | null }[] | null;
   project_requests:
     | {
         id: string;
@@ -65,52 +59,37 @@ function unwrap<T>(value: T | T[] | null | undefined): T | null {
   return Array.isArray(value) ? value[0] ?? null : value;
 }
 
-export async function ActiveProjectsSection({
+export async function AgencyActiveProjectsSection({
   projects,
 }: {
   projects: AgreementRow[];
 }) {
-  const t = await getTranslations("client.dashboard");
+  const t = await getTranslations("agency.dashboard");
 
   return (
     <section className="mt-10">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <Badge variant="accent" size="sm" className="mb-2">
-            {t("deliveryManagement")}
-          </Badge>
-          <div className="flex items-center gap-2">
-            <FolderKanban className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold tracking-tight">{t("activeProjectsTitle")}</h2>
-          </div>
-          <p className="mt-1 max-w-2xl text-sm text-muted">{t("activeProjectsDescription")}</p>
+      <div className="mb-5">
+        <Badge variant="accent" size="sm" className="mb-2">
+          {t("deliveryManagement")}
+        </Badge>
+        <div className="flex items-center gap-2">
+          <FolderKanban className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-bold tracking-tight">{t("activeProjectsTitle")}</h2>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="rounded-full border border-border-subtle bg-surface px-4 py-1.5 text-sm font-medium text-muted-foreground">
-            {t("activeProjectsCount", { count: projects.length })}
-          </span>
-          <div className="flex rounded-lg border border-border-subtle bg-surface p-1">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
-              <LayoutGrid className="h-4 w-4" />
-            </span>
-          </div>
-        </div>
+        <p className="mt-1 max-w-2xl text-sm text-muted">{t("activeProjectsDescription")}</p>
       </div>
 
       {!projects.length ? (
         <Card className="text-center">
           <p className="text-muted">{t("noActiveProjects")}</p>
-          <Link
-            href="/client/quotations"
-            className="mt-4 inline-block text-sm font-semibold text-primary"
-          >
-            {t("browseQuotations")} →
+          <Link href="/agency/projects" className="mt-4 inline-block text-sm font-semibold text-primary">
+            {t("viewProjects")} →
           </Link>
         </Card>
       ) : (
         <div className="grid gap-5 xl:grid-cols-2">
           {projects.map((agreement) => {
-            const agency = unwrap(agreement.agencies);
+            const client = unwrap(agreement.profiles);
             const request = unwrap(agreement.project_requests);
             const quote = unwrap(agreement.quotations);
             if (!request) return null;
@@ -121,6 +100,11 @@ export async function ActiveProjectsSection({
             const progress = computeProgress(milestones);
             const statusBadge = getProjectStatusBadge(milestones, payments, contractValue);
             const payment = getPaymentLabel(payments, contractValue);
+            const currentPhase = getCurrentPhase(milestones);
+            const nextItem = getNextItem(milestones);
+            const showAlert = needsClientReview(milestones);
+            const clientName = client?.full_name || client?.email || t("clientLabel");
+
             const statusLabel =
               statusBadge.label === "On track"
                 ? t("statusOnTrack")
@@ -135,9 +119,6 @@ export async function ActiveProjectsSection({
                   : payment.label === "Paid to date"
                     ? t("paidToDate")
                     : t("awaitingPayment");
-            const currentPhase = getCurrentPhase(milestones);
-            const nextItem = getNextItem(milestones);
-            const showAlert = needsClientReview(milestones);
 
             return (
               <Card key={agreement.id} padding="none" className="overflow-hidden">
@@ -169,9 +150,8 @@ export async function ActiveProjectsSection({
                       </p>
                     </div>
                   </div>
-
                   <h3 className="mt-4 text-lg font-bold">{request.title}</h3>
-                  <p className="text-sm text-muted">{agency?.name}</p>
+                  <p className="text-sm text-muted">{clientName}</p>
                 </div>
 
                 {showAlert && (
@@ -232,17 +212,16 @@ export async function ActiveProjectsSection({
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-
                   <div className="mt-4 flex flex-wrap justify-end gap-2">
                     <Link
-                      href={`/client/projects/${request.id}`}
+                      href={`/agency/projects/${request.id}`}
                       className="inline-flex h-10 items-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:border-primary/20"
                     >
                       <Calendar className="h-4 w-4" />
                       {t("viewSchedule")}
                     </Link>
                     <Link
-                      href={`/client/projects/${request.id}`}
+                      href={`/agency/projects/${request.id}`}
                       className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
                     >
                       <ExternalLink className="h-4 w-4" />

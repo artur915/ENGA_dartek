@@ -4,19 +4,62 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
 import { createDefaultMilestones } from "@/actions/milestones";
+import {
+  formatPaymentTermsLabel,
+  paymentMilestoneTotal,
+  type PaymentMilestone,
+  type PaymentTermsType,
+} from "@/lib/quotation";
 
 export interface SubmitQuotationInput {
   request_id: string;
   price: number;
   scope?: string;
-  deliverables?: string;
-  timeline_days?: number;
-  payment_terms?: string;
+  deliverables_items: string[];
+  estimated_duration?: string;
+  payment_terms_type: PaymentTermsType;
+  payment_milestones?: PaymentMilestone[];
+  terms_and_conditions: string[];
+  confirmed_accurate: boolean;
+}
+
+function validateQuotationInput(input: SubmitQuotationInput): string | null {
+  if (!input.confirmed_accurate) {
+    return "Please confirm the quotation is accurate and binding.";
+  }
+  if (!input.deliverables_items.length || input.deliverables_items.every((d) => !d.trim())) {
+    return "Add at least one deliverable.";
+  }
+  if (!input.terms_and_conditions.length || input.terms_and_conditions.every((t) => !t.trim())) {
+    return "Add at least one terms & conditions clause.";
+  }
+  if (input.payment_terms_type === "milestones") {
+    const milestones = input.payment_milestones ?? [];
+    if (!milestones.length) return "Add at least one payment milestone.";
+    const total = paymentMilestoneTotal(milestones);
+    if (total !== 100) return `Payment milestones must total 100% (currently ${total}%).`;
+    if (milestones.some((m) => !m.name.trim())) return "Each payment milestone needs a name.";
+  }
+  return null;
+}
+
+function buildLegacyFields(input: SubmitQuotationInput) {
+  return {
+    deliverables: input.deliverables_items.filter(Boolean).join("\n"),
+    payment_terms: formatPaymentTermsLabel(
+      input.payment_terms_type,
+      input.payment_milestones ?? [],
+      input.price
+    ),
+  };
 }
 
 export async function submitQuotation(input: SubmitQuotationInput) {
   const profile = await getProfile();
   if (!profile) return { error: "Not authenticated" };
+
+  const validationError = validateQuotationInput(input);
+  if (validationError) return { error: validationError };
 
   const supabase = await createClient();
   const { data: agency } = await supabase
@@ -38,6 +81,23 @@ export async function submitQuotation(input: SubmitQuotationInput) {
 
   if (!invitation) return { error: "You are not invited to quote on this request" };
 
+  const legacy = buildLegacyFields(input);
+  const payload = {
+    price: input.price,
+    scope: input.scope ?? null,
+    deliverables: legacy.deliverables,
+    deliverables_items: input.deliverables_items.filter(Boolean),
+    estimated_duration: input.estimated_duration ?? null,
+    timeline_days: null,
+    payment_terms: legacy.payment_terms,
+    payment_terms_type: input.payment_terms_type,
+    payment_milestones:
+      input.payment_terms_type === "milestones" ? input.payment_milestones ?? [] : [],
+    terms_and_conditions: input.terms_and_conditions.filter(Boolean),
+    status: "submitted" as const,
+    submitted_at: new Date().toISOString(),
+  };
+
   const { data: existing } = await supabase
     .from("quotations")
     .select("id, revision_number")
@@ -51,14 +111,8 @@ export async function submitQuotation(input: SubmitQuotationInput) {
     const { data: updated, error } = await supabase
       .from("quotations")
       .update({
-        price: input.price,
-        scope: input.scope ?? null,
-        deliverables: input.deliverables ?? null,
-        timeline_days: input.timeline_days ?? null,
-        payment_terms: input.payment_terms ?? null,
-        status: "submitted",
+        ...payload,
         revision_number: existing.revision_number + 1,
-        submitted_at: new Date().toISOString(),
       })
       .eq("id", existing.id)
       .select()
@@ -72,13 +126,7 @@ export async function submitQuotation(input: SubmitQuotationInput) {
       .insert({
         request_id: input.request_id,
         agency_id: agency.id,
-        price: input.price,
-        scope: input.scope ?? null,
-        deliverables: input.deliverables ?? null,
-        timeline_days: input.timeline_days ?? null,
-        payment_terms: input.payment_terms ?? null,
-        status: "submitted",
-        submitted_at: new Date().toISOString(),
+        ...payload,
       })
       .select()
       .single();
@@ -87,7 +135,6 @@ export async function submitQuotation(input: SubmitQuotationInput) {
     quotationId = created.id;
   }
 
-  // Update request status to quoted if floating
   await supabase
     .from("project_requests")
     .update({ status: "quoted" })
@@ -98,6 +145,29 @@ export async function submitQuotation(input: SubmitQuotationInput) {
   revalidatePath("/agency/quotations");
   revalidatePath(`/client/quotations/${input.request_id}`);
   return { success: true, quotationId };
+}
+
+export async function getAgencyQuotationForRequest(requestId: string) {
+  const profile = await getProfile();
+  if (!profile) return null;
+
+  const supabase = await createClient();
+  const { data: agency } = await supabase
+    .from("agencies")
+    .select("id")
+    .eq("owner_id", profile.id)
+    .maybeSingle();
+
+  if (!agency) return null;
+
+  const { data } = await supabase
+    .from("quotations")
+    .select("*")
+    .eq("request_id", requestId)
+    .eq("agency_id", agency.id)
+    .maybeSingle();
+
+  return data;
 }
 
 export async function getQuotationsForRequest(requestId: string) {

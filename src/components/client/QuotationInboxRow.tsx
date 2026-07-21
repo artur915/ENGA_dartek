@@ -19,7 +19,8 @@ interface QuotationRow {
   id: string;
   price: number;
   scope: string | null;
-  timeline_days: number | null;
+  estimated_duration: string | null;
+  timeline_days?: number | null;
   agencies: {
     id: string;
     name: string;
@@ -51,6 +52,9 @@ export function QuotationInboxRow({
     locationCity ??
     agency?.service_areas?.[0] ??
     "—";
+  const duration =
+    quotation.estimated_duration ??
+    (quotation.timeline_days ? `${quotation.timeline_days} days` : null);
 
   function handleAccept() {
     if (!confirm(`Accept quotation from ${agency?.name ?? "this provider"}?`)) return;
@@ -98,10 +102,10 @@ export function QuotationInboxRow({
               <Star className="h-3.5 w-3.5 fill-warning text-warning" />
               4.8
             </span>
-            {quotation.timeline_days && (
+            {duration && (
               <span className="inline-flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                {t("durationDays", { days: quotation.timeline_days })}
+                {duration}
               </span>
             )}
             <span className="inline-flex items-center gap-1">

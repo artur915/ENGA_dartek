@@ -7,6 +7,14 @@ import { Badge } from "@/components/ui/Badge";
 import { updateMilestone, addMilestone } from "@/actions/milestones";
 import { recordPayment, updatePaymentStatus, closeProject, archiveProject } from "@/actions/payments";
 import type { MilestoneStatus, PaymentStatus, RequestStatus } from "@/types";
+import {
+  getQuotationDeliverables,
+  getQuotationDuration,
+  getQuotationPaymentMilestones,
+  getQuotationTerms,
+  type QuotationDisplayData,
+} from "@/lib/quotation-display";
+import { formatDate, formatDateTime, formatNumber } from "@/lib/format";
 import { TrafficCone, CreditCard, Archive, CheckCircle } from "lucide-react";
 
 interface Milestone {
@@ -30,19 +38,7 @@ interface AgreementInfo {
   id: string;
   signed_at: string | null;
   agencies?: { name: string } | { name: string }[] | null;
-  quotations?: {
-    price: number;
-    scope: string | null;
-    deliverables: string | null;
-    timeline_days: number | null;
-    payment_terms: string | null;
-  } | {
-    price: number;
-    scope: string | null;
-    deliverables: string | null;
-    timeline_days: number | null;
-    payment_terms: string | null;
-  }[] | null;
+  quotations?: QuotationDisplayData | QuotationDisplayData[] | null;
 }
 
 const STATUS_COLORS: Record<MilestoneStatus, string> = {
@@ -162,37 +158,59 @@ export function ProjectWorkspace({
             <div>
               <p className="text-sm text-muted">Contract Value</p>
               <p className="text-xl font-bold text-primary">
-                SAR {Number(quote?.price ?? 0).toLocaleString()}
+                SAR {formatNumber(Number(quote?.price ?? 0))}
               </p>
             </div>
             {quote?.scope && (
               <div className="sm:col-span-2">
                 <p className="text-sm text-muted">Scope</p>
-                <p className="text-sm">{quote.scope}</p>
+                <p className="text-sm whitespace-pre-wrap">{quote.scope}</p>
               </div>
             )}
-            {quote?.deliverables && (
+            {quote && getQuotationDeliverables(quote).length > 0 && (
               <div className="sm:col-span-2">
                 <p className="text-sm text-muted">Deliverables</p>
-                <p className="text-sm">{quote.deliverables}</p>
+                <ul className="text-sm">
+                  {getQuotationDeliverables(quote).map((item) => (
+                    <li key={item}>• {item}</li>
+                  ))}
+                </ul>
               </div>
             )}
             {quote?.payment_terms && (
               <div>
                 <p className="text-sm text-muted">Payment Terms</p>
-                <p className="text-sm">{quote.payment_terms}</p>
+                {getQuotationPaymentMilestones(quote).length > 0 ? (
+                  <ul className="text-sm">
+                    {getQuotationPaymentMilestones(quote).map((m) => (
+                      <li key={m.id}>{m.name}: {m.percentage}%</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm">{quote.payment_terms}</p>
+                )}
               </div>
             )}
-            {quote?.timeline_days && (
+            {quote && getQuotationDuration(quote) && (
               <div>
-                <p className="text-sm text-muted">Timeline</p>
-                <p className="text-sm">{quote.timeline_days} days</p>
+                <p className="text-sm text-muted">Estimated Duration</p>
+                <p className="text-sm">{getQuotationDuration(quote)}</p>
+              </div>
+            )}
+            {quote && getQuotationTerms(quote).length > 0 && (
+              <div className="sm:col-span-2">
+                <p className="text-sm text-muted">Terms & Conditions</p>
+                <ul className="text-sm">
+                  {getQuotationTerms(quote).map((term) => (
+                    <li key={term}>• {term}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
           {agreement.signed_at && (
             <p className="mt-3 text-xs text-muted">
-              Signed: {new Date(agreement.signed_at).toLocaleString()}
+              Signed: {formatDateTime(agreement.signed_at)}
             </p>
           )}
         </Card>
@@ -275,8 +293,8 @@ export function ProjectWorkspace({
             {payments.map((p) => (
               <div key={p.id} className="flex items-center justify-between rounded-lg border border-border p-3">
                 <div>
-                  <p className="font-medium">SAR {Number(p.amount).toLocaleString()}</p>
-                  <p className="text-xs text-muted">{p.method} · {new Date(p.created_at).toLocaleDateString()}</p>
+                  <p className="font-medium">SAR {formatNumber(Number(p.amount))}</p>
+                  <p className="text-xs text-muted">{p.method} · {formatDate(p.created_at)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={PAYMENT_VARIANT[p.status]}>{p.status}</Badge>
