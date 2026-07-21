@@ -21,16 +21,6 @@ const STATUS_VARIANT: Record<string, "default" | "success" | "warning" | "outlin
   cancelled: "outline",
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: "Draft",
-  floating: "Floating",
-  quoted: "Quoted",
-  accepted: "Accepted",
-  in_progress: "In progress",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
-
 export default async function ClientRequestsPage({
   params,
 }: {
@@ -40,6 +30,8 @@ export default async function ClientRequestsPage({
   setRequestLocale(locale);
   const t = await getTranslations("client");
   const tc = await getTranslations("common");
+  const ts = await getTranslations("status.request");
+  const te = await getTranslations("empty");
   const requests = await getClientRequests();
   const nav = getClientNav(t, tc);
 
@@ -48,7 +40,7 @@ export default async function ClientRequestsPage({
       title={t("title")}
       nav={nav}
       pageTitle={t("myRequests")}
-      pageDescription="View and manage all your project requests in one place."
+      pageDescription={t("requestsPage.description")}
       action={
         <Link href="/client/requests/new">
           <Button>{t("newRequest")}</Button>
@@ -58,8 +50,8 @@ export default async function ClientRequestsPage({
       {requests.length === 0 ? (
         <EmptyState
           icon={ClipboardList}
-          title="No requests yet"
-          description="Create your first project request to receive quotations from licensed engineering offices."
+          title={te("noRequests")}
+          description={te("noRequestsDesc")}
           action={
             <Link href="/client/requests/new">
               <Button>{t("newRequest")}</Button>
@@ -82,7 +74,7 @@ export default async function ClientRequestsPage({
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold text-foreground">{req.title}</h3>
                     <Badge variant={STATUS_VARIANT[req.status] ?? "outline"}>
-                      {STATUS_LABELS[req.status] ?? req.status}
+                      {ts.has(req.status) ? ts(req.status) : req.status}
                     </Badge>
                   </div>
                   <p className="mt-1 text-sm text-muted">

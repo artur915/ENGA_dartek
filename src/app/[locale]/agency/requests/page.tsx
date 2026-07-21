@@ -20,6 +20,11 @@ export default async function AgencyRequestsPage({
   setRequestLocale(locale);
   const t = await getTranslations("agency");
   const tc = await getTranslations("common");
+  const te = await getTranslations("empty");
+  const tq = await getTranslations("quotationsPage");
+  const tsRequest = await getTranslations("status.request");
+  const tsQuotation = await getTranslations("status.quotation");
+  const tsAgency = await getTranslations("status.agency");
 
   const agency = await getMyAgency();
   const incoming = await getAgencyIncomingRequests();
@@ -30,12 +35,12 @@ export default async function AgencyRequestsPage({
       title={t("title")}
       nav={nav}
       pageTitle={t("incomingRequests")}
-      pageDescription="Review matched project requests and submit structured quotations."
+      pageDescription={t("requestsPage.description")}
     >
       {!agency ? (
         <EmptyState
-          title="Register your engineering office"
-          description="Complete registration to receive incoming project requests."
+          title={te("registerOffice")}
+          description={te("registerOfficeDesc")}
           action={
             <Link href="/agency/register">
               <Button>{t("register")}</Button>
@@ -45,28 +50,34 @@ export default async function AgencyRequestsPage({
       ) : agency.status === "suspended" ? (
         <Card>
           <Badge variant="warning" className="mb-3">
-            Suspended
+            {tsAgency("suspended")}
           </Badge>
           <p className="text-muted">{t("accountSuspended")}</p>
         </Card>
       ) : agency.status === "rejected" ? (
         <Card>
           <Badge variant="danger" className="mb-3">
-            Rejected
+            {tsAgency("rejected")}
           </Badge>
           <p className="text-muted">{t("accountRejected")}</p>
         </Card>
       ) : incoming.length === 0 ? (
         <EmptyState
           icon={Inbox}
-          title="No incoming requests"
-          description="Matched project requests will appear here when clients float projects to your office."
+          title={te("noIncoming")}
+          description={te("noIncomingDesc")}
         />
       ) : (
         <div className="space-y-4">
           {incoming.map((item) => {
             const req = item.request;
             if (!req) return null;
+            const statusKey = item.hasQuote ? "quoted" : req.status;
+            const statusLabel = item.hasQuote
+              ? tsQuotation("quoted")
+              : tsRequest.has(statusKey)
+                ? tsRequest(statusKey)
+                : statusKey;
             return (
               <Card key={item.invitation.id} hover>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -74,7 +85,7 @@ export default async function AgencyRequestsPage({
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-semibold text-foreground">{req.title}</h3>
                       <Badge variant={item.hasQuote ? "success" : "warning"}>
-                        {item.hasQuote ? "Quoted" : req.status}
+                        {statusLabel}
                       </Badge>
                     </div>
                     <p className="mt-1 text-sm text-muted">
@@ -86,7 +97,9 @@ export default async function AgencyRequestsPage({
                     )}
                   </div>
                   <Link href={`/agency/requests/${req.id}`}>
-                    <Button size="sm">{item.hasQuote ? "View / revise" : t("submitQuote")}</Button>
+                    <Button size="sm">
+                      {item.hasQuote ? tq("viewRevise") : t("submitQuote")}
+                    </Button>
                   </Link>
                 </div>
               </Card>

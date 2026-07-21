@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -36,11 +37,12 @@ export function QuotationCompare({
   quotations: Quotation[];
   requestStatus: string;
 }) {
+  const t = useTranslations("quotationsPage");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   function handleAccept(quotationId: string) {
-    if (!confirm("Accept this quotation and generate agreement?")) return;
+    if (!confirm(t("acceptConfirm"))) return;
     startTransition(async () => {
       const result = await acceptQuotation(quotationId);
       if (result.success) {
@@ -55,11 +57,7 @@ export function QuotationCompare({
   if (quotations.length === 0) {
     return (
       <Card className="mt-8 text-center">
-        <p className="text-muted">
-          {requestStatus === "floating"
-            ? "Your request is floating. Agencies are reviewing it — check back soon."
-            : "No quotations received yet."}
-        </p>
+        <p className="text-muted">{requestStatus === "floating" ? t("floating") : t("none")}</p>
       </Card>
     );
   }
@@ -83,16 +81,16 @@ export function QuotationCompare({
                   <h3 className="font-semibold">{q.agencies?.name}</h3>
                   <div className="mt-1 flex flex-wrap gap-1">
                     {q.agencies?.disciplines?.slice(0, 2).map((d) => (
-                      <Badge key={d} variant="outline">{d}</Badge>
+                      <Badge key={d} variant="outline">
+                        {d}
+                      </Badge>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            <p className="text-3xl font-bold text-primary">
-              SAR {formatNumber(Number(q.price))}
-            </p>
+            <p className="text-3xl font-bold text-primary">SAR {formatNumber(Number(q.price))}</p>
 
             {duration && (
               <div className="mt-3 flex items-center gap-1.5 text-sm text-muted">
@@ -103,14 +101,14 @@ export function QuotationCompare({
 
             {q.scope && (
               <div className="mt-4">
-                <p className="text-xs font-semibold uppercase text-muted">Scope</p>
-                <p className="mt-1 text-sm whitespace-pre-wrap">{q.scope}</p>
+                <p className="text-xs font-semibold uppercase text-muted">{t("scope")}</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm">{q.scope}</p>
               </div>
             )}
 
             {deliverables.length > 0 && (
               <div className="mt-3">
-                <p className="text-xs font-semibold uppercase text-muted">Deliverables</p>
+                <p className="text-xs font-semibold uppercase text-muted">{t("deliverables")}</p>
                 <ul className="mt-1 space-y-1 text-sm">
                   {deliverables.map((item) => (
                     <li key={item}>• {item}</li>
@@ -121,7 +119,7 @@ export function QuotationCompare({
 
             {(q.payment_terms || paymentMilestones.length > 0) && (
               <div className="mt-3">
-                <p className="text-xs font-semibold uppercase text-muted">Payment Terms</p>
+                <p className="text-xs font-semibold uppercase text-muted">{t("paymentTerms")}</p>
                 {paymentMilestones.length > 0 ? (
                   <ul className="mt-1 space-y-1 text-sm">
                     {paymentMilestones.map((m) => (
@@ -138,7 +136,7 @@ export function QuotationCompare({
 
             {terms.length > 0 && (
               <div className="mt-3">
-                <p className="text-xs font-semibold uppercase text-muted">Terms & Conditions</p>
+                <p className="text-xs font-semibold uppercase text-muted">{t("terms")}</p>
                 <ul className="mt-1 space-y-1 text-sm">
                   {terms.slice(0, 3).map((term) => (
                     <li key={term}>• {term}</li>
@@ -152,10 +150,10 @@ export function QuotationCompare({
                 type="button"
                 onClick={() => handleAccept(q.id)}
                 disabled={isPending}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
               >
                 <CheckCircle className="h-4 w-4" />
-                {isPending ? "Processing..." : "Accept Quotation"}
+                {isPending ? t("processing") : t("accept")}
               </button>
             )}
           </Card>

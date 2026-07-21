@@ -18,6 +18,7 @@ import {
   getPaymentLabel,
   getProjectStatusBadge,
   needsClientReview,
+  PROJECT_KICKOFF,
 } from "@/lib/client-dashboard";
 import { formatNumber } from "@/lib/format";
 
@@ -72,6 +73,7 @@ export async function ActiveProjectsSection({
   projects: AgreementRow[];
 }) {
   const t = await getTranslations("client.dashboard");
+  const ts = await getTranslations("status");
 
   return (
     <section className="mt-10">
@@ -122,21 +124,11 @@ export async function ActiveProjectsSection({
             const progress = computeProgress(milestones);
             const statusBadge = getProjectStatusBadge(milestones, payments, contractValue);
             const payment = getPaymentLabel(payments, contractValue);
-            const statusLabel =
-              statusBadge.label === "On track"
-                ? t("statusOnTrack")
-                : statusBadge.label === "Awaiting payment"
-                  ? t("statusAwaitingPayment")
-                  : t("statusAwaitingDecision");
-            const paymentLabel =
-              payment.label === "Payment pending"
-                ? t("paymentPending")
-                : payment.label === "Paid in full"
-                  ? t("paidInFull")
-                  : payment.label === "Paid to date"
-                    ? t("paidToDate")
-                    : t("awaitingPayment");
-            const currentPhase = getCurrentPhase(milestones);
+            const statusLabel = t(statusBadge.key);
+            const paymentLabel = t(payment.key);
+            const currentPhaseRaw = getCurrentPhase(milestones);
+            const currentPhase =
+              currentPhaseRaw === PROJECT_KICKOFF ? ts("projectKickoff") : currentPhaseRaw;
             const nextItem = getNextItem(milestones);
             const showAlert = needsClientReview(milestones);
 

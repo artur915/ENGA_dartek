@@ -48,7 +48,7 @@ interface PortalSidebarProps {
   items: NavItem[];
 }
 
-function isNavActive(pathname: string, href: string): boolean {
+function isNavActive(pathname: string, href: string, allHrefs: string[]): boolean {
   if (pathname === href) return true;
 
   const dashboardRoots = ["/client", "/agency", "/engineer", "/admin"];
@@ -56,7 +56,20 @@ function isNavActive(pathname: string, href: string): boolean {
     return pathname === href;
   }
 
-  return pathname.startsWith(`${href}/`);
+  if (!pathname.startsWith(`${href}/`)) {
+    return false;
+  }
+
+  // Prefer the most specific nav item (e.g. /client/requests/new over /client/requests).
+  const hasMoreSpecificMatch = allHrefs.some(
+    (other) =>
+      other !== href &&
+      other.length > href.length &&
+      other.startsWith(`${href}/`) &&
+      (pathname === other || pathname.startsWith(`${other}/`))
+  );
+
+  return !hasMoreSpecificMatch;
 }
 
 function NavLinks({
@@ -68,10 +81,12 @@ function NavLinks({
   pathname: string;
   onNavigate?: () => void;
 }) {
+  const allHrefs = items.map((item) => item.href);
+
   return (
     <>
       {items.map((item) => {
-        const isActive = isNavActive(pathname, item.href);
+        const isActive = isNavActive(pathname, item.href, allHrefs);
         const Icon = iconMap[item.icon] ?? LayoutDashboard;
         return (
           <Link
@@ -115,7 +130,7 @@ export function PortalSidebar({ title, items }: PortalSidebarProps) {
           type="button"
           onClick={() => setMobileOpen(true)}
           className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground"
-          aria-label="Open navigation"
+          aria-label={tc("openNav")}
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -128,7 +143,7 @@ export function PortalSidebar({ title, items }: PortalSidebarProps) {
             type="button"
             className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
-            aria-label="Close navigation"
+            aria-label={tc("closeNav")}
           />
           <aside className="absolute inset-y-0 start-0 flex w-72 max-w-[85vw] flex-col bg-surface shadow-elevated">
             <div className="flex items-center justify-between border-b border-border-subtle px-5 py-4">

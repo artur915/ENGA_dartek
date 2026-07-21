@@ -23,6 +23,7 @@ export default async function AgencyDashboard({
   setRequestLocale(locale);
   const t = await getTranslations("agency");
   const tc = await getTranslations("common");
+  const ts = await getTranslations("status.agency");
   const [stats, agency, activeProjects] = await Promise.all([
     getAgencyDashboardStats(),
     getMyAgency(),
@@ -38,7 +39,7 @@ export default async function AgencyDashboard({
         badge={
           agency ? (
             <Badge variant={agency.status === "approved" ? "success" : agency.status === "pending" ? "warning" : "outline"}>
-              {agency.status}
+              {ts.has(agency.status) ? ts(agency.status) : agency.status}
             </Badge>
           ) : undefined
         }
@@ -64,18 +65,18 @@ export default async function AgencyDashboard({
             title={t("register")}
             description={
               agency
-                ? `${agency.name} — ${agency.status}`
-                : "Complete registration with your license details to activate your account."
+                ? `${agency.name} — ${ts.has(agency.status) ? ts(agency.status) : agency.status}`
+                : t("dashboard.registerPrompt")
             }
           />
           <Link href="/agency/register" className="link-primary text-sm">
-            {agency ? "Update Registration" : t("register")} →
+            {agency ? t("dashboard.updateRegistration") : t("register")} →
           </Link>
         </Card>
         <Card>
           <CardHeader
             title={t("incomingRequests")}
-            description="Review matched project requests, client requirements, and submit quotations."
+            description={t("dashboard.incomingDesc")}
           />
           <Link href="/agency/requests" className="link-primary text-sm">
             {t("incomingRequests")} →

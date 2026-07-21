@@ -1,3 +1,8 @@
+export const PROJECT_KICKOFF = "__kickoff__";
+
+export type PaymentStatusKey = "paymentPending" | "paidInFull" | "paidToDate" | "awaitingPayment";
+export type ProjectStatusKey = "statusOnTrack" | "statusAwaitingPayment" | "statusAwaitingDecision";
+
 type Milestone = {
   title: string;
   status: string;
@@ -32,11 +37,11 @@ export function computeProgress(milestones: Milestone[]): number {
 }
 
 export function getCurrentPhase(milestones: Milestone[]): string {
-  if (!milestones.length) return "Project kickoff";
+  if (!milestones.length) return PROJECT_KICKOFF;
   const sorted = [...milestones].sort((a, b) => a.sort_order - b.sort_order);
   const active = sorted.find((m) => m.status !== "green");
   if (active) return active.title;
-  return sorted[sorted.length - 1]?.title ?? "Project kickoff";
+  return sorted[sorted.length - 1]?.title ?? PROJECT_KICKOFF;
 }
 
 export function getNextItem(milestones: Milestone[]): { title: string; dueDate: string | null } | null {
@@ -49,37 +54,37 @@ export function getNextItem(milestones: Milestone[]): { title: string; dueDate: 
 export function getPaymentLabel(
   payments: Payment[],
   contractValue: number
-): { label: string; variant: "success" | "warning" | "default" } {
+): { key: PaymentStatusKey; variant: "success" | "warning" | "default" } {
   const pending = payments.some((p) => p.status === "pending");
-  if (pending) return { label: "Payment pending", variant: "warning" };
+  if (pending) return { key: "paymentPending", variant: "warning" };
 
   const confirmed = payments
     .filter((p) => p.status === "confirmed")
     .reduce((sum, p) => sum + Number(p.amount), 0);
 
   if (confirmed >= contractValue && contractValue > 0) {
-    return { label: "Paid in full", variant: "success" };
+    return { key: "paidInFull", variant: "success" };
   }
-  if (confirmed > 0) return { label: "Paid to date", variant: "success" };
-  return { label: "Awaiting payment", variant: "warning" };
+  if (confirmed > 0) return { key: "paidToDate", variant: "success" };
+  return { key: "awaitingPayment", variant: "warning" };
 }
 
 export function getProjectStatusBadge(
   milestones: Milestone[],
   payments: Payment[],
   contractValue: number
-): { label: string; variant: "success" | "warning" | "accent" } {
+): { key: ProjectStatusKey; variant: "success" | "warning" | "accent" } {
   const payment = getPaymentLabel(payments, contractValue);
-  if (payment.label === "Awaiting payment" || payment.label === "Payment pending") {
-    return { label: "Awaiting payment", variant: "warning" };
+  if (payment.key === "awaitingPayment" || payment.key === "paymentPending") {
+    return { key: "statusAwaitingPayment", variant: "warning" };
   }
 
   const next = getNextItem(milestones);
   if (next) {
-    return { label: "Awaiting your decision", variant: "accent" };
+    return { key: "statusAwaitingDecision", variant: "accent" };
   }
 
-  return { label: "On track", variant: "success" };
+  return { key: "statusOnTrack", variant: "success" };
 }
 
 export function needsClientReview(milestones: Milestone[]): boolean {

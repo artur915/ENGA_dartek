@@ -23,7 +23,10 @@
     "continue": "Continue",
     "backToSite": "Back to site",
     "platform": "ENGA Platform",
-    "approved": "Approved"
+    "approved": "Approved",
+    "openNav": "Open navigation",
+    "closeNav": "Close navigation",
+    "toggleMenu": "Toggle menu"
   },
   "landing": {
     "heroEyebrow": "The Kingdom's trusted marketplace",
@@ -142,7 +145,135 @@
     },
     "createAccount": "Create Account",
     "alreadyHaveAccount": "Already have an account?",
-    "noAccount": "Don't have an account?"
+    "noAccount": "Don't have an account?",
+    "signingIn": "Signing in…",
+    "emailPlaceholder": "you@example.com",
+    "shellTitle": "Request, quote, deliver, and pay — in one trusted platform.",
+    "shellSubtitle": "Built for Saudi Arabia's engineering services ecosystem with verified offices and structured workflows.",
+    "shellEyebrow": "Engineering marketplace",
+    "accountCreated": "Account created",
+    "accountCreatedMessage": "Account created! Check your email and click the confirmation link, then sign in."
+  },
+  "status": {
+    "request": {
+      "draft": "Draft",
+      "floating": "Floating",
+      "quoted": "Quoted",
+      "accepted": "Accepted",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "archived": "Archived"
+    },
+    "agency": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "suspended": "Suspended"
+    },
+    "payment": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "confirmed": "Confirmed",
+      "failed": "Failed"
+    },
+    "quotation": {
+      "quoted": "Quoted",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "declined": "Declined"
+    },
+    "traffic": {
+      "green": "On track",
+      "amber": "Attention needed",
+      "red": "Blocked"
+    },
+    "projectKickoff": "Project kickoff"
+  },
+  "empty": {
+    "noRequests": "No requests yet",
+    "noRequestsDesc": "Create your first project request to receive quotations from licensed engineering offices.",
+    "registerOffice": "Register your engineering office",
+    "registerOfficeDesc": "Complete registration to receive incoming project requests.",
+    "noIncoming": "No incoming requests",
+    "noIncomingDesc": "Matched project requests will appear here when clients float projects to your office.",
+    "none": "None",
+    "noFinanceRecords": "No finance records yet."
+  },
+  "servicesPage": {
+    "searchPlaceholder": "Search services…",
+    "allCategories": "All categories",
+    "found": "{count} services found"
+  },
+  "projectWorkspace": {
+    "agreementTitle": "Agreement / Purchase Order",
+    "agency": "Agency",
+    "contractValue": "Contract value",
+    "scope": "Scope",
+    "deliverables": "Deliverables",
+    "paymentTerms": "Payment terms",
+    "estimatedDuration": "Estimated duration",
+    "terms": "Terms & conditions",
+    "signed": "Signed: {date}",
+    "milestonesTitle": "Milestones — traffic-light execution",
+    "statusLabel": "Status: {status}",
+    "addMilestonePlaceholder": "Add milestone…",
+    "add": "Add",
+    "paymentsTitle": "Manual payment tracking",
+    "noPayments": "No payments recorded yet.",
+    "confirm": "Confirm",
+    "amountPlaceholder": "Amount (SAR)",
+    "bankTransfer": "Bank transfer",
+    "cash": "Cash",
+    "cheque": "Cheque",
+    "recordPayment": "Record payment",
+    "closeTitle": "Close & archive",
+    "closeHint": "Complete when all milestones are green and payment is confirmed.",
+    "milestonesProgress": "Milestones: {status}",
+    "milestonesAllGreen": "✓ All green",
+    "milestonesInProgress": "In progress",
+    "paymentProgress": "Payment: {status}",
+    "paymentConfirmed": "✓ Confirmed",
+    "paymentPending": "Pending",
+    "markCompleted": "Mark completed",
+    "archiveProject": "Archive project",
+    "statusUpdated": "Status updated"
+  },
+  "quotationsPage": {
+    "acceptConfirm": "Accept this quotation and generate agreement?",
+    "floating": "Your request is floating. Agencies are reviewing it — check back soon.",
+    "none": "No quotations received yet.",
+    "scope": "Scope",
+    "deliverables": "Deliverables",
+    "paymentTerms": "Payment terms",
+    "terms": "Terms & conditions",
+    "accept": "Accept quotation",
+    "processing": "Processing…",
+    "engineeringOffice": "Engineering office",
+    "viewRevise": "View / revise"
+  },
+  "financePage": {
+    "projectIncome": "Project income",
+    "externalIncome": "External income",
+    "expenses": "Expenses",
+    "balance": "Balance",
+    "addRecord": "Add record",
+    "amountPlaceholder": "Amount (SAR)",
+    "descriptionPlaceholder": "Description",
+    "add": "Add",
+    "records": "Records",
+    "noRecords": "No finance records yet.",
+    "recordTypes": {
+      "external_income": "External income",
+      "expense": "Expense",
+      "invoice": "Invoice"
+    }
+  },
+  "adminPage": {
+    "manageAgencies": "Manage all engineering offices on the platform",
+    "pendingApproval": "Pending approval",
+    "approved": "Approved",
+    "suspendedRejected": "Suspended / rejected"
   },
   "client": {
     "title": "Client Portal",
@@ -150,6 +281,9 @@
     "myRequests": "My Requests",
     "compareQuotes": "Compare Quotations",
     "activeProjects": "Active Projects",
+    "requestsPage": {
+      "description": "View and manage all your project requests in one place."
+    },
     "dashboard": {
       "subtitle": "Compare quotations, review scope, and select the right delivery partner.",
       "deliveryManagement": "Delivery Management",
@@ -292,6 +426,9 @@
     "financeLite": "Finance Lite",
     "accountSuspended": "Your office account has been suspended. Contact platform support.",
     "accountRejected": "Your office registration was rejected. Contact platform support.",
+    "requestsPage": {
+      "description": "Review matched project requests and submit structured quotations."
+    },
     "dashboard": {
       "subtitle": "Track delivery progress, win new work, and manage your active contracts.",
       "pendingQuotes": "Pending Quotes",
@@ -318,7 +455,10 @@
       "paymentPending": "Payment pending",
       "paidInFull": "Paid in full",
       "paidToDate": "Paid to date",
-      "awaitingPayment": "Awaiting payment"
+      "awaitingPayment": "Awaiting payment",
+      "registerPrompt": "Complete registration with your license details to activate your account.",
+      "updateRegistration": "Update registration",
+      "incomingDesc": "Review matched project requests, client requirements, and submit quotations."
     },
     "quotationForm": {
       "scopeTitle": "Scope of Work",

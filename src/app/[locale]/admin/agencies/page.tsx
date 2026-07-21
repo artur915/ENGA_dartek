@@ -1,6 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
-import { PortalSidebar } from "@/components/layout/PortalSidebar";
+import { PortalPageLayout } from "@/components/layout/PortalPageLayout";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { AdminAgencyActions } from "@/components/admin/AdminAgencyActions";
@@ -15,6 +15,9 @@ export default async function AdminAgenciesPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const tc = await getTranslations("common");
+  const ta = await getTranslations("adminPage");
+  const ts = await getTranslations("status.agency");
+  const te = await getTranslations("empty");
 
   const supabase = await createClient();
   const { data: agencies } = await supabase
@@ -28,45 +31,59 @@ export default async function AdminAgenciesPage({
     other: (agencies ?? []).filter((a) => !["pending", "approved"].includes(a.status)),
   };
 
-  return (
-    <div className="flex min-h-screen">
-      <PortalSidebar title={tc("admin")} items={getAdminNav(tc)} />
-      <div className="flex-1 bg-surface-muted p-8">
-        <h1 className="text-2xl font-bold">{tc("agencies")}</h1>
-        <p className="mt-1 text-muted">Manage all engineering offices on the platform</p>
+  const sections = [
+    { title: ta("pendingApproval"), items: grouped.pending, showActions: true },
+    { title: ta("approved"), items: grouped.approved, showActions: false },
+    { title: ta("suspendedRejected"), items: grouped.other, showActions: false },
+  ];
 
-        {[
-          { title: "Pending Approval", items: grouped.pending, showActions: true },
-          { title: "Approved", items: grouped.approved, showActions: false },
-          { title: "Suspended / Rejected", items: grouped.other, showActions: false },
-        ].map((section) => (
-          <Card key={section.title} className="mt-8">
-            <h2 className="text-lg font-semibold">{section.title} ({section.items.length})</h2>
-            {section.items.length === 0 ? (
-              <p className="mt-4 text-sm text-muted">None</p>
-            ) : (
-              <div className="mt-4 divide-y divide-border">
-                {section.items.map((agency) => (
-                  <div key={agency.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">{agency.name}</h3>
-                        <Badge variant={agency.status === "approved" ? "success" : agency.status === "pending" ? "warning" : "outline"}>
-                          {agency.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted">
-                        CR: {agency.commercial_registration} · {agency.service_areas?.join(", ")}
-                      </p>
+  return (
+    <PortalPageLayout
+      title={tc("admin")}
+      nav={getAdminNav(tc)}
+      pageTitle={tc("agencies")}
+      pageDescription={ta("manageAgencies")}
+    >
+      {sections.map((section) => (
+        <Card key={section.title} className="mt-6 first:mt-0">
+          <h2 className="text-lg font-semibold">
+            {section.title} ({section.items.length})
+          </h2>
+          {section.items.length === 0 ? (
+            <p className="mt-4 text-sm text-muted">{te("none")}</p>
+          ) : (
+            <div className="mt-4 divide-y divide-border">
+              {section.items.map((agency) => (
+                <div
+                  key={agency.id}
+                  className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold">{agency.name}</h3>
+                      <Badge
+                        variant={
+                          agency.status === "approved"
+                            ? "success"
+                            : agency.status === "pending"
+                              ? "warning"
+                              : "outline"
+                        }
+                      >
+                        {ts.has(agency.status) ? ts(agency.status) : agency.status}
+                      </Badge>
                     </div>
-                    {section.showActions && <AdminAgencyActions agencyId={agency.id} />}
+                    <p className="text-xs text-muted">
+                      CR: {agency.commercial_registration} · {agency.service_areas?.join(", ")}
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
-    </div>
+                  {section.showActions && <AdminAgencyActions agencyId={agency.id} />}
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      ))}
+    </PortalPageLayout>
   );
 }

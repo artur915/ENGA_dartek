@@ -23,7 +23,10 @@
     "continue": "متابعة",
     "backToSite": "العودة للموقع",
     "platform": "منصة إنجا",
-    "approved": "معتمد"
+    "approved": "معتمد",
+    "openNav": "فتح القائمة",
+    "closeNav": "إغلاق القائمة",
+    "toggleMenu": "تبديل القائمة"
   },
   "landing": {
     "heroEyebrow": "سوق المملكة الموثوق",
@@ -142,7 +145,135 @@
     },
     "createAccount": "إنشاء حساب",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
-    "noAccount": "ليس لديك حساب؟"
+    "noAccount": "ليس لديك حساب؟",
+    "signingIn": "جارٍ تسجيل الدخول…",
+    "emailPlaceholder": "you@example.com",
+    "shellTitle": "اطلب، قارن، نفّذ، وادفع — في منصة موثوقة واحدة.",
+    "shellSubtitle": "مصممة لمنظومة الخدمات الهندسية في المملكة مع مكاتب معتمدة وسير عمل منظم.",
+    "shellEyebrow": "سوق الخدمات الهندسية",
+    "accountCreated": "تم إنشاء الحساب",
+    "accountCreatedMessage": "تم إنشاء الحساب! تحقق من بريدك واضغط رابط التأكيد، ثم سجّل الدخول."
+  },
+  "status": {
+    "request": {
+      "draft": "مسودة",
+      "floating": "معروض",
+      "quoted": "تم التسعير",
+      "accepted": "مقبول",
+      "in_progress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "archived": "مؤرشف"
+    },
+    "agency": {
+      "pending": "قيد المراجعة",
+      "approved": "معتمد",
+      "rejected": "مرفوض",
+      "suspended": "موقوف"
+    },
+    "payment": {
+      "pending": "معلق",
+      "processing": "قيد المعالجة",
+      "confirmed": "مؤكد",
+      "failed": "فشل"
+    },
+    "quotation": {
+      "quoted": "تم التسعير",
+      "submitted": "مقدّم",
+      "accepted": "مقبول",
+      "declined": "مرفوض"
+    },
+    "traffic": {
+      "green": "سير طبيعي",
+      "amber": "يتطلب انتباه",
+      "red": "متوقف"
+    },
+    "projectKickoff": "بدء المشروع"
+  },
+  "empty": {
+    "noRequests": "لا توجد طلبات بعد",
+    "noRequestsDesc": "أنشئ أول طلب مشروع لتلقي عروض أسعار من مكاتب هندسية مرخصة.",
+    "registerOffice": "سجّل مكتبك الهندسي",
+    "registerOfficeDesc": "أكمل التسجيل لاستقبال الطلبات الواردة.",
+    "noIncoming": "لا توجد طلبات واردة",
+    "noIncomingDesc": "ستظهر الطلبات المتطابقة هنا عند طرح العملاء لمشاريعهم.",
+    "none": "لا يوجد",
+    "noFinanceRecords": "لا توجد سجلات مالية بعد."
+  },
+  "servicesPage": {
+    "searchPlaceholder": "ابحث في الخدمات…",
+    "allCategories": "جميع الفئات",
+    "found": "{count} خدمة"
+  },
+  "projectWorkspace": {
+    "agreementTitle": "الاتفاقية / أمر الشراء",
+    "agency": "المكتب",
+    "contractValue": "قيمة العقد",
+    "scope": "نطاق العمل",
+    "deliverables": "المخرجات",
+    "paymentTerms": "شروط الدفع",
+    "estimatedDuration": "المدة التقديرية",
+    "terms": "الشروط والأحكام",
+    "signed": "تم التوقيع: {date}",
+    "milestonesTitle": "المراحل — تنفيذ بإشارة مرور",
+    "statusLabel": "الحالة: {status}",
+    "addMilestonePlaceholder": "إضافة مرحلة…",
+    "add": "إضافة",
+    "paymentsTitle": "تتبع المدفوعات اليدوي",
+    "noPayments": "لم تُسجّل مدفوعات بعد.",
+    "confirm": "تأكيد",
+    "amountPlaceholder": "المبلغ (ريال)",
+    "bankTransfer": "تحويل بنكي",
+    "cash": "نقداً",
+    "cheque": "شيك",
+    "recordPayment": "تسجيل دفعة",
+    "closeTitle": "الإغلاق والأرشفة",
+    "closeHint": "أكمل عندما تكون جميع المراحل خضراء وتم تأكيد الدفع.",
+    "milestonesProgress": "المراحل: {status}",
+    "milestonesAllGreen": "✓ جميعها خضراء",
+    "milestonesInProgress": "قيد التنفيذ",
+    "paymentProgress": "الدفع: {status}",
+    "paymentConfirmed": "✓ مؤكد",
+    "paymentPending": "معلق",
+    "markCompleted": "تحديد كمكتمل",
+    "archiveProject": "أرشفة المشروع",
+    "statusUpdated": "تم تحديث الحالة"
+  },
+  "quotationsPage": {
+    "acceptConfirm": "قبول هذا العرض وإنشاء الاتفاقية؟",
+    "floating": "طلبك معروض. المكاتب تراجعه — عد لاحقاً.",
+    "none": "لم تُستلم عروض بعد.",
+    "scope": "نطاق العمل",
+    "deliverables": "المخرجات",
+    "paymentTerms": "شروط الدفع",
+    "terms": "الشروط والأحكام",
+    "accept": "قبول العرض",
+    "processing": "جارٍ المعالجة…",
+    "engineeringOffice": "مكتب هندسي",
+    "viewRevise": "عرض / تعديل"
+  },
+  "financePage": {
+    "projectIncome": "دخل المشاريع",
+    "externalIncome": "دخل خارجي",
+    "expenses": "مصروفات",
+    "balance": "الرصيد",
+    "addRecord": "إضافة سجل",
+    "amountPlaceholder": "المبلغ (ريال)",
+    "descriptionPlaceholder": "الوصف",
+    "add": "إضافة",
+    "records": "السجلات",
+    "noRecords": "لا توجد سجلات مالية بعد.",
+    "recordTypes": {
+      "external_income": "دخل خارجي",
+      "expense": "مصروف",
+      "invoice": "فاتورة"
+    }
+  },
+  "adminPage": {
+    "manageAgencies": "إدارة جميع المكاتب الهندسية على المنصة",
+    "pendingApproval": "بانتظار الموافقة",
+    "approved": "معتمد",
+    "suspendedRejected": "موقوف / مرفوض"
   },
   "client": {
     "title": "بوابة العميل",
@@ -150,6 +281,9 @@
     "myRequests": "طلباتي",
     "compareQuotes": "مقارنة العروض",
     "activeProjects": "المشاريع النشطة",
+    "requestsPage": {
+      "description": "اعرض وأدر جميع طلبات مشروعك في مكان واحد."
+    },
     "dashboard": {
       "subtitle": "قارن عروض الأسعار، راجع النطاق، واختر شريك التنفيذ المناسب.",
       "deliveryManagement": "إدارة التسليم",
@@ -292,6 +426,9 @@
     "financeLite": "المالية المبسطة",
     "accountSuspended": "تم تعليق حساب مكتبك. تواصل مع دعم المنصة.",
     "accountRejected": "تم رفض تسجيل مكتبك. تواصل مع دعم المنصة.",
+    "requestsPage": {
+      "description": "راجع الطلبات المتطابقة وقدّم عروض أسعار منظمة."
+    },
     "dashboard": {
       "subtitle": "تابع تقدم التسليم، واكسب أعمالاً جديدة، وأدر عقودك النشطة.",
       "pendingQuotes": "عروض معلقة",
@@ -318,7 +455,10 @@
       "paymentPending": "دفع معلق",
       "paidInFull": "مدفوع بالكامل",
       "paidToDate": "مدفوع حتى الآن",
-      "awaitingPayment": "بانتظار الدفع"
+      "awaitingPayment": "بانتظار الدفع",
+      "registerPrompt": "أكمل التسجيل ببيانات الترخيص لتفعيل حسابك.",
+      "updateRegistration": "تحديث التسجيل",
+      "incomingDesc": "راجع الطلبات المتطابقة ومتطلبات العملاء وقدّم العروض."
     },
     "quotationForm": {
       "scopeTitle": "نطاق العمل",

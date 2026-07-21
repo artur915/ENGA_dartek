@@ -14,6 +14,7 @@ import { Alert } from "@/components/ui/Alert";
 export default function SignInPage() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
+  const tf = useTranslations("landing.footer");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +44,10 @@ export default function SignInPage() {
       title={tc("signIn")}
       subtitle={tc("tagline")}
       icon={Building2}
+      shellEyebrow={t("shellEyebrow")}
+      shellTitle={t("shellTitle")}
+      shellSubtitle={t("shellSubtitle")}
+      shellRegion={tf("region")}
       footer={
         <p className="text-center text-sm text-muted">
           {t("noAccount")}{" "}
@@ -59,7 +64,7 @@ export default function SignInPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
+            placeholder={t("emailPlaceholder")}
             autoComplete="email"
           />
         </FormField>
@@ -74,7 +79,7 @@ export default function SignInPage() {
         </FormField>
         {error && <Alert variant="error">{error}</Alert>}
         <Button type="submit" fullWidth disabled={loading} size="lg">
-          {loading ? "Signing in…" : tc("signIn")}
+          {loading ? t("signingIn") : tc("signIn")}
         </Button>
       </form>
     </AuthShell>

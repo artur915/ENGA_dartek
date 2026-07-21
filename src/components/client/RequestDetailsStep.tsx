@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   MapPin,
   Sparkles,
@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Input, Textarea, Label } from "@/components/ui/Input";
 import { SAUDI_REGIONS } from "@/data/regions";
+import { getRegionLabel } from "@/lib/regions-i18n";
 import type { DistributionType, DocumentCategory, RequestUrgency } from "@/actions/requests";
 
 type AgencyOption = { id: string; name: string; service_areas: string[] | null };
@@ -156,6 +157,7 @@ export function RequestDetailsStep({
   onGenerateDescription: () => Promise<void>;
 }) {
   const t = useTranslations("client.requestForm");
+  const locale = useLocale();
   const [agencySearch, setAgencySearch] = useState("");
   const [isGenerating, startGenerate] = useTransition();
 
@@ -372,7 +374,7 @@ export function RequestDetailsStep({
               <option value="">{t("selectRegionPlaceholder")}</option>
               {SAUDI_REGIONS.map((region) => (
                 <option key={region} value={region}>
-                  {region}
+                  {getRegionLabel(region, locale)}
                 </option>
               ))}
             </select>

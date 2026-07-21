@@ -12,6 +12,7 @@ import {
   getPaymentLabel,
   getProjectStatusBadge,
   needsClientReview,
+  PROJECT_KICKOFF,
 } from "@/lib/client-dashboard";
 import { formatNumber } from "@/lib/format";
 
@@ -66,6 +67,7 @@ export async function AgencyActiveProjectsSection({
   projects: AgreementRow[];
 }) {
   const t = await getTranslations("agency.dashboard");
+  const ts = await getTranslations("status");
 
   return (
     <section className="mt-10">
@@ -101,25 +103,14 @@ export async function AgencyActiveProjectsSection({
             const progress = computeProgress(milestones);
             const statusBadge = getProjectStatusBadge(milestones, payments, contractValue);
             const payment = getPaymentLabel(payments, contractValue);
-            const currentPhase = getCurrentPhase(milestones);
+            const statusLabel = t(statusBadge.key);
+            const paymentLabel = t(payment.key);
+            const currentPhaseRaw = getCurrentPhase(milestones);
+            const currentPhase =
+              currentPhaseRaw === PROJECT_KICKOFF ? ts("projectKickoff") : currentPhaseRaw;
             const nextItem = getNextItem(milestones);
             const showAlert = needsClientReview(milestones);
             const clientName = client?.full_name || client?.email || t("clientLabel");
-
-            const statusLabel =
-              statusBadge.label === "On track"
-                ? t("statusOnTrack")
-                : statusBadge.label === "Awaiting payment"
-                  ? t("statusAwaitingPayment")
-                  : t("statusAwaitingDecision");
-            const paymentLabel =
-              payment.label === "Payment pending"
-                ? t("paymentPending")
-                : payment.label === "Paid in full"
-                  ? t("paidInFull")
-                  : payment.label === "Paid to date"
-                    ? t("paidToDate")
-                    : t("awaitingPayment");
 
             return (
               <Card key={agreement.id} padding="none" className="overflow-hidden">

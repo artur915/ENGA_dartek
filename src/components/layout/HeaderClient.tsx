@@ -130,7 +130,7 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
           type="button"
           className="flex h-10 w-10 items-center justify-center rounded-xl border border-border md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
+          aria-label={t("toggleMenu")}
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>

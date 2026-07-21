@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -73,6 +74,8 @@ export function ProjectWorkspace({
   mode: "client" | "agency";
   quotedPrice?: number;
 }) {
+  const t = useTranslations("projectWorkspace");
+  const ts = useTranslations("status");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [newMilestone, setNewMilestone] = useState("");
@@ -148,28 +151,28 @@ export function ProjectWorkspace({
         <Card>
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <CheckCircle className="h-5 w-5 text-success" />
-            Agreement / Purchase Order
+            {t("agreementTitle")}
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-sm text-muted">Agency</p>
+              <p className="text-sm text-muted">{t("agency")}</p>
               <p className="font-medium">{agency?.name}</p>
             </div>
             <div>
-              <p className="text-sm text-muted">Contract Value</p>
+              <p className="text-sm text-muted">{t("contractValue")}</p>
               <p className="text-xl font-bold text-primary">
                 SAR {formatNumber(Number(quote?.price ?? 0))}
               </p>
             </div>
             {quote?.scope && (
               <div className="sm:col-span-2">
-                <p className="text-sm text-muted">Scope</p>
+                <p className="text-sm text-muted">{t("scope")}</p>
                 <p className="text-sm whitespace-pre-wrap">{quote.scope}</p>
               </div>
             )}
             {quote && getQuotationDeliverables(quote).length > 0 && (
               <div className="sm:col-span-2">
-                <p className="text-sm text-muted">Deliverables</p>
+                <p className="text-sm text-muted">{t("deliverables")}</p>
                 <ul className="text-sm">
                   {getQuotationDeliverables(quote).map((item) => (
                     <li key={item}>• {item}</li>
@@ -179,7 +182,7 @@ export function ProjectWorkspace({
             )}
             {quote?.payment_terms && (
               <div>
-                <p className="text-sm text-muted">Payment Terms</p>
+                <p className="text-sm text-muted">{t("paymentTerms")}</p>
                 {getQuotationPaymentMilestones(quote).length > 0 ? (
                   <ul className="text-sm">
                     {getQuotationPaymentMilestones(quote).map((m) => (
@@ -193,13 +196,13 @@ export function ProjectWorkspace({
             )}
             {quote && getQuotationDuration(quote) && (
               <div>
-                <p className="text-sm text-muted">Estimated Duration</p>
+                <p className="text-sm text-muted">{t("estimatedDuration")}</p>
                 <p className="text-sm">{getQuotationDuration(quote)}</p>
               </div>
             )}
             {quote && getQuotationTerms(quote).length > 0 && (
               <div className="sm:col-span-2">
-                <p className="text-sm text-muted">Terms & Conditions</p>
+                <p className="text-sm text-muted">{t("terms")}</p>
                 <ul className="text-sm">
                   {getQuotationTerms(quote).map((term) => (
                     <li key={term}>• {term}</li>
@@ -210,7 +213,7 @@ export function ProjectWorkspace({
           </div>
           {agreement.signed_at && (
             <p className="mt-3 text-xs text-muted">
-              Signed: {formatDateTime(agreement.signed_at)}
+              {t("signed", { date: formatDateTime(agreement.signed_at) })}
             </p>
           )}
         </Card>
@@ -219,9 +222,13 @@ export function ProjectWorkspace({
       <Card>
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <TrafficCone className="h-5 w-5 text-warning" />
-          Milestones — Traffic-Light Execution
+          {t("milestonesTitle")}
         </h2>
-        <p className="mt-1 text-sm text-muted">{requestTitle} · Status: {requestStatus}</p>
+        <p className="mt-1 text-sm text-muted">
+          {requestTitle} · {t("statusLabel", {
+            status: ts.has(`request.${requestStatus}`) ? ts(`request.${requestStatus}`) : requestStatus,
+          })}
+        </p>
 
         <div className="mt-4 space-y-3">
           {milestones.map((m) => (
@@ -245,7 +252,7 @@ export function ProjectWorkspace({
                         key={s}
                         type="button"
                         disabled={isPending}
-                        onClick={() => handleMilestoneUpdate(m.id, s, `${s} status updated`)}
+                        onClick={() => handleMilestoneUpdate(m.id, s, t("statusUpdated"))}
                         className={`rounded px-2 py-1 text-xs font-medium capitalize ${
                           m.status === s ? STATUS_COLORS[s] : "border border-border text-muted"
                         }`}
