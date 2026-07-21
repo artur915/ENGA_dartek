@@ -28,10 +28,54 @@
     "closeNav": "إغلاق القائمة",
     "toggleMenu": "تبديل القائمة",
     "currency": "ريال",
+    "submitRequest": "تقديم طلب",
+    "browseServices": "تصفح الخدمات",
     "goToSignIn": "الانتقال لتسجيل الدخول ←"
   },
   "landing": {
-    "heroEyebrow": "سوق المملكة الموثوق",
+    "heroEyebrow": "سوق الخدمات الهندسية · المملكة العربية السعودية",
+    "heroHeadline": "اطلب الخدمات الهندسية، قارن العروض، وأدر التسليم في مكان واحد.",
+    "heroSubtitle": "قدّم مشروعك، استقبل عروضاً تنافسية من مقدّمي الخدمات الهندسية، ووقّع الاتفاقيات، وتتبع التنفيذ بوضوح.",
+    "ctaSubmitRequest": "تقديم طلب",
+    "ctaBrowseServices": "تصفح الخدمات",
+    "ctaJoinProvider": "انضم كمقدّم خدمة هندسية",
+    "heroPreviewRequest": "باقة تصريح فيلا جديدة",
+    "heroPreviewStatus": "3 عروض مستلمة",
+    "heroPreviewStep": "قارن واختر المزود",
+    "heroPreviewStep1": "تم إرسال النطاق والموقع",
+    "heroPreviewStep2": "عروض جاهزة للمقارنة",
+    "heroPreviewActive": "نشط",
+    "trustTitle": "مصممة للعمل الهندسي الجاد",
+    "trustItems": {
+      "catalog": "147 خدمة في 10 فئات",
+      "quotes": "عروض تنافسية لكل طلب",
+      "tracking": "تتبع مراحل بسيط",
+      "bilingual": "عربي وإنجليزي مع دعم RTL كامل"
+    },
+    "workflowStages": {
+      "request": {
+        "title": "الطلب",
+        "summary": "حدد الموقع والخدمات وتفاصيل المشروع.",
+        "steps": ["تقديم الطلب", "اختيار الموقع", "اختيار الخدمة", "طرح الطلب"]
+      },
+      "compare": {
+        "title": "المقارنة والاتفاق",
+        "summary": "راجع العروض ووقّع اتفاقك.",
+        "steps": ["مقارنة العروض", "قبول العرض", "توقيع الاتفاقية / أمر الشراء"]
+      },
+      "execute": {
+        "title": "التنفيذ",
+        "summary": "تابع المراحل بإشارات خضراء أو برتقالية أو حمراء.",
+        "steps": ["تنفيذ المشروع", "تحديث المراحل", "اعتماد المخرجات"]
+      },
+      "close": {
+        "title": "الدفع والأرشفة",
+        "summary": "سجّل المدفوعات يدوياً وأغلق المشروع.",
+        "steps": ["تأكيد الدفع", "إغلاق المشروع", "أرشفة السجلات"]
+      }
+    },
+    "workflowViewDetails": "عرض الخطوات التفصيلية",
+    "workflowHideDetails": "إخفاء التفاصيل",
     "heroTitleLine1": "سوق",
     "heroTitleHighlight": "الخدمات الهندسية",
     "heroTitleLine2": "",
@@ -63,8 +107,8 @@
     "ctaAgency": "أنا مكتب هندسي",
     "ctaEngineer": "أنا مهندس فردي",
     "workflowBadge": "رحلة المنصة",
-    "workflowTitle": "كيف تعمل المنصة",
-    "workflowDescription": "من أول طلب إلى أرشفة المشروع — تسع خطوات واضحة في منصة واحدة.",
+    "workflowTitle": "كيف تعمل إنجا",
+    "workflowDescription": "أربع مراحل واضحة من الطلب إلى الأرشفة — وسّع أي مرحلة لرؤية الخطوات التفصيلية.",
     "workflowSteps": {
       "submit": "تقديم الطلب",
       "location": "اختيار الموقع",
@@ -214,7 +258,23 @@
   "servicesPage": {
     "searchPlaceholder": "ابحث في الخدمات…",
     "allCategories": "جميع الفئات",
-    "found": "{count} خدمة"
+    "allPackages": "جميع الباقات",
+    "allProviders": "جميع أنواع المزودين",
+    "found": "{count} خدمة",
+    "resetFilters": "إعادة تعيين الفلاتر",
+    "filters": "الفلاتر",
+    "applyFilters": "تطبيق",
+    "viewDetails": "عرض التفاصيل",
+    "requestService": "إضافة للطلب",
+    "emptyTitle": "لا توجد خدمات مطابقة",
+    "emptyDesc": "جرّب بحثاً مختلفاً أو امسح الفلاتر.",
+    "pageOf": "صفحة {page} من {total}",
+    "detailOverview": "نظرة عامة",
+    "detailDeliverables": "المخرجات المعتادة",
+    "detailPrepare": "ما يجب تجهيزه",
+    "detailProvider": "المزود المؤهل",
+    "detailRelated": "الباقات ذات الصلة",
+    "detailCta": "ابدأ طلباً بهذه الخدمة"
   },
   "projectWorkspace": {
     "agreementTitle": "الاتفاقية / أمر الشراء",
@@ -593,6 +653,17 @@
     "licenses": "التراخيص",
     "startingPrice": "السعر الابتدائي",
     "crLabel": "س.ت",
-    "engineeringLabel": "هندسي"
+    "engineeringLabel": "هندسي",
+    "searchPlaceholder": "ابحث في المزودين…",
+    "allRegions": "جميع المناطق",
+    "allDisciplines": "جميع التخصصات",
+    "filters": "الفلاتر",
+    "resetFilters": "إعادة تعيين",
+    "found": "{count} مزود",
+    "emptyTitle": "لا يوجد مزودون مطابقون",
+    "emptyDesc": "جرّب تعديل البحث أو الفلاتر.",
+    "viewProfile": "عرض الملف",
+    "requestQuote": "طلب عرض",
+    "certificateSubmitted": "شهادة مسجّلة"
   }
 }

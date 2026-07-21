@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { PublicPageHeader } from "@/components/ui/PublicPageHeader";
 import { SERVICE_PACKAGES } from "@/data/catalog";
 import { getPackageField } from "@/lib/catalog-i18n";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Package } from "lucide-react";
@@ -47,6 +48,14 @@ export default async function PackagesPage({
               <p className="mt-5 rounded-xl bg-surface-muted px-4 py-3 text-sm font-medium text-primary">
                 {getPackageField(pkg, "categories", locale)}
               </p>
+              <ButtonLink
+                href={`/client/requests/new?package=${encodeURIComponent(pkg.name)}`}
+                variant="primary"
+                size="sm"
+                className="mt-5 w-full"
+              >
+                {t("ctaSubmitRequest")}
+              </ButtonLink>
             </Card>
           ))}
         </div>

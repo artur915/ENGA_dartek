@@ -6,6 +6,7 @@ import { ActiveProjectsSection } from "@/components/client/ActiveProjectsSection
 import { QuotationsInboxSection } from "@/components/client/QuotationsInboxSection";
 import { getClientNav } from "@/lib/nav";
 import { getClientActiveProjects, getClientQuotationsInbox } from "@/actions/projects";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 export default async function ClientDashboard({
   params,
@@ -26,7 +27,15 @@ export default async function ClientDashboard({
 
   return (
     <PortalShell title={t("title")} nav={nav}>
-      <PageHeader title={tc("dashboard")} description={td("subtitle")} />
+      <PageHeader
+        title={tc("dashboard")}
+        description={td("subtitle")}
+        actions={
+          <ButtonLink href="/client/requests/new" size="md">
+            {t("newRequest")}
+          </ButtonLink>
+        }
+      />
 
       <ActiveProjectsSection projects={activeProjects} />
       <QuotationsInboxSection requests={quotationsInbox} />

@@ -28,10 +28,54 @@
     "closeNav": "Close navigation",
     "toggleMenu": "Toggle menu",
     "currency": "SAR",
+    "submitRequest": "Submit Request",
+    "browseServices": "Browse Services",
     "goToSignIn": "Go to Sign In →"
   },
   "landing": {
-    "heroEyebrow": "The Kingdom's trusted marketplace",
+    "heroEyebrow": "Engineering marketplace · Saudi Arabia",
+    "heroHeadline": "Request engineering services, compare quotations, and manage delivery in one place.",
+    "heroSubtitle": "Submit your project, receive competitive quotes from engineering providers, sign agreements, and track execution with clarity.",
+    "ctaSubmitRequest": "Submit a Request",
+    "ctaBrowseServices": "Browse Services",
+    "ctaJoinProvider": "Join as an Engineering Provider",
+    "heroPreviewRequest": "New villa permit package",
+    "heroPreviewStatus": "3 quotations received",
+    "heroPreviewStep": "Compare & choose provider",
+    "heroPreviewStep1": "Scope & location submitted",
+    "heroPreviewStep2": "Quotations ready to compare",
+    "heroPreviewActive": "Active",
+    "trustTitle": "Built for serious engineering work",
+    "trustItems": {
+      "catalog": "147 services across 10 categories",
+      "quotes": "Competitive quotations per request",
+      "tracking": "Simple milestone tracking",
+      "bilingual": "English and Arabic with full RTL"
+    },
+    "workflowStages": {
+      "request": {
+        "title": "Request",
+        "summary": "Define location, services, and project details.",
+        "steps": ["Submit request", "Select location", "Choose service", "Float request"]
+      },
+      "compare": {
+        "title": "Compare & Agree",
+        "summary": "Review quotations and sign your agreement.",
+        "steps": ["Compare quotations", "Accept quotation", "Sign agreement / PO"]
+      },
+      "execute": {
+        "title": "Execute",
+        "summary": "Track milestones with clear green, amber, or red status.",
+        "steps": ["Execute project", "Update milestones", "Approve deliverables"]
+      },
+      "close": {
+        "title": "Pay & Archive",
+        "summary": "Record payments manually and close the project.",
+        "steps": ["Confirm payment", "Close project", "Archive records"]
+      }
+    },
+    "workflowViewDetails": "View detailed steps",
+    "workflowHideDetails": "Hide details",
     "heroTitleLine1": "Engineering",
     "heroTitleHighlight": "Services",
     "heroTitleLine2": "Marketplace",
@@ -63,8 +107,8 @@
     "ctaAgency": "I'm an engineering office",
     "ctaEngineer": "I'm an individual engineer",
     "workflowBadge": "Platform journey",
-    "workflowTitle": "How it works",
-    "workflowDescription": "From first request to project archive — nine clear steps on one platform.",
+    "workflowTitle": "How ENGA works",
+    "workflowDescription": "Four clear stages from request to archive — expand any stage to see the detailed steps.",
     "workflowSteps": {
       "submit": "Submit request",
       "location": "Select location",
@@ -214,7 +258,23 @@
   "servicesPage": {
     "searchPlaceholder": "Search services…",
     "allCategories": "All categories",
-    "found": "{count} services found"
+    "allPackages": "All packages",
+    "allProviders": "All provider types",
+    "found": "{count} services found",
+    "resetFilters": "Reset filters",
+    "filters": "Filters",
+    "applyFilters": "Apply",
+    "viewDetails": "View details",
+    "requestService": "Add to request",
+    "emptyTitle": "No services match your filters",
+    "emptyDesc": "Try a different search term or clear your filters.",
+    "pageOf": "Page {page} of {total}",
+    "detailOverview": "Overview",
+    "detailDeliverables": "Typical deliverables",
+    "detailPrepare": "What to prepare",
+    "detailProvider": "Eligible provider",
+    "detailRelated": "Related packages",
+    "detailCta": "Start request with this service"
   },
   "projectWorkspace": {
     "agreementTitle": "Agreement / Purchase Order",
@@ -593,6 +653,17 @@
     "licenses": "Licenses",
     "startingPrice": "Starting Price",
     "crLabel": "CR",
-    "engineeringLabel": "Engineering"
+    "engineeringLabel": "Engineering",
+    "searchPlaceholder": "Search providers…",
+    "allRegions": "All regions",
+    "allDisciplines": "All disciplines",
+    "filters": "Filters",
+    "resetFilters": "Reset filters",
+    "found": "{count} providers found",
+    "emptyTitle": "No providers match your filters",
+    "emptyDesc": "Try adjusting your search or filters.",
+    "viewProfile": "View profile",
+    "requestQuote": "Request quotation",
+    "certificateSubmitted": "Certificate on file"
   }
 }

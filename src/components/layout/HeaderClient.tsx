@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { localeNames, type Locale } from "@/i18n/config";
 import { ROLE_PORTAL, type Profile } from "@/types";
 import { signOut } from "@/actions/auth";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const publicNav = [
   { href: "/services", key: "services" as const },
@@ -110,6 +111,9 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
             </>
           ) : (
             <>
+              <ButtonLink href="/client/requests/new" variant="primary" size="sm" className="hidden sm:inline-flex">
+                {t("submitRequest")}
+              </ButtonLink>
               <Link
                 href="/auth/sign-in"
                 className="inline-flex h-9 items-center justify-center rounded-xl px-3.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
@@ -176,6 +180,13 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
             </>
           ) : (
             <div className="flex flex-col gap-2 pt-2">
+              <ButtonLink
+                href="/client/requests/new"
+                fullWidth
+                onClick={() => setMobileOpen(false)}
+              >
+                {t("submitRequest")}
+              </ButtonLink>
               <Link
                 href="/auth/sign-in"
                 onClick={() => setMobileOpen(false)}

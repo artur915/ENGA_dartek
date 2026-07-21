@@ -1,8 +1,8 @@
 import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { SERVICE_PACKAGES } from "@/data/catalog";
 import { getPackageField } from "@/lib/catalog-i18n";
 import { Package } from "lucide-react";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 import {
   LandingCard,
   LandingSection,
@@ -17,7 +17,7 @@ export function PackagesSection() {
   const locale = useLocale();
 
   return (
-    <LandingSection variant="muted" id="packages">
+    <LandingSection variant="light" id="packages">
       <LandingSectionHeader
         badge={t("packagesBadge")}
         title={t("packagesTitle")}
@@ -42,9 +42,17 @@ export function PackagesSection() {
             <p className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed text-muted">
               {getPackageField(pkg, "description", locale)}
             </p>
-            <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-primary">
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-primary">
               {getPackageField(pkg, "categories", locale)}
             </p>
+            <ButtonLink
+              href={`/client/requests/new?package=${encodeURIComponent(pkg.name)}`}
+              variant="outline"
+              size="sm"
+              className="mt-5 w-full"
+            >
+              {t("ctaSubmitRequest")}
+            </ButtonLink>
           </LandingCard>
         ))}
       </div>

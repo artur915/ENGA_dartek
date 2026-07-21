@@ -30,6 +30,17 @@
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
+  --space-section: 4rem;
+  --space-section-lg: 6rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --info: #0369a1;
 }
 
 @theme inline {
@@ -54,6 +65,7 @@
   --color-navy: var(--navy);
   --color-landing-bg: var(--landing-bg);
   --color-landing-muted: var(--landing-muted);
+  --color-info: var(--info);
   --font-sans: var(--font-inter);
   --font-arabic: var(--font-noto-arabic);
   --shadow-card: var(--shadow-sm);
@@ -73,6 +85,20 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   body {
@@ -181,5 +207,17 @@
 
   .eyebrow {
     @apply text-xs font-bold uppercase tracking-[0.18em] text-primary;
+  }
+
+  .btn-touch {
+    @apply min-h-11 min-w-11;
+  }
+
+  .surface-panel {
+    @apply rounded-xl border border-border-subtle bg-surface shadow-card;
+  }
+
+  .text-display {
+    @apply text-balance text-4xl font-bold tracking-tight text-navy sm:text-5xl lg:text-[3.25rem] lg:leading-[1.08];
   }
 }
