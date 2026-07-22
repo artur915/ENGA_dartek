@@ -7,8 +7,8 @@ type LandingVariant = "light" | "muted" | "navy" | "accent";
 const variantStyles: Record<LandingVariant, string> = {
   light: "bg-landing-bg text-foreground",
   muted: "bg-landing-muted text-foreground",
-  navy: "gradient-primary text-white",
-  accent: "bg-primary text-white",
+  navy: "gradient-accent text-foreground",
+  accent: "bg-primary/8 text-foreground border-y border-primary/15",
 };
 
 export function LandingSection({
@@ -62,8 +62,8 @@ export function LandingSectionHeader({
             className={cn(
               "mb-3 inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-bold uppercase tracking-[0.14em]",
               inverted
-                ? "border-white/20 bg-white/10 text-white/90"
-                : "border-primary/15 bg-primary/5 text-primary"
+                ? "border-primary/20 bg-white/70 text-primary-dark"
+                : "border-primary/15 bg-primary/10 text-primary-dark"
             )}
           >
             {badge}
@@ -72,7 +72,7 @@ export function LandingSectionHeader({
         <h2
           className={cn(
             "text-balance text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl",
-            inverted ? "text-white" : "text-navy"
+            inverted ? "text-navy" : "text-navy"
           )}
         >
           {title}
@@ -81,7 +81,7 @@ export function LandingSectionHeader({
           <p
             className={cn(
               "mt-3 text-base leading-relaxed sm:text-lg",
-              inverted ? "text-white/80" : "text-muted-foreground",
+              inverted ? "text-muted-foreground" : "text-muted-foreground",
               centered && "mx-auto"
             )}
           >

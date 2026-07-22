@@ -35,7 +35,7 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
     <header className="sticky top-0 z-50 border-b border-border/80 bg-surface/95 backdrop-blur-md">
       <div className="container-app flex h-14 items-center justify-between gap-4 lg:h-16">
         <Link href="/" className="group flex shrink-0 items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-white shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
             <Building2 className="h-4 w-4" />
           </div>
           <span className="text-base font-bold tracking-tight text-navy">{t("appName")}</span>

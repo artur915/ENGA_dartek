@@ -48,7 +48,7 @@ export function WorkflowSection() {
                   aria-expanded={isOpen}
                   aria-controls={`workflow-panel-${key}`}
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
                     {i + 1}
                   </span>
                   <span className="mt-4 flex items-center gap-2">
@@ -102,7 +102,7 @@ export function WorkflowSection() {
                 aria-expanded={isOpen}
                 aria-controls={`workflow-mobile-${key}`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy text-sm font-bold text-white">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
                   {i + 1}
                 </span>
                 <span className="min-w-0 flex-1">

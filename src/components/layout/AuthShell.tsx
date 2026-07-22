@@ -28,20 +28,20 @@ export function AuthShell({
       <div className="gradient-primary relative hidden w-[42%] flex-col justify-between p-10 text-white lg:flex xl:p-14">
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/25">
               <Icon className="h-5 w-5" />
             </div>
             <span className="text-lg font-bold">{appName}</span>
           </Link>
           <div className="mt-16 max-w-md">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/85">
               {shellEyebrow}
             </p>
             <h2 className="mt-4 text-3xl font-bold leading-tight">{shellTitle}</h2>
-            <p className="mt-4 text-base leading-relaxed text-white/75">{shellSubtitle}</p>
+            <p className="mt-4 text-base leading-relaxed text-white/90">{shellSubtitle}</p>
           </div>
         </div>
-        <p className="text-sm text-white/60">{shellRegion}</p>
+        <p className="text-sm text-white/80">{shellRegion}</p>
       </div>
 
       <div className="flex flex-1 items-center justify-center px-4 py-10 sm:px-6">

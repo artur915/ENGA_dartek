@@ -24,23 +24,18 @@ export function ProviderBenefitsSection() {
           return (
             <div
               key={item}
-              className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm"
+              className="rounded-xl border border-primary/15 bg-white/85 p-5 shadow-soft backdrop-blur-sm"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-primary-light">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary-dark">
                 <Icon className="h-4 w-4" />
               </span>
-              <p className="mt-4 text-sm leading-relaxed text-white/80">{item}</p>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item}</p>
             </div>
           );
         })}
       </div>
       <div className="mt-10">
-        <ButtonLink
-          href="/auth/sign-up?role=agency_owner"
-          size="lg"
-          variant="secondary"
-          className="bg-white text-navy hover:bg-white/90"
-        >
+        <ButtonLink href="/auth/sign-up?role=agency_owner" size="lg" variant="primary">
           {t("cta")}
           <ArrowRight className="h-4 w-4 rtl:rotate-180" />
         </ButtonLink>

@@ -13,7 +13,7 @@ export function HeroProductPreview() {
 
   return (
     <div className="surface-panel overflow-hidden shadow-elevated">
-      <div className="border-b border-border-subtle bg-navy px-5 py-4 text-white">
+      <div className="border-b border-primary/15 bg-primary px-5 py-4 text-white">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">
