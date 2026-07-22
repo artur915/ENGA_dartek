@@ -8,7 +8,8 @@ import { AlertCircle, Calendar, ChevronDown, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type ActiveProjectCardProps = {
-  projectId: string;
+  scheduleHref: string;
+  workspaceHref: string;
   title: string;
   contractValueLabel: string;
   contractValueFormatted: string;
@@ -22,7 +23,7 @@ export type ActiveProjectCardProps = {
     statusLabel: string;
     statusVariant: "success" | "warning" | "accent";
     projectRef: string;
-    agencyName: string | null;
+    subtitle: string | null;
     showAlert: boolean;
     reviewNextItemLabel: string;
     currentPhaseLabel: string;
@@ -39,7 +40,8 @@ export type ActiveProjectCardProps = {
 };
 
 export function ActiveProjectCard({
-  projectId,
+  scheduleHref,
+  workspaceHref,
   title,
   contractValueLabel,
   contractValueFormatted,
@@ -108,8 +110,8 @@ export function ActiveProjectCard({
               <span className="text-xs text-muted">{details.projectRef}</span>
             </div>
 
-            {details.agencyName && (
-              <p className="text-sm text-muted">{details.agencyName}</p>
+            {details.subtitle && (
+              <p className="text-sm text-muted">{details.subtitle}</p>
             )}
 
             {details.showAlert && (
@@ -172,7 +174,7 @@ export function ActiveProjectCard({
           </button>
           <div className="flex flex-wrap justify-end gap-2">
             <Link
-              href={`/client/projects/${projectId}`}
+              href={scheduleHref}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex h-10 items-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:border-primary/20"
             >
@@ -180,7 +182,7 @@ export function ActiveProjectCard({
               {viewScheduleLabel}
             </Link>
             <Link
-              href={`/client/projects/${projectId}`}
+              href={workspaceHref}
               onClick={(e) => e.stopPropagation()}
               className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
             >

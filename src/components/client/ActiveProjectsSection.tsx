@@ -129,7 +129,8 @@ export async function ActiveProjectsSection({
             return (
               <ActiveProjectCard
                 key={agreement.id}
-                projectId={request.id}
+                scheduleHref={`/client/projects/${request.id}`}
+                workspaceHref={`/client/projects/${request.id}`}
                 title={request.title}
                 contractValueLabel={t("contractValue")}
                 contractValueFormatted={formatCurrency(contractValue, tc("currency"), locale)}
@@ -143,7 +144,7 @@ export async function ActiveProjectsSection({
                   statusLabel: t(statusBadge.key),
                   statusVariant: statusBadge.variant,
                   projectRef: `${formatProjectRef(request.id, request.created_at)} · ${formatPoRef(agreement.id, agreement.signed_at)}`,
-                  agencyName: agency?.name ?? null,
+                  subtitle: agency?.name ?? null,
                   showAlert: needsClientReview(milestones),
                   reviewNextItemLabel: t("reviewNextItem"),
                   currentPhaseLabel: t("currentPhase"),
