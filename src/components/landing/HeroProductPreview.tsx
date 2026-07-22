@@ -22,8 +22,8 @@ export function HeroProductPreview() {
             <p className="mt-1 text-sm font-semibold">{t("requestTitle")}</p>
             <p className="mt-0.5 text-xs text-white/60">{t("requestLocation")}</p>
           </div>
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-success/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-200">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden />
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/20 px-2.5 py-1 text-[11px] font-semibold text-primary-dark">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
             {t("statusActive")}
           </span>
         </div>
