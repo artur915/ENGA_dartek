@@ -201,6 +201,11 @@ export function NewRequestForm({ draftId }: { draftId: string | null }) {
     setDescription(result.description);
   }
 
+  function validateStep1(): string | null {
+    if (selectedServices.length === 0) return tf("errorServices");
+    return null;
+  }
+
   function validateStep2(): string | null {
     const { city } = parseLocationInput(locationInput);
     if (!city) return tf("errorLocation");
@@ -212,39 +217,70 @@ export function NewRequestForm({ draftId }: { draftId: string | null }) {
     return null;
   }
 
-  function handleNext() {
+  function getStepValidationError(stepNum: number): string | null {
+    if (stepNum === 1) return validateStep1();
+    if (stepNum === 2) return validateStep2();
+    return null;
+  }
+
+  function isStepValid(stepNum: number): boolean {
+    return getStepValidationError(stepNum) === null;
+  }
+
+  function isStepReachable(targetStep: number): boolean {
+    if (targetStep <= step) return true;
+    for (let s = 1; s < targetStep; s++) {
+      if (!isStepValid(s)) return false;
+    }
+    return true;
+  }
+
+  function navigateToStep(targetStep: number) {
     setError("");
-    if (step === 1) {
-      if (selectedServices.length === 0) {
-        setError(tf("errorServices"));
-        return;
-      }
-      setStep(2);
+    if (targetStep === step) return;
+
+    if (targetStep < step) {
+      setStep(targetStep);
       return;
     }
-    if (step === 2) {
-      const validationError = validateStep2();
+
+    for (let s = 1; s < targetStep; s++) {
+      const validationError = getStepValidationError(s);
       if (validationError) {
         setError(validationError);
+        setStep(s);
         return;
       }
+    }
+
+    if (targetStep >= 3) {
       startTransition(async () => {
         const id = await ensureDraft();
         if (!id) return;
-        setStep(3);
+        setStep(targetStep);
       });
+      return;
     }
+
+    setStep(targetStep);
+  }
+
+  function handleNext() {
+    navigateToStep(step + 1);
   }
 
   function handleSaveAndFloat() {
     setError("");
-    if (selectedServices.length === 0) {
-      setError(tf("errorServices"));
+    const step1Error = validateStep1();
+    if (step1Error) {
+      setError(step1Error);
+      setStep(1);
       return;
     }
-    const validationError = validateStep2();
-    if (validationError) {
-      setError(validationError);
+    const step2Error = validateStep2();
+    if (step2Error) {
+      setError(step2Error);
+      setStep(2);
       return;
     }
 
@@ -280,7 +316,12 @@ export function NewRequestForm({ draftId }: { draftId: string | null }) {
     <PortalShell title={t("title")} nav={nav}>
       <PageHeader title={tf("pageTitle")} description={tf("pageDescription")} />
 
-      <StepWizard steps={WIZARD_STEPS} currentStep={step} onStepClick={setStep} />
+      <StepWizard
+        steps={WIZARD_STEPS}
+        currentStep={step}
+        onStepClick={navigateToStep}
+        isStepReachable={isStepReachable}
+      />
 
       <Card className="mt-8">
         {step === 1 && (
@@ -422,11 +463,20 @@ export function NewRequestForm({ draftId }: { draftId: string | null }) {
           </Button>
 
           {step < 3 ? (
-            <Button type="button" onClick={handleNext} disabled={isPending}>
+            <Button
+              type="button"
+              onClick={handleNext}
+              disabled={isPending || !isStepValid(step)}
+            >
               {isPending ? tf("saving") : tf("nextStep")}
             </Button>
           ) : (
-            <Button type="button" onClick={handleSaveAndFloat} disabled={isPending} size="lg">
+            <Button
+              type="button"
+              onClick={handleSaveAndFloat}
+              disabled={isPending || !isStepValid(1) || !isStepValid(2)}
+              size="lg"
+            >
               {isPending ? tf("submitting") : tf("submitRequest")}
             </Button>
           )}

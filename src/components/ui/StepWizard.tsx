@@ -7,10 +7,13 @@ export function StepWizard({
   steps,
   currentStep,
   onStepClick,
+  isStepReachable,
 }: {
   steps: string[];
   currentStep: number;
   onStepClick?: (step: number) => void;
+  /** When set, forward steps that fail this check are not clickable. Back navigation always allowed. */
+  isStepReachable?: (step: number) => boolean;
 }) {
   return (
     <div className="overflow-x-auto pb-2">
@@ -19,18 +22,23 @@ export function StepWizard({
           const stepNum = i + 1;
           const isComplete = stepNum < currentStep;
           const isCurrent = stepNum === currentStep;
+          const isBackwardOrCurrent = stepNum <= currentStep;
+          const isForwardReachable = isStepReachable ? isStepReachable(stepNum) : true;
+          const canClick = !!onStepClick && (isBackwardOrCurrent || isForwardReachable);
           return (
             <li key={label} className="flex items-center gap-2 sm:gap-3">
               <button
                 type="button"
-                onClick={() => onStepClick?.(stepNum)}
-                disabled={!onStepClick}
+                onClick={() => canClick && onStepClick?.(stepNum)}
+                disabled={!canClick}
+                aria-disabled={!canClick}
                 className={cn(
                   "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all sm:px-4",
                   isCurrent && "bg-primary text-white shadow-sm",
                   isComplete && "bg-primary/10 text-primary",
                   !isCurrent && !isComplete && "border border-border bg-surface text-muted",
-                  onStepClick && "hover:border-primary/30"
+                  canClick && "hover:border-primary/30",
+                  !canClick && "cursor-not-allowed opacity-50"
                 )}
               >
                 <span
