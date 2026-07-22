@@ -30,150 +30,174 @@
     "currency": "SAR",
     "submitRequest": "Submit Request",
     "browseServices": "Browse Services",
+    "howItWorks": "How It Works",
+    "engineeringProviders": "Engineering Providers",
     "goToSignIn": "Go to Sign In →"
   },
   "landing": {
     "heroEyebrow": "Engineering marketplace · Saudi Arabia",
-    "heroHeadline": "Request engineering services, compare quotations, and manage delivery in one place.",
-    "heroSubtitle": "Submit your project, receive competitive quotes from engineering providers, sign agreements, and track execution with clarity.",
+    "heroHeadline": "Engineering services, clearly sourced and professionally delivered.",
+    "heroSubtitle": "Submit your project requirements, receive quotations from engineering providers, compare offers, sign the agreement, and manage delivery in one place.",
+    "heroTrustPoints": [
+      "Standardized engineering services across 147 catalog entries",
+      "Structured quotation comparison for every request",
+      "Secure project records, agreements, and delivery history",
+      "Built for the Saudi engineering market in English and Arabic"
+    ],
     "ctaSubmitRequest": "Submit a Request",
-    "ctaBrowseServices": "Browse Services",
+    "ctaBrowseServices": "Browse Engineering Services",
     "ctaJoinProvider": "Join as an Engineering Provider",
-    "heroPreviewRequest": "New villa permit package",
-    "heroPreviewStatus": "3 quotations received",
-    "heroPreviewStep": "Compare & choose provider",
-    "heroPreviewStep1": "Scope & location submitted",
-    "heroPreviewStep2": "Quotations ready to compare",
-    "heroPreviewActive": "Active",
-    "trustTitle": "Built for serious engineering work",
-    "trustItems": {
-      "catalog": "147 services across 10 categories",
-      "quotes": "Competitive quotations per request",
-      "tracking": "Simple milestone tracking",
-      "bilingual": "English and Arabic with full RTL"
+    "heroPreview": {
+      "requestLabel": "Project request",
+      "requestTitle": "Villa design & permit package",
+      "requestLocation": "Riyadh · Al Malqa",
+      "statusActive": "Quotations open",
+      "quotationsTitle": "Quotations received",
+      "quote1Office": "Al-Rashid Engineering",
+      "quote1Price": "SAR 48,500",
+      "quote2Office": "Najd Design Office",
+      "quote2Price": "SAR 52,000",
+      "quote3Office": "Horizon Consultants",
+      "quote3Price": "SAR 45,750",
+      "milestoneLabel": "Current milestone",
+      "milestoneTitle": "Structural review approved",
+      "milestoneStatus": "Green"
     },
-    "workflowStages": {
-      "request": {
-        "title": "Request",
-        "summary": "Define location, services, and project details.",
-        "steps": ["Submit request", "Select location", "Choose service", "Float request"]
+    "trustTitle": "Why teams choose ENGA",
+    "trustItems": {
+      "catalog": {
+        "title": "Standardized scope",
+        "description": "147 engineering services with clear requirements and deliverables."
       },
-      "compare": {
-        "title": "Compare & Agree",
-        "summary": "Review quotations and sign your agreement.",
-        "steps": ["Compare quotations", "Accept quotation", "Sign agreement / PO"]
+      "quotes": {
+        "title": "Comparable quotations",
+        "description": "Providers submit their own pricing — you compare structured offers."
       },
-      "execute": {
-        "title": "Execute",
-        "summary": "Track milestones with clear green, amber, or red status.",
-        "steps": ["Execute project", "Update milestones", "Approve deliverables"]
+      "tracking": {
+        "title": "Simple execution",
+        "description": "Green, amber, and red milestones without complex reporting."
       },
-      "close": {
-        "title": "Pay & Archive",
-        "summary": "Record payments manually and close the project.",
-        "steps": ["Confirm payment", "Close project", "Archive records"]
+      "bilingual": {
+        "title": "Saudi-ready platform",
+        "description": "English and Arabic with full RTL support across the experience."
       }
     },
-    "workflowViewDetails": "View detailed steps",
-    "workflowHideDetails": "Hide details",
-    "heroTitleLine1": "Engineering",
-    "heroTitleHighlight": "Services",
-    "heroTitleLine2": "Marketplace",
-    "heroRegion": "for Saudi Arabia",
-    "heroSubtitle": "Connecting clients with verified engineering professionals to move projects forward with confidence.",
-    "ctaStartProject": "Start your project",
-    "ctaJoinProfessional": "Join as a professional",
-    "heroSocialProofCount": "147+ services",
-    "heroSocialProofText": "across 10 categories, ready for your project",
-    "heroLiveProjects": "Live projects",
-    "heroLiveProjectsCount": "234 active",
-    "heroActiveLabel": "Active",
-    "heroFeaturedProject": "Mixed-use development",
-    "heroFeaturedPhase": "Construction phase",
-    "heroFeaturedProgress": "Construction — 65% complete",
-    "heroCards": {
-      "kafd": "King Abdullah Financial District",
-      "kafdSub": "120+ projects delivered",
-      "murabba": "New Murabba",
-      "murabbaSub": "Transforming the future",
-      "network": "Verified offices",
-      "networkSub": "Government-approved specialists",
-      "qiddiya": "Qiddiya City",
-      "qiddiyaSub": "Entertainment reimagined"
-    },
-    "heroTitle": "Connect with Licensed Engineering Offices in Saudi Arabia",
-    "heroSubtitleLegacy": "Submit your project request, compare quotations, sign agreements, and track execution — all in one platform.",
-    "ctaClient": "I need engineering services",
-    "ctaAgency": "I'm an engineering office",
-    "ctaEngineer": "I'm an individual engineer",
-    "workflowBadge": "Platform journey",
+    "workflowBadge": "How it works",
     "workflowTitle": "How ENGA works",
-    "workflowDescription": "Four clear stages from request to archive — expand any stage to see the detailed steps.",
-    "workflowSteps": {
-      "submit": "Submit request",
-      "location": "Select location",
-      "services": "Choose service",
-      "float": "Float request",
-      "compare": "Compare quotations",
-      "agree": "Sign agreement / PO",
-      "execute": "Execute project",
-      "pay": "Confirm payment",
-      "close": "Close and archive"
+    "workflowDescription": "Four clear stages from request to archive. Expand any stage to see the detailed steps.",
+    "workflowViewDetails": "View steps",
+    "workflowHideDetails": "Hide steps",
+    "workflowStages": {
+      "submit": {
+        "title": "Submit",
+        "summary": "Select the project location, services, and requirements.",
+        "steps": ["Submit request", "Select project location", "Choose engineering services", "Float request to providers"]
+      },
+      "compare": {
+        "title": "Compare",
+        "summary": "Receive and compare structured agency quotations.",
+        "steps": ["Receive quotations", "Compare scope and terms", "Accept the right provider"]
+      },
+      "execute": {
+        "title": "Agree & Execute",
+        "summary": "Sign the agreement and follow simple milestones.",
+        "steps": ["Sign digital agreement or PO", "Execute the project", "Update milestone status"]
+      },
+      "complete": {
+        "title": "Complete",
+        "summary": "Confirm payment, close the project, and archive records.",
+        "steps": ["Confirm payment status", "Close the project", "Archive records securely"]
+      }
     },
-    "packagesBadge": "Curated packages",
-    "packagesTitle": "Service packages",
-    "packagesSubtitle": "Choose a curated package or select individual services from our catalog of 147 engineering services.",
+    "catalogBadge": "Service catalog",
+    "catalogTitle": "Find the engineering service you need",
+    "catalogSubtitle": "Search the catalog or browse main categories — then explore all 147 services.",
+    "catalogSearchPlaceholder": "What engineering service do you need?",
+    "catalogExploreAll": "Explore all 147 services",
+    "catalogServicesCount": "{count} services",
+    "catalogCategoryDescriptions": {
+      "Design": "Architectural, structural, and interior design for new and existing buildings.",
+      "Permits & Licensing": "Building permits, licensing, and regulatory submissions.",
+      "Surveying & Land": "Land surveys, boundary reports, and site measurements.",
+      "Supervision & Project Management": "Construction supervision and project coordination on site.",
+      "Inspections & Technical Reports": "Technical inspections, safety reports, and compliance reviews.",
+      "Engineering Studies": "Feasibility, environmental, and specialized engineering studies."
+    },
+    "packagesBadge": "Solution packages",
+    "packagesTitle": "Packages for real project goals",
+    "packagesSubtitle": "Curated service groups for common client needs — providers still submit their own quotations.",
     "packagesPopular": "Popular",
-    "catalogBadge": "147 services",
-    "catalogTitle": "Engineering service categories",
-    "catalogSubtitle": "10 categories covering design, permits, supervision, inspections, and more.",
     "catalogServicesLabel": "services",
-    "benefitsBadge": "Why ENGA",
-    "benefitsTitle": "Built for clients and engineering offices",
-    "benefitsDescription": "A single platform to request, quote, deliver, and pay — with transparency at every step.",
+    "packageMeta": {
+      "build-my-villa": {
+        "forWho": "For homeowners building a new villa",
+        "problem": "Everything needed to move from design to completion."
+      },
+      "design-to-permit": {
+        "forWho": "For projects ready to reach permit approval",
+        "problem": "Complete the design and prepare for permit approval."
+      },
+      "renovate-&-expand": {
+        "forWho": "For property owners modifying existing buildings",
+        "problem": "Modify or expand an existing property correctly."
+      },
+      "legalize-my-building": {
+        "forWho": "For buildings needing compliance correction",
+        "problem": "Resolve building compliance and permit issues."
+      }
+    },
     "clientBenefits": {
-      "label": "For clients",
-      "title": "Move projects forward with confidence",
+      "badge": "For clients",
+      "title": "Move your project forward with clarity",
+      "description": "One structured request, comparable quotations, and a single place to manage delivery.",
       "items": [
-        "Submit one structured request and receive competitive quotations",
-        "Compare scope, price, and payment terms side by side",
-        "Track milestones with clear green, amber, and red status updates",
-        "Manage agreements, payments, and delivery in one workspace"
+        "Understand which engineering service your project requires",
+        "Submit one structured request instead of scattered outreach",
+        "Receive comparable quotations from engineering providers",
+        "Choose the right provider with scope and terms side by side",
+        "Keep agreements, files, and project records in one place",
+        "Follow progress with simple milestone status — no complex reports"
       ]
     },
-    "agencyBenefits": {
-      "label": "For agencies",
-      "title": "Win work and deliver professionally",
+    "providerBenefits": {
+      "badge": "For providers",
+      "title": "Win relevant work and deliver professionally",
+      "description": "Engineering offices and individual engineers use the same provider account flow.",
+      "cta": "Join as an Engineering Provider",
       "items": [
-        "Receive matched project requests from verified clients",
-        "Submit structured quotations with scope, deliverables, and terms",
-        "Manage active projects, milestones, and payments in one portal",
-        "Build credibility through verified registration and delivery history"
+        "Receive relevant project opportunities matched to your services",
+        "Submit professional quotations with scope and deliverables",
+        "Manage active projects and milestone updates in one portal",
+        "Upload deliverables and keep client records organized",
+        "Track payment status recorded on the platform",
+        "Manage invoices and basic financial activity"
       ]
     },
-    "agenciesBadge": "Verified partners",
-    "agenciesTitle": "Approved engineering agencies",
-    "agenciesDescription": "Government-approved engineering offices registered and verified on ENGA.",
-    "agenciesEmpty": "Approved agencies will appear here as they join the platform.",
-    "agenciesApproved": "Approved",
+    "agenciesBadge": "Engineering providers",
+    "agenciesTitle": "Registered engineering providers",
+    "agenciesDescription": "Browse engineering offices on ENGA. Registration and profile completion are required before providers can receive requests.",
+    "agenciesEmpty": "Registered providers will appear here as they join the platform.",
+    "agenciesEmptyHint": "Engineering offices can register now and complete their profile to start receiving requests.",
+    "agenciesRegistered": "Registered provider",
+    "agenciesApproved": "Registered provider",
     "agenciesFrom": "From",
-    "getStartedBadge": "Get started",
-    "getStartedTitle": "Join ENGA today",
-    "getStartedDescription": "Whether you need engineering services or deliver them — start in minutes.",
-    "roleClientDesc": "Discover services, submit requests, compare quotes, and track delivery to completion.",
-    "roleClientCta": "Start as client",
-    "roleAgencyDesc": "Register your office, receive matched requests, submit quotations, and grow your business.",
-    "roleAgencyCta": "Register office",
-    "stats": {
-      "services": "147 services",
-      "categories": "10 categories",
-      "packages": "7 packages"
-    },
+    "agenciesViewProfile": "View profile",
+    "agenciesRequestQuote": "Request quotation",
+    "getStartedBadge": "Ready to start",
+    "getStartedTitle": "Ready to move your engineering project forward?",
+    "getStartedDescription": "Submit your requirements and start receiving quotations from engineering providers.",
     "footer": {
-      "explore": "Explore",
+      "description": "ENGA connects clients with engineering providers and manages the commercial process from request to archive.",
+      "platform": "Platform",
+      "company": "Company",
+      "about": "About ENGA",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "joinProvider": "Join as a provider",
       "region": "Kingdom of Saudi Arabia",
       "copyright": "© 2026 ENGA — Engineering Services Marketplace",
-      "tagline": "Licensed engineering offices · Built for Saudi Arabia"
+      "tagline": "Structured engineering procurement · Built for Saudi Arabia"
     }
   },
   "auth": {

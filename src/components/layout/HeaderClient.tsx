@@ -13,7 +13,8 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 const publicNav = [
   { href: "/services", key: "services" as const },
   { href: "/packages", key: "packages" as const },
-  { href: "/agencies", key: "agencies" as const },
+  { href: "/agencies", key: "engineeringProviders" as const },
+  { href: "#how-it-works", key: "howItWorks" as const, anchor: true },
 ];
 
 export function HeaderClient({ profile }: { profile: Profile | null }) {
@@ -31,58 +32,61 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
   }
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 border-b backdrop-blur-lg transition-colors",
-        isLanding
-          ? "border-border-subtle/80 bg-surface/90"
-          : "border-border-subtle bg-surface/90"
-      )}
-    >
-      <div className="container-app flex h-16 items-center justify-between lg:h-[4.5rem]">
-        <Link href="/" className="group flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-sm transition-transform duration-200 group-hover:scale-105">
-            <Building2 className="h-5 w-5" />
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-surface/95 backdrop-blur-md">
+      <div className="container-app flex h-14 items-center justify-between gap-4 lg:h-16">
+        <Link href="/" className="group flex shrink-0 items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-navy text-white shadow-sm">
+            <Building2 className="h-4 w-4" />
           </div>
-          <div className="hidden flex-col sm:flex">
-            <span className="text-base font-bold tracking-tight text-foreground">{t("appName")}</span>
-            <span className="text-xs text-muted">{t("tagline")}</span>
-          </div>
+          <span className="text-base font-bold tracking-tight text-navy">{t("appName")}</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
-          {publicNav.map(({ href, key }) => {
-            const active = pathname === href || pathname.startsWith(href + "/");
+        <nav className="hidden items-center gap-0.5 lg:flex" aria-label={t("platform")}>
+          {publicNav.map(({ href, key, anchor }) => {
+            const active =
+              !anchor && (pathname === href || pathname.startsWith(href + "/"));
+            if (anchor) {
+              return isLanding ? (
+                <a
+                  key={key}
+                  href={href}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-muted hover:text-navy"
+                >
+                  {t(key)}
+                </a>
+              ) : (
+                <Link
+                  key={key}
+                  href="/#how-it-works"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-muted hover:text-navy"
+                >
+                  {t(key)}
+                </Link>
+              );
+            }
             return (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+                  "rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+                    ? "bg-primary/8 text-primary"
+                    : "text-muted-foreground hover:bg-surface-muted hover:text-navy"
                 )}
               >
                 {t(key)}
               </Link>
             );
           })}
-          {isLanding && (
-            <Link
-              href="#how-it-works"
-              className="rounded-lg px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
-            >
-              {t("learnMore")}
-            </Link>
-          )}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <Link
             href="/"
             locale={otherLocale}
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-border px-3.5 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+            className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/25 hover:text-primary"
+            aria-label={t("language")}
           >
             <Globe className="h-4 w-4" />
             {localeNames[otherLocale]}
@@ -93,17 +97,16 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
               {portalHref && (
                 <Link
                   href={portalHref}
-                  className="rounded-lg px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
                 >
                   {t("dashboard")}
                 </Link>
               )}
-              <span className="max-w-[140px] truncate text-sm text-muted">{profile.full_name || profile.email}</span>
               <button
                 type="button"
                 onClick={handleSignOut}
                 disabled={isPending}
-                className="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
+                className="inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-muted hover:text-navy"
               >
                 <LogOut className="h-4 w-4" />
                 {t("signOut")}
@@ -111,30 +114,25 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
             </>
           ) : (
             <>
-              <ButtonLink href="/client/requests/new" variant="primary" size="sm" className="hidden sm:inline-flex">
-                {t("submitRequest")}
-              </ButtonLink>
               <Link
                 href="/auth/sign-in"
-                className="inline-flex h-9 items-center justify-center rounded-xl px-3.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
+                className="inline-flex h-10 items-center rounded-lg px-3.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-surface-muted hover:text-navy"
               >
                 {t("signIn")}
               </Link>
-              <Link
-                href="/auth/sign-up"
-                className="inline-flex h-9 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark"
-              >
-                {t("getStarted")}
-              </Link>
+              <ButtonLink href="/client/requests/new" size="sm">
+                {t("submitRequest")}
+              </ButtonLink>
             </>
           )}
         </div>
 
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-border md:hidden"
+          className="btn-touch flex items-center justify-center rounded-lg border border-border lg:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={t("toggleMenu")}
+          aria-expanded={mobileOpen}
+          aria-label={mobileOpen ? t("closeNav") : t("openNav")}
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -142,68 +140,79 @@ export function HeaderClient({ profile }: { profile: Profile | null }) {
 
       <div
         className={cn(
-          "border-t border-border-subtle bg-surface md:hidden",
+          "border-t border-border-subtle bg-surface lg:hidden",
           mobileOpen ? "block" : "hidden"
         )}
       >
-        <div className="container-app flex flex-col gap-1 py-4">
-          {publicNav.map(({ href, key }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-surface-muted"
-            >
-              {t(key)}
-            </Link>
-          ))}
-          {isLanding && (
-            <Link
-              href="#how-it-works"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-surface-muted"
-            >
-              {t("learnMore")}
-            </Link>
+        <nav className="container-app flex flex-col gap-0.5 py-4">
+          {publicNav.map(({ href, key, anchor }) =>
+            anchor ? (
+              isLanding ? (
+                <a
+                  key={key}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-surface-muted"
+                >
+                  {t(key)}
+                </a>
+              ) : (
+                <Link
+                  key={key}
+                  href="/#how-it-works"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-surface-muted"
+                >
+                  {t(key)}
+                </Link>
+              )
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-lg px-3 py-3 text-sm font-medium hover:bg-surface-muted"
+              >
+                {t(key)}
+              </Link>
+            )
           )}
           <div className="my-2 border-t border-border-subtle" />
+          <Link
+            href="/"
+            locale={otherLocale}
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium hover:bg-surface-muted"
+          >
+            <Globe className="h-4 w-4" />
+            {localeNames[otherLocale]}
+          </Link>
           {profile ? (
             <>
               {portalHref && (
-                <Link href={portalHref} className="rounded-lg px-3 py-2.5 text-sm font-medium">
+                <Link href={portalHref} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-3 text-sm font-medium">
                   {t("dashboard")}
                 </Link>
               )}
-              <button type="button" onClick={handleSignOut} className="rounded-lg px-3 py-2.5 text-start text-sm font-medium">
+              <button type="button" onClick={handleSignOut} className="rounded-lg px-3 py-3 text-start text-sm font-medium">
                 {t("signOut")}
               </button>
             </>
           ) : (
             <div className="flex flex-col gap-2 pt-2">
-              <ButtonLink
-                href="/client/requests/new"
-                fullWidth
-                onClick={() => setMobileOpen(false)}
-              >
+              <ButtonLink href="/client/requests/new" fullWidth onClick={() => setMobileOpen(false)}>
                 {t("submitRequest")}
               </ButtonLink>
               <Link
                 href="/auth/sign-in"
                 onClick={() => setMobileOpen(false)}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-border text-sm font-semibold"
+                className="inline-flex h-11 items-center justify-center rounded-lg border border-border text-sm font-semibold"
               >
                 {t("signIn")}
               </Link>
-              <Link
-                href="/auth/sign-up"
-                onClick={() => setMobileOpen(false)}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-white"
-              >
-                {t("getStarted")}
-              </Link>
             </div>
           )}
-        </div>
+        </nav>
       </div>
     </header>
   );

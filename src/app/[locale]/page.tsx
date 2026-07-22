@@ -4,9 +4,10 @@ import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { TrustSection } from "@/components/landing/TrustSection";
 import { WorkflowSection } from "@/components/landing/WorkflowSection";
+import { ServiceDiscoverySection } from "@/components/landing/ServiceDiscoverySection";
 import { PackagesSection } from "@/components/landing/PackagesSection";
-import { CatalogSection } from "@/components/landing/CatalogSection";
-import { BenefitsSection } from "@/components/landing/BenefitsSection";
+import { ClientBenefitsSection } from "@/components/landing/ClientBenefitsSection";
+import { ProviderBenefitsSection } from "@/components/landing/ProviderBenefitsSection";
 import { AgenciesPreviewSection } from "@/components/landing/AgenciesPreviewSection";
 import { RoleCTASection } from "@/components/landing/RoleCTASection";
 
@@ -25,9 +26,10 @@ export default async function HomePage({
         <HeroSection />
         <TrustSection />
         <WorkflowSection />
+        <ServiceDiscoverySection />
         <PackagesSection />
-        <CatalogSection />
-        <BenefitsSection />
+        <ClientBenefitsSection />
+        <ProviderBenefitsSection />
         <AgenciesPreviewSection />
         <RoleCTASection />
       </main>

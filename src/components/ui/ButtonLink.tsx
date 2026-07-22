@@ -17,9 +17,9 @@ const variants: Record<ButtonVariant, string> = {
 };
 
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-9 px-3.5 text-xs gap-1.5",
-  md: "h-11 px-5 text-sm gap-2",
-  lg: "h-12 px-6 text-base gap-2.5",
+  sm: "h-9 min-h-[2.75rem] px-3.5 text-xs gap-1.5",
+  md: "h-11 min-h-[2.75rem] px-5 text-sm gap-2",
+  lg: "h-12 min-h-[2.75rem] px-6 text-base gap-2.5",
 };
 
 export function ButtonLink({
