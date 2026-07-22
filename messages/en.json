@@ -2,6 +2,13 @@
   "common": {
     "appName": "ENGA",
     "tagline": "Engineering Services Marketplace",
+    "logoTagline": "Build better. Together.",
+    "home": "Home",
+    "marketplace": "Marketplace",
+    "providersDirectory": "Providers Directory",
+    "clientPortal": "Client",
+    "providerPortal": "Provider Portal",
+    "location": "Riyadh, Saudi Arabia",
     "getStarted": "Get Started",
     "signIn": "Sign In",
     "signUp": "Sign Up",
@@ -326,6 +333,65 @@
     "detailProvider": "Eligible provider",
     "detailRelated": "Related packages",
     "detailCta": "Start request with this service"
+  },
+  "marketplacePage": {
+    "title": "Marketplace",
+    "subtitle": "The complete engineering services × packages catalog — 147 services across 10 categories",
+    "searchPlaceholder": "Search for services, packages, or providers..",
+    "filters": "Filters",
+    "tabPackages": "Curated Packages",
+    "tabServices": "Individual Services",
+    "customizeServices": "Customize Services",
+    "selectPackage": "Select Package",
+    "includedServices": "{included}/{total} Included Services",
+    "requestService": "Request Service",
+    "viewDetails": "View details",
+    "allCategories": "All categories",
+    "allPackages": "All packages",
+    "allProviders": "All provider types",
+    "applyFilters": "Apply",
+    "resetFilters": "Reset filters",
+    "foundServices": "{count} services found",
+    "emptyTitle": "No results match your search",
+    "emptyDesc": "Try a different search term or adjust your filters.",
+    "packages": {
+      "build-my-villa": {
+        "name": "Build My Villa",
+        "description": "Turnkey villa: design, permits, and supervision.",
+        "included": 67,
+        "total": 67
+      },
+      "design-to-permit": {
+        "name": "From Design to Permit",
+        "description": "Full design package through to the building permit.",
+        "included": 23,
+        "total": 23
+      },
+      "fast-permit": {
+        "name": "Fast Permit",
+        "description": "Quick issuance of your building permit.",
+        "included": 5,
+        "total": 5
+      },
+      "renovate-&-expand": {
+        "name": "Renovate & Expand",
+        "description": "Renovation, additions, and modification permits.",
+        "included": 14,
+        "total": 14
+      },
+      "legalize-my-building": {
+        "name": "Legalize My Building",
+        "description": "Bring an existing building into compliance.",
+        "included": 23,
+        "total": 23
+      },
+      "design-studio": {
+        "name": "Design Studio",
+        "description": "Design-only services across disciplines.",
+        "included": 36,
+        "total": 36
+      }
+    }
   },
   "projectWorkspace": {
     "agreementTitle": "Agreement / Purchase Order",

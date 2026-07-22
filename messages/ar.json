@@ -2,6 +2,13 @@
   "common": {
     "appName": "إنجا",
     "tagline": "سوق الخدمات الهندسية",
+    "logoTagline": "نبني أفضل. معاً.",
+    "home": "الرئيسية",
+    "marketplace": "السوق",
+    "providersDirectory": "دليل المزودين",
+    "clientPortal": "العميل",
+    "providerPortal": "بوابة المزود",
+    "location": "الرياض، المملكة العربية السعودية",
     "getStarted": "ابدأ الآن",
     "signIn": "تسجيل الدخول",
     "signUp": "إنشاء حساب",
@@ -326,6 +333,65 @@
     "detailProvider": "المزود المؤهل",
     "detailRelated": "الباقات ذات الصلة",
     "detailCta": "ابدأ طلباً بهذه الخدمة"
+  },
+  "marketplacePage": {
+    "title": "السوق",
+    "subtitle": "147 خدمة هندسية في 10 فئات — باقات وخدمات فردية",
+    "searchPlaceholder": "ابحث عن خدمات أو باقات أو مزودين..",
+    "filters": "الفلاتر",
+    "tabPackages": "باقات مختارة",
+    "tabServices": "خدمات فردية",
+    "customizeServices": "تخصيص الخدمات",
+    "selectPackage": "اختر الباقة",
+    "includedServices": "{included}/{total} خدمة مشمولة",
+    "requestService": "طلب الخدمة",
+    "viewDetails": "عرض التفاصيل",
+    "allCategories": "جميع الفئات",
+    "allPackages": "جميع الباقات",
+    "allProviders": "جميع أنواع المزودين",
+    "applyFilters": "تطبيق",
+    "resetFilters": "إعادة تعيين الفلاتر",
+    "foundServices": "{count} خدمة",
+    "emptyTitle": "لا توجد نتائج مطابقة",
+    "emptyDesc": "جرّب بحثاً مختلفاً أو عدّل الفلاتر.",
+    "packages": {
+      "build-my-villa": {
+        "name": "ابنِ فيلتي",
+        "description": "فيلا متكاملة: تصميم وتصاريح وإشراف.",
+        "included": 67,
+        "total": 67
+      },
+      "design-to-permit": {
+        "name": "من التصميم إلى التصريح",
+        "description": "باقة تصميم كاملة حتى تصريح البناء.",
+        "included": 23,
+        "total": 23
+      },
+      "fast-permit": {
+        "name": "تصريح سريع",
+        "description": "إصدار سريع لتصريح البناء.",
+        "included": 5,
+        "total": 5
+      },
+      "renovate-&-expand": {
+        "name": "تجديد وتوسعة",
+        "description": "تجديد وإضافات وتصاريح تعديل.",
+        "included": 14,
+        "total": 14
+      },
+      "legalize-my-building": {
+        "name": "تنظيم مبناي",
+        "description": "إخراج مبنى قائم إلى وضع مطابق.",
+        "included": 23,
+        "total": 23
+      },
+      "design-studio": {
+        "name": "استوديو التصميم",
+        "description": "خدمات تصميم فقط عبر التخصصات.",
+        "included": 36,
+        "total": 36
+      }
+    }
   },
   "projectWorkspace": {
     "agreementTitle": "الاتفاقية / أمر الشراء",
