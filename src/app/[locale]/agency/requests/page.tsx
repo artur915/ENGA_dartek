@@ -80,8 +80,8 @@ export default async function AgencyRequestsPage({
                 : statusKey;
             return (
               <Card key={item.invitation.id} hover>
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-semibold text-foreground">{req.title}</h3>
                       <Badge variant={item.hasQuote ? "success" : "warning"}>
@@ -96,8 +96,11 @@ export default async function AgencyRequestsPage({
                       <p className="mt-2 line-clamp-2 text-sm text-muted">{req.description}</p>
                     )}
                   </div>
-                  <Link href={`/agency/requests/${req.id}`}>
-                    <Button size="sm">
+                  <Link href={`/agency/requests/${req.id}`} className="shrink-0">
+                    <Button
+                      size="sm"
+                      className="h-auto min-h-10 w-[10.5rem] whitespace-normal px-3 py-2.5 text-center text-[11px] leading-snug sm:text-xs"
+                    >
                       {item.hasQuote ? tq("viewRevise") : t("submitQuote")}
                     </Button>
                   </Link>
