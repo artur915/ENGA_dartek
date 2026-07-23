@@ -426,7 +426,12 @@
     "markCompleted": "Mark completed",
     "archiveProject": "Archive project",
     "statusUpdated": "Status updated",
-    "paymentNote": "Client recorded bank transfer"
+    "paymentNote": "Client recorded bank transfer",
+    "progressLabel": "Completion",
+    "completedMilestone": "Completed",
+    "upcomingMilestone": "Upcoming",
+    "upcomingHint": "Starts after earlier milestones are completed.",
+    "progressReadOnlyHint": "Progress is updated by the engineering office."
   },
   "quotationsPage": {
     "acceptConfirm": "Accept this quotation and generate agreement?",

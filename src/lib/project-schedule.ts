@@ -1,8 +1,13 @@
 import {
-  computeProgress,
   formatPoRef,
   needsClientReview,
 } from "@/lib/client-dashboard";
+import {
+  computeMilestoneProgressPercent,
+  countCompletedPhases,
+  resolveMilestoneExecutionAtIndex,
+  sortMilestones,
+} from "@/lib/milestone-progress";
 import {
   parseDeliverablesItems,
   parsePaymentMilestones,
@@ -58,6 +63,7 @@ export type ScheduleProject = {
   weeks: ScheduleWeek[];
   periodLabel: string;
   durationLabel: string;
+  milestones: MilestoneRow[];
 };
 
 export type ProjectUpdateEntry = {
@@ -105,19 +111,6 @@ function formatShortDate(date: Date, locale: string): string {
 
 function formatIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
-}
-
-function phaseProgress(status: string): number {
-  if (status === "green") return 100;
-  if (status === "red") return 40;
-  if (status === "amber") return 65;
-  return 0;
-}
-
-function phaseStatus(status: string): SchedulePhaseStatus {
-  if (status === "green") return "completed";
-  if (status === "amber" || status === "red") return "in_progress";
-  return "upcoming";
 }
 
 function distributeDeliverables(
@@ -205,8 +198,10 @@ export function buildScheduleProject(input: {
   milestones: MilestoneRow[];
   locale: string;
   durationWeeksLabel: (weeks: number) => string;
+  progressById?: Record<string, number>;
 }): ScheduleProject {
-  const milestones = [...input.milestones].sort((a, b) => a.sort_order - b.sort_order);
+  const milestones = sortMilestones(input.milestones);
+  const progressById = input.progressById ?? {};
   const deliverables = parseDeliverablesItems(input.deliverablesItems);
   const paymentMilestones = parsePaymentMilestones(input.paymentMilestones);
   const durationWeeks = parseDurationWeeks(input.estimatedDuration);
@@ -242,6 +237,7 @@ export function buildScheduleProject(input: {
     };
     const startOffsetDays = daysBetween(projectStart, range.start);
     const phaseDays = daysBetween(range.start, range.end) + 1;
+    const execution = resolveMilestoneExecutionAtIndex(milestones, index, progressById);
 
     return {
       id: milestone.id,
@@ -255,14 +251,15 @@ export function buildScheduleProject(input: {
         deliverables,
         paymentMilestones
       ),
-      progress: phaseProgress(milestone.status),
-      status: phaseStatus(milestone.status),
+      progress: execution.progress,
+      status: execution.status,
       weekStart: startOffsetDays / 7,
       weekSpan: Math.max(phaseDays / 7, 1 / 7),
     };
   });
 
-  const completedPhases = milestones.filter((milestone) => milestone.status === "green").length;
+  const completedPhases = countCompletedPhases(milestones);
+  const progress = computeMilestoneProgressPercent(milestones, progressById);
 
   return {
     requestId: input.requestId,
@@ -272,7 +269,7 @@ export function buildScheduleProject(input: {
     clientName: input.clientName,
     poRef: formatPoRef(input.agreementId, input.signedAt),
     signedAt: input.signedAt,
-    progress: computeProgress(milestones),
+    progress,
     completedPhases,
     totalPhases: milestones.length,
     awaitingApproval: needsClientReview(milestones),
@@ -280,6 +277,30 @@ export function buildScheduleProject(input: {
     weeks,
     periodLabel: `${formatShortDate(projectStart, input.locale)} – ${formatShortDate(projectEnd, input.locale)}`,
     durationLabel: input.durationWeeksLabel(weekCount),
+    milestones,
+  };
+}
+
+export function refreshScheduleProject(
+  project: ScheduleProject,
+  progressById: Record<string, number>
+): ScheduleProject {
+  const milestones = sortMilestones(project.milestones);
+  const phases = project.phases.map((phase, index) => {
+    const execution = resolveMilestoneExecutionAtIndex(milestones, index, progressById);
+    return {
+      ...phase,
+      progress: execution.progress,
+      status: execution.status,
+    };
+  });
+
+  return {
+    ...project,
+    progress: computeMilestoneProgressPercent(milestones, progressById),
+    completedPhases: countCompletedPhases(milestones),
+    phases,
+    milestones,
   };
 }
 

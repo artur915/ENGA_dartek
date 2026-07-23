@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Calendar, Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ScheduleProject } from "@/lib/project-schedule";
+import { refreshScheduleProject } from "@/lib/project-schedule";
+import { loadMilestoneProgress } from "@/lib/milestone-progress-storage";
 import { ProjectGanttChart } from "@/components/client/ProjectGanttChart";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
@@ -24,6 +26,26 @@ export function ProjectScheduleWorkspace({
   const t = useTranslations(portal === "agency" ? "agency.schedule" : "client.schedule");
   const [view, setView] = useState<"client" | "agency">(portal === "agency" ? "agency" : "client");
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
+  const [progressById, setProgressById] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    setProgressById(loadMilestoneProgress());
+  }, []);
+
+  useEffect(() => {
+    const syncProgress = () => setProgressById(loadMilestoneProgress());
+    window.addEventListener("storage", syncProgress);
+    window.addEventListener("enga-milestone-progress", syncProgress);
+    return () => {
+      window.removeEventListener("storage", syncProgress);
+      window.removeEventListener("enga-milestone-progress", syncProgress);
+    };
+  }, []);
+
+  const scheduleProjects = useMemo(
+    () => projects.map((project) => refreshScheduleProject(project, progressById)),
+    [projects, progressById]
+  );
 
   const basePath = portal === "agency" ? "/agency/schedule" : "/client/schedule";
   const workspacePath = portal === "agency" ? "/agency/projects" : "/client/projects";
@@ -31,16 +53,16 @@ export function ProjectScheduleWorkspace({
   const emptyLabel = portal === "agency" ? t("browseProjects") : t("browseQuotations");
 
   const selectedId =
-    initialProjectId && projects.some((p) => p.requestId === initialProjectId)
+    initialProjectId && scheduleProjects.some((p) => p.requestId === initialProjectId)
       ? initialProjectId
-      : projects[0]?.requestId;
+      : scheduleProjects[0]?.requestId;
 
   const selected = useMemo(
-    () => projects.find((project) => project.requestId === selectedId) ?? projects[0] ?? null,
-    [projects, selectedId]
+    () => scheduleProjects.find((project) => project.requestId === selectedId) ?? scheduleProjects[0] ?? null,
+    [scheduleProjects, selectedId]
   );
 
-  if (!projects.length || !selected) {
+  if (!scheduleProjects.length || !selected) {
     return (
       <div className="rounded-2xl border border-border-subtle bg-surface p-8 text-center">
         <p className="text-muted">{t("empty")}</p>
@@ -59,7 +81,7 @@ export function ProjectScheduleWorkspace({
       <aside className="rounded-2xl border border-border-subtle bg-surface p-3">
         <p className="px-2 py-2 text-xs font-bold uppercase tracking-wide text-muted">{t("ongoingProjects")}</p>
         <ul className="space-y-1">
-          {projects.map((project) => {
+          {scheduleProjects.map((project) => {
             const active = project.requestId === selected.requestId;
             const projectSubtitle = portal === "agency" ? project.clientName ?? "—" : project.agencyName;
             return (

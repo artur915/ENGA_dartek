@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { MilestoneProgressControl } from "@/components/project/MilestoneProgressControl";
 import { updateMilestone, addMilestone } from "@/actions/milestones";
 import { recordPayment, updatePaymentStatus, closeProject, archiveProject } from "@/actions/payments";
 import type { MilestoneStatus, PaymentStatus, RequestStatus } from "@/types";
@@ -15,6 +16,15 @@ import {
   getQuotationTerms,
   type QuotationDisplayData,
 } from "@/lib/quotation-display";
+import {
+  resolveMilestoneExecution,
+  sortMilestones,
+} from "@/lib/milestone-progress";
+import {
+  loadMilestoneProgress,
+  setMilestoneProgress,
+  clearMilestoneProgress,
+} from "@/lib/milestone-progress-storage";
 import { formatDate, formatDateTime, formatNumber, formatCurrency } from "@/lib/format";
 import { TrafficCone, CreditCard, Archive, CheckCircle } from "lucide-react";
 
@@ -83,6 +93,50 @@ export function ProjectWorkspace({
   const [newMilestone, setNewMilestone] = useState("");
   const [paymentAmount, setPaymentAmount] = useState(quotedPrice?.toString() ?? "");
   const [paymentMethod, setPaymentMethod] = useState("bank_transfer");
+  const [progressById, setProgressById] = useState<Record<string, number>>({});
+
+  const sortedMilestones = useMemo(() => sortMilestones(milestones), [milestones]);
+
+  useEffect(() => {
+    const stored = loadMilestoneProgress();
+    sortedMilestones.forEach((milestone) => {
+      if (milestone.status === "green") {
+        stored[milestone.id] = 100;
+      }
+    });
+    setProgressById(stored);
+  }, [sortedMilestones]);
+
+  function handleProgressChange(milestoneId: string, progress: number) {
+    const clamped = Math.min(100, Math.max(0, Math.round(progress)));
+    setMilestoneProgress(milestoneId, clamped);
+    setProgressById((current) => ({ ...current, [milestoneId]: clamped }));
+
+    if (clamped >= 100 && mode === "agency") {
+      handleMilestoneUpdate(milestoneId, "green", t("statusUpdated"));
+    }
+  }
+
+  function handleMilestoneUpdate(id: string, status: MilestoneStatus, status_update?: string) {
+    const previous = sortedMilestones.find((milestone) => milestone.id === id);
+
+    if (status === "green") {
+      setMilestoneProgress(id, 100);
+      setProgressById((current) => ({ ...current, [id]: 100 }));
+    } else if (previous?.status === "green") {
+      clearMilestoneProgress(id);
+      setProgressById((current) => {
+        const next = { ...current };
+        delete next[id];
+        return next;
+      });
+    }
+
+    startTransition(async () => {
+      await updateMilestone(id, { status, status_update });
+      router.refresh();
+    });
+  }
 
   const agency = agreement?.agencies
     ? Array.isArray(agreement.agencies)
@@ -94,13 +148,6 @@ export function ProjectWorkspace({
       ? agreement.quotations[0]
       : agreement.quotations
     : null;
-
-  function handleMilestoneUpdate(id: string, status: MilestoneStatus, status_update?: string) {
-    startTransition(async () => {
-      await updateMilestone(id, { status, status_update });
-      router.refresh();
-    });
-  }
 
   function handleAddMilestone() {
     if (!newMilestone.trim()) return;
@@ -233,21 +280,53 @@ export function ProjectWorkspace({
         </p>
 
         <div className="mt-4 space-y-3">
-          {milestones.map((m) => (
+          {sortedMilestones.map((m) => {
+            const execution = resolveMilestoneExecution(sortedMilestones, m.id, progressById);
+            const progressValue =
+              m.status === "green" ? 100 : progressById[m.id] ?? execution.progress;
+
+            return (
             <div key={m.id} className="rounded-lg border border-border p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${STATUS_COLORS[m.status]}`}>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${STATUS_COLORS[m.status]}`}>
                     {m.status === "green" ? "✓" : m.status === "amber" ? "!" : "✕"}
                   </span>
-                  <div>
-                    <p className="font-medium">{m.title}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium">{m.title}</p>
+                      {execution.isUpcoming && (
+                        <Badge variant="outline" size="sm">
+                          {t("upcomingMilestone")}
+                        </Badge>
+                      )}
+                    </div>
                     {m.status_update && (
                       <p className="text-xs text-muted">{m.status_update}</p>
                     )}
+                    {m.status === "green" ? (
+                      <p className="mt-2 text-xs font-semibold text-success">
+                        {t("completedMilestone")} · 100%
+                      </p>
+                    ) : execution.isActive ? (
+                      <>
+                        <MilestoneProgressControl
+                          value={progressValue}
+                          onChange={(value) => handleProgressChange(m.id, value)}
+                          disabled={mode !== "agency" || requestStatus === "archived" || isPending}
+                          label={t("progressLabel")}
+                          completedLabel={t("completedMilestone")}
+                        />
+                        {mode === "client" && (
+                          <p className="mt-1 text-xs text-muted">{t("progressReadOnlyHint")}</p>
+                        )}
+                      </>
+                    ) : execution.isUpcoming ? (
+                      <p className="mt-2 text-xs text-muted">{t("upcomingHint")}</p>
+                    ) : null}
                   </div>
                 </div>
-                {mode === "agency" && requestStatus !== "archived" && (
+                {mode === "agency" && requestStatus !== "archived" && execution.isActive && (
                   <div className="flex flex-wrap gap-2">
                     {(["green", "amber", "red"] as MilestoneStatus[]).map((s) => (
                       <button
@@ -266,7 +345,7 @@ export function ProjectWorkspace({
                 )}
               </div>
             </div>
-          ))}
+          )})}
         </div>
 
         {mode === "agency" && requestStatus !== "archived" && (

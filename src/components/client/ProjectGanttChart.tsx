@@ -135,7 +135,9 @@ function GanttPhaseRow({ phase, weeks }: { phase: SchedulePhase; weeks: Schedule
               </>
             )}
             {isUpcoming && (
-              <span className="flex h-full items-center justify-center">{phase.progress}%</span>
+              <span className="flex h-full items-center justify-center text-[11px] font-semibold text-muted">
+                —
+              </span>
             )}
           </div>
         </div>

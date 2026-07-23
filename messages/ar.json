@@ -426,7 +426,12 @@
     "markCompleted": "تحديد كمكتمل",
     "archiveProject": "أرشفة المشروع",
     "statusUpdated": "تم تحديث الحالة",
-    "paymentNote": "سجّل العميل تحويلاً بنكياً"
+    "paymentNote": "سجّل العميل تحويلاً بنكياً",
+    "progressLabel": "نسبة الإنجاز",
+    "completedMilestone": "مكتمل",
+    "upcomingMilestone": "قادم",
+    "upcomingHint": "يبدأ بعد إكمال المراحل السابقة.",
+    "progressReadOnlyHint": "يحدّث المكتب الهندسي نسبة الإنجاز."
   },
   "quotationsPage": {
     "acceptConfirm": "قبول هذا العرض وإنشاء الاتفاقية؟",
