@@ -49,7 +49,7 @@ const emptyForm: AddPartnerForm = {
 };
 
 export function PartnersWorkspace({ projects }: { projects: ProjectOption[] }) {
-  const t = useTranslations("agency.partners");
+  const t = useTranslations("agency.partnersPage");
   const tc = useTranslations("common");
   const locale = useLocale();
   const [requests, setRequests] = useState<PartnershipRequest[]>([]);
@@ -153,28 +153,22 @@ export function PartnersWorkspace({ projects }: { projects: ProjectOption[] }) {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">{t("title")}</h2>
-          <p className="mt-1 max-w-2xl text-sm text-muted">{t("subtitle")}</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/agencies"
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-surface-muted"
-          >
-            <Shield className="h-4 w-4 text-primary" />
-            {t("browseOffices")}
-          </Link>
-          <button
-            type="button"
-            onClick={() => setShowAddModal(true)}
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
-          >
-            <Plus className="h-4 w-4" />
-            {t("addPartner")}
-          </button>
-        </div>
+      <div className="flex flex-wrap justify-end gap-2">
+        <Link
+          href="/agencies"
+          className="inline-flex h-10 items-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 text-sm font-semibold text-foreground transition-colors hover:bg-surface-muted"
+        >
+          <Shield className="h-4 w-4 text-primary" />
+          {t("browseOffices")}
+        </Link>
+        <button
+          type="button"
+          onClick={() => setShowAddModal(true)}
+          className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+        >
+          <Plus className="h-4 w-4" />
+          {t("addPartner")}
+        </button>
       </div>
 
       {successMessage && (

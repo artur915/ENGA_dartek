@@ -806,7 +806,7 @@
       "discussionUpdated": "A deliverable discussion was updated",
       "noUpdatesYet": "No updates yet"
     },
-    "partners": {
+    "partnersPage": {
       "title": "Partners",
       "subtitle": "Add engineering offices or individuals you can assign as resources on active projects.",
       "browseOffices": "Browse partner offices",

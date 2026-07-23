@@ -18,7 +18,7 @@ export default async function AgencyPartnersPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("agency");
-  const tp = await getTranslations("agency.partners");
+  const tp = await getTranslations("agency.partnersPage");
   const tc = await getTranslations("common");
   const nav = getAgencyNav(t, tc);
   const agreements = await getAgencyActiveProjects();
