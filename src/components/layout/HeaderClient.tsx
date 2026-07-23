@@ -15,7 +15,7 @@ const publicNav = [
   { href: "/marketplace", key: "marketplace" as const },
   { href: "/services", key: "services" as const },
   { href: "/packages", key: "packages" as const },
-  { href: "/agencies", key: "agencies" as const },
+  { href: "/agencies", key: "providersDirectory" as const },
 ];
 
 export function HeaderClient({ profile }: { profile: Profile | null }) {
