@@ -13,9 +13,9 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 const publicNav = [
   { href: "/", key: "home" as const, exact: true },
   { href: "/marketplace", key: "marketplace" as const },
-  { href: "/agencies", key: "providersDirectory" as const },
-  { href: "/client", key: "clientPortal" as const },
-  { href: "/agency", key: "providerPortal" as const },
+  { href: "/services", key: "services" as const },
+  { href: "/packages", key: "packages" as const },
+  { href: "/agencies", key: "agencies" as const },
 ];
 
 export function HeaderClient({ profile }: { profile: Profile | null }) {
