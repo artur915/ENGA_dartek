@@ -22,6 +22,7 @@ import {
   Bell,
   type LucideIcon,
 } from "lucide-react";
+import { PortalSignOutButton } from "@/components/layout/PortalSignOutButton";
 import { useState } from "react";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -130,14 +131,17 @@ export function PortalSidebar({ title, items }: PortalSidebarProps) {
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-primary">{title}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setMobileOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground"
-          aria-label={tc("openNav")}
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-3">
+          <PortalSignOutButton />
+          <button
+            type="button"
+            onClick={() => setMobileOpen(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-foreground"
+            aria-label={tc("openNav")}
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Mobile drawer */}
