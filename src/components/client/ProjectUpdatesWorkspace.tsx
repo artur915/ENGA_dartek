@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition, type KeyboardEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
@@ -24,6 +24,12 @@ import {
   type ProviderUpdate,
   type UpdatesProjectSummary,
 } from "@/lib/project-updates-display";
+import {
+  appendLocalChatMessage,
+  loadAllLocalChatMessages,
+  mergeChatMessages,
+  replaceLocalChatMessage,
+} from "@/lib/project-chat-storage";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
@@ -74,6 +80,7 @@ export function ProjectUpdatesWorkspace({
     } catch {
       setReadIds(new Set());
     }
+    setExtraMessages(loadAllLocalChatMessages());
   }, []);
 
   const persistReadIds = (next: Set<string>) => {
@@ -92,27 +99,51 @@ export function ProjectUpdatesWorkspace({
   };
 
   const handleSend = () => {
-    if (!selected || !messageDraft.trim()) return;
+    if (!selected || !messageDraft.trim() || isPending) return;
     const body = messageDraft.trim();
+    const tempId = `local-${crypto.randomUUID()}`;
+    const optimistic: ChatMessage = {
+      id: tempId,
+      body,
+      senderRole: "client",
+      senderName: t("you"),
+      createdAt: new Date().toISOString(),
+    };
+
     setMessageDraft("");
+    appendLocalChatMessage(selected.requestId, optimistic);
+    setExtraMessages((current) => ({
+      ...current,
+      [selected.requestId]: [...(current[selected.requestId] ?? []), optimistic],
+    }));
 
     startTransition(async () => {
       const result = await sendProjectMessage(selected.requestId, body);
-      if (result.message) {
-        const row = result.message as ProjectMessageRow;
-        const chatMessage: ChatMessage = {
-          id: row.id,
-          body: row.body,
-          senderRole: row.sender_role,
-          senderName: row.sender_role === "client" ? t("you") : selected.agencyName,
-          createdAt: row.created_at,
-        };
-        setExtraMessages((current) => ({
-          ...current,
-          [selected.requestId]: [...(current[selected.requestId] ?? []), chatMessage],
-        }));
-      }
+      if (!result.message) return;
+
+      const row = result.message as ProjectMessageRow;
+      const persisted: ChatMessage = {
+        id: row.id,
+        body: row.body,
+        senderRole: row.sender_role,
+        senderName: t("you"),
+        createdAt: row.created_at,
+      };
+
+      replaceLocalChatMessage(selected.requestId, tempId, persisted);
+      setExtraMessages((current) => ({
+        ...current,
+        [selected.requestId]: (current[selected.requestId] ?? []).map((item) =>
+          item.id === tempId ? persisted : item
+        ),
+      }));
     });
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== "Enter" || event.shiftKey) return;
+    event.preventDefault();
+    handleSend();
   };
 
   if (!projects.length || !selected) {
@@ -126,8 +157,9 @@ export function ProjectUpdatesWorkspace({
     );
   }
 
-  const selectedMessages = [...selected.chatMessages, ...(extraMessages[selected.requestId] ?? [])].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  const selectedMessages = mergeChatMessages(
+    selected.chatMessages,
+    extraMessages[selected.requestId] ?? []
   );
   const selectedUnread = unreadProviderCount(selected.providerUpdates, readIds);
 
@@ -275,7 +307,12 @@ export function ProjectUpdatesWorkspace({
                               : "rounded-es-md border border-border-subtle bg-surface-muted text-foreground"
                           )}
                         >
-                          {message.body}
+                          {message.body.split("\n").map((line, lineIndex, lines) => (
+                            <span key={lineIndex}>
+                              {line}
+                              {lineIndex < lines.length - 1 && <br />}
+                            </span>
+                          ))}
                         </div>
                         <p className="mt-1 text-[10px] text-muted">
                           {formatMessageTime(message.createdAt, locale)}
@@ -293,6 +330,7 @@ export function ProjectUpdatesWorkspace({
               <textarea
                 value={messageDraft}
                 onChange={(event) => setMessageDraft(event.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder={t("messagePlaceholder", { agency: selected.agencyName })}
                 rows={2}
                 className="min-h-[72px] flex-1 resize-none rounded-xl border border-border-subtle bg-surface px-4 py-3 text-sm outline-none ring-primary/20 focus:ring-2"
