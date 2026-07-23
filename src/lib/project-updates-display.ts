@@ -38,6 +38,7 @@ export type UpdatesProjectSummary = {
   requestId: string;
   title: string;
   agencyName: string;
+  clientName: string;
   projectRef: string;
   projectRefShort: string;
   latestSnippet: string;
@@ -158,7 +159,8 @@ export function buildUpdatesProjects(input: {
   agreements: {
     id: string;
     signed_at: string | null;
-    agencies: { name: string } | { name: string }[] | null;
+    agencies?: { name: string } | { name: string }[] | null;
+    profiles?: { full_name: string | null; email: string | null } | { full_name: string | null; email: string | null }[] | null;
     project_requests:
       | {
           id: string;
@@ -175,7 +177,8 @@ export function buildUpdatesProjects(input: {
       | null;
   }[];
   messagesByRequest: Record<string, ProjectMessageRow[]>;
-  clientName: string;
+  agencyName?: string;
+  clientFallback: string;
   labels: {
     clientRole: string;
     managerRole: string;
@@ -188,11 +191,14 @@ export function buildUpdatesProjects(input: {
   return input.agreements
     .map((agreement) => {
       const agency = unwrap(agreement.agencies);
+      const client = unwrap(agreement.profiles);
       const request = unwrap(agreement.project_requests);
       if (!request) return null;
 
       const milestones = request.milestones ?? [];
       const projectRef = formatProjectRef(request.id, request.created_at);
+      const agencyName = input.agencyName ?? agency?.name ?? "—";
+      const clientName = client?.full_name || client?.email || input.clientFallback;
       const providerUpdates = buildProviderUpdates(milestones, {
         deliverable: input.labels.deliverable,
         approval: input.labels.approval,
@@ -212,7 +218,8 @@ export function buildUpdatesProjects(input: {
       return {
         requestId: request.id,
         title: request.title,
-        agencyName: agency?.name ?? "—",
+        agencyName,
+        clientName,
         projectRef,
         projectRefShort: shortRef(projectRef),
         latestSnippet,
@@ -221,15 +228,15 @@ export function buildUpdatesProjects(input: {
         progress: computeProgress(milestones),
         providerUpdates,
         teamMembers: buildTeamMembers(
-          input.clientName,
-          agency?.name ?? "—",
+          clientName,
+          agencyName,
           input.labels.clientRole,
           input.labels.managerRole
         ),
         chatMessages: buildChatMessages(
           request.id,
-          agency?.name ?? "—",
-          input.clientName,
+          agencyName,
+          clientName,
           milestones,
           input.messagesByRequest[request.id] ?? []
         ),

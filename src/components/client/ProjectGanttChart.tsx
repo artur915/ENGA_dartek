@@ -7,11 +7,13 @@ import type { SchedulePhase, ScheduleWeek } from "@/lib/project-schedule";
 export function ProjectGanttChart({
   phases,
   weeks,
+  portal = "client",
 }: {
   phases: SchedulePhase[];
   weeks: ScheduleWeek[];
+  portal?: "client" | "agency";
 }) {
-  const t = useTranslations("client.schedule");
+  const t = useTranslations(portal === "agency" ? "agency.schedule" : "client.schedule");
 
   return (
     <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface">

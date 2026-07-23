@@ -10,16 +10,25 @@ import { ProjectGanttChart } from "@/components/client/ProjectGanttChart";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 
+type Portal = "client" | "agency";
+
 export function ProjectScheduleWorkspace({
   projects,
   initialProjectId,
+  portal = "client",
 }: {
   projects: ScheduleProject[];
   initialProjectId?: string;
+  portal?: Portal;
 }) {
-  const t = useTranslations("client.schedule");
-  const [view, setView] = useState<"client" | "agency">("client");
+  const t = useTranslations(portal === "agency" ? "agency.schedule" : "client.schedule");
+  const [view, setView] = useState<"client" | "agency">(portal === "agency" ? "agency" : "client");
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
+
+  const basePath = portal === "agency" ? "/agency/schedule" : "/client/schedule";
+  const workspacePath = portal === "agency" ? "/agency/projects" : "/client/projects";
+  const emptyHref = portal === "agency" ? "/agency/projects" : "/client/quotations";
+  const emptyLabel = portal === "agency" ? t("browseProjects") : t("browseQuotations");
 
   const selectedId =
     initialProjectId && projects.some((p) => p.requestId === initialProjectId)
@@ -35,14 +44,15 @@ export function ProjectScheduleWorkspace({
     return (
       <div className="rounded-2xl border border-border-subtle bg-surface p-8 text-center">
         <p className="text-muted">{t("empty")}</p>
-        <ButtonLink href="/client/quotations" variant="outline" size="sm" className="mt-4">
-          {t("browseQuotations")}
+        <ButtonLink href={emptyHref} variant="outline" size="sm" className="mt-4">
+          {emptyLabel}
         </ButtonLink>
       </div>
     );
   }
 
   const awaitingApproval = selected.awaitingApproval && !approvedIds.has(selected.requestId);
+  const subtitle = portal === "agency" ? selected.clientName ?? "—" : selected.agencyName;
 
   return (
     <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
@@ -51,10 +61,11 @@ export function ProjectScheduleWorkspace({
         <ul className="space-y-1">
           {projects.map((project) => {
             const active = project.requestId === selected.requestId;
+            const projectSubtitle = portal === "agency" ? project.clientName ?? "—" : project.agencyName;
             return (
               <li key={project.requestId}>
                 <Link
-                  href={`/client/schedule?project=${project.requestId}`}
+                  href={`${basePath}?project=${project.requestId}`}
                   className={cn(
                     "block rounded-xl px-3 py-3 transition-colors",
                     active ? "bg-primary text-white shadow-sm" : "hover:bg-surface-muted"
@@ -62,7 +73,7 @@ export function ProjectScheduleWorkspace({
                 >
                   <p className="text-sm font-semibold leading-snug">{project.title}</p>
                   <p className={cn("mt-1 text-xs", active ? "text-white/80" : "text-muted")}>
-                    {project.agencyName}
+                    {projectSubtitle}
                   </p>
                   <p className={cn("mt-2 text-[11px] font-medium", active ? "text-white/90" : "text-primary")}>
                     {project.progress}% · {project.completedPhases}/{project.totalPhases} {t("phasesShort")}
@@ -124,6 +135,7 @@ export function ProjectScheduleWorkspace({
             <p className="mt-1 text-xs text-muted">
               {selected.durationLabel} · {selected.poRef}
             </p>
+            <p className="mt-1 text-xs text-muted">{subtitle}</p>
           </SummaryCard>
           <SummaryCard title={t("scheduleProgress")}>
             <div className="flex items-center justify-between gap-3">
@@ -153,10 +165,10 @@ export function ProjectScheduleWorkspace({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-semibold text-foreground">{selected.title}</p>
             <div className="flex flex-wrap gap-2">
-              <ButtonLink href={`/client/projects/${selected.requestId}`} variant="outline" size="sm">
+              <ButtonLink href={`${workspacePath}/${selected.requestId}`} variant="outline" size="sm">
                 {t("openWorkspace")}
               </ButtonLink>
-              {awaitingApproval && (
+              {portal === "client" && awaitingApproval && (
                 <button
                   type="button"
                   onClick={() =>
@@ -172,12 +184,12 @@ export function ProjectScheduleWorkspace({
 
           {awaitingApproval && (
             <div className="mt-4 rounded-xl border border-warning/20 bg-warning/10 px-4 py-3 text-sm text-muted-foreground">
-              {t("reviewBanner")}
+              {portal === "agency" ? t("reviewBannerAgency") : t("reviewBanner")}
             </div>
           )}
 
           <div className="mt-5">
-            <ProjectGanttChart phases={selected.phases} weeks={selected.weeks} />
+            <ProjectGanttChart phases={selected.phases} weeks={selected.weeks} portal={portal} />
           </div>
 
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted">

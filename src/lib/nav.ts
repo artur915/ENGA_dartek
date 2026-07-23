@@ -20,6 +20,8 @@ export function getAgencyNav(t: (key: string) => string, tc: (key: string) => st
     { href: "/agency/requests", label: t("incomingRequests"), icon: "ClipboardList" },
     { href: "/agency/quotations", label: tc("quotations"), icon: "FileText" },
     { href: "/agency/projects", label: t("activeProjects"), icon: "FolderKanban" },
+    { href: "/agency/schedule", label: t("projectSchedule"), icon: "Calendar" },
+    { href: "/agency/updates", label: t("projectUpdates"), icon: "Bell" },
     { href: "/agency/finance", label: t("financeLite"), icon: "DollarSign" },
   ];
 }

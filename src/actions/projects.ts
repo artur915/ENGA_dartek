@@ -116,7 +116,7 @@ export async function getAgencyActiveProjects() {
         milestones(id, title, status, sort_order, due_date, status_update, updated_at),
         payments(id, amount, status)
       ),
-      quotations(price),
+      quotations(price, estimated_duration, deliverables_items, payment_milestones),
       profiles!agreements_client_id_fkey(full_name, email)
     `)
     .eq("agency_id", agency.id)

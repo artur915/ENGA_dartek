@@ -62,6 +62,9 @@ export async function sendProjectMessage(requestId: string, body: string) {
   if (error) return { error: error.message };
 
   revalidatePath("/client/updates");
+  revalidatePath("/client/schedule");
+  revalidatePath("/agency/updates");
+  revalidatePath("/agency/schedule");
   revalidatePath("/agency/projects");
   return { success: true, message: data as ProjectMessageRow };
 }

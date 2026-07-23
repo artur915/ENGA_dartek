@@ -47,6 +47,7 @@ export type ScheduleProject = {
   agreementId: string;
   title: string;
   agencyName: string;
+  clientName?: string;
   poRef: string;
   signedAt: string | null;
   progress: number;
@@ -196,6 +197,7 @@ export function buildScheduleProject(input: {
   agreementId: string;
   title: string;
   agencyName: string;
+  clientName?: string;
   signedAt: string | null;
   estimatedDuration: string | null;
   deliverablesItems?: unknown;
@@ -267,6 +269,7 @@ export function buildScheduleProject(input: {
     agreementId: input.agreementId,
     title: input.title,
     agencyName: input.agencyName,
+    clientName: input.clientName,
     poRef: formatPoRef(input.agreementId, input.signedAt),
     signedAt: input.signedAt,
     progress: computeProgress(milestones),

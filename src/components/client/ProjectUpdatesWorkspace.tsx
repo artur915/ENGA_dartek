@@ -34,7 +34,10 @@ import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 
-const READ_STORAGE_KEY = "enga-project-update-reads";
+const READ_STORAGE_KEYS = {
+  client: "enga-project-update-reads",
+  agency: "enga-agency-project-update-reads",
+} as const;
 
 const STATUS_VARIANT: Record<string, "success" | "warning" | "accent"> = {
   statusOnTrack: "success",
@@ -51,17 +54,28 @@ const UPDATE_ICON: Record<ProviderUpdate["kind"], typeof FileText> = {
 export function ProjectUpdatesWorkspace({
   projects,
   initialProjectId,
+  portal = "client",
+  senderDisplayName,
 }: {
   projects: UpdatesProjectSummary[];
   initialProjectId?: string;
+  portal?: "client" | "agency";
+  senderDisplayName?: string;
 }) {
-  const t = useTranslations("client.updates");
-  const td = useTranslations("client.dashboard");
+  const t = useTranslations(portal === "agency" ? "agency.updates" : "client.updates");
+  const td = useTranslations(portal === "agency" ? "agency.dashboard" : "client.dashboard");
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const [messageDraft, setMessageDraft] = useState("");
   const [extraMessages, setExtraMessages] = useState<Record<string, ChatMessage[]>>({});
+
+  const basePath = portal === "agency" ? "/agency/updates" : "/client/updates";
+  const workspacePath = portal === "agency" ? "/agency/projects" : "/client/projects";
+  const emptyHref = portal === "agency" ? "/agency/projects" : "/client/quotations";
+  const outgoingRole = portal === "agency" ? "agency" : "client";
+  const readStorageKey = READ_STORAGE_KEYS[portal];
+  const youLabel = senderDisplayName ?? t("you");
 
   const selectedId =
     initialProjectId && projects.some((project) => project.requestId === initialProjectId)
@@ -75,7 +89,7 @@ export function ProjectUpdatesWorkspace({
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(READ_STORAGE_KEY);
+      const raw = localStorage.getItem(readStorageKey);
       if (raw) setReadIds(new Set(JSON.parse(raw) as string[]));
     } catch {
       setReadIds(new Set());
@@ -85,7 +99,7 @@ export function ProjectUpdatesWorkspace({
 
   const persistReadIds = (next: Set<string>) => {
     setReadIds(next);
-    localStorage.setItem(READ_STORAGE_KEY, JSON.stringify([...next]));
+    localStorage.setItem(readStorageKey, JSON.stringify([...next]));
   };
 
   const markRead = (updateId: string) => {
@@ -105,8 +119,8 @@ export function ProjectUpdatesWorkspace({
     const optimistic: ChatMessage = {
       id: tempId,
       body,
-      senderRole: "client",
-      senderName: t("you"),
+      senderRole: outgoingRole,
+      senderName: youLabel,
       createdAt: new Date().toISOString(),
     };
 
@@ -126,7 +140,7 @@ export function ProjectUpdatesWorkspace({
         id: row.id,
         body: row.body,
         senderRole: row.sender_role,
-        senderName: t("you"),
+        senderName: row.sender_role === outgoingRole ? youLabel : row.sender_role === "client" ? selected.clientName : selected.agencyName,
         createdAt: row.created_at,
       };
 
@@ -150,7 +164,7 @@ export function ProjectUpdatesWorkspace({
     return (
       <div className="rounded-2xl border border-border-subtle bg-surface p-8 text-center">
         <p className="text-muted">{t("empty")}</p>
-        <Link href="/client/quotations" className="mt-4 inline-block text-sm font-semibold text-primary">
+        <Link href={emptyHref} className="mt-4 inline-block text-sm font-semibold text-primary">
           {t("browseProjects")} →
         </Link>
       </div>
@@ -175,7 +189,7 @@ export function ProjectUpdatesWorkspace({
               return (
                 <li key={project.requestId}>
                   <Link
-                    href={`/client/updates?project=${project.requestId}`}
+                    href={`${basePath}?project=${project.requestId}`}
                     className={cn(
                       "block rounded-xl border px-3 py-3 transition-colors",
                       active
@@ -201,7 +215,9 @@ export function ProjectUpdatesWorkspace({
                             </span>
                           )}
                         </div>
-                        <p className="mt-0.5 text-xs text-muted">{project.agencyName}</p>
+                        <p className="mt-0.5 text-xs text-muted">
+                          {portal === "agency" ? project.clientName : project.agencyName}
+                        </p>
                         <p className="mt-2 line-clamp-2 text-[11px] text-muted-foreground">{project.latestSnippet}</p>
                         <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
                           <StatusDot statusKey={project.statusKey} label={td(project.statusKey)} />
@@ -231,7 +247,9 @@ export function ProjectUpdatesWorkspace({
                 <div>
                   <p className="text-base font-bold text-foreground">{selected.title}</p>
                   <p className="text-xs text-muted">
-                    {selected.agencyName} · {selected.projectRef}
+                    {portal === "agency"
+                      ? `${selected.clientName} · ${selected.projectRef}`
+                      : `${selected.agencyName} · ${selected.projectRef}`}
                   </p>
                 </div>
               </div>
@@ -252,7 +270,9 @@ export function ProjectUpdatesWorkspace({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <Users className="h-4 w-4 text-primary" />
-                  {t("projectTeam", { agency: selected.agencyName })}
+                  {portal === "agency"
+                    ? t("projectTeamClient", { client: selected.clientName })
+                    : t("projectTeam", { agency: selected.agencyName })}
                 </div>
                 <span className="text-xs text-success">{t("online")}</span>
               </div>
@@ -285,7 +305,7 @@ export function ProjectUpdatesWorkspace({
               selectedMessages.map((message, index) => {
                 const showDate =
                   index === 0 || !isSameDay(message.createdAt, selectedMessages[index - 1].createdAt);
-                const isClient = message.senderRole === "client";
+                const isOutgoing = message.senderRole === outgoingRole;
 
                 return (
                   <div key={message.id}>
@@ -294,15 +314,15 @@ export function ProjectUpdatesWorkspace({
                         {t("today")}
                       </p>
                     )}
-                    <div className={cn("flex", isClient ? "justify-end" : "justify-start")}>
-                      <div className={cn("max-w-[85%]", isClient ? "text-end" : "text-start")}>
-                        {!isClient && (
+                    <div className={cn("flex", isOutgoing ? "justify-end" : "justify-start")}>
+                      <div className={cn("max-w-[85%]", isOutgoing ? "text-end" : "text-start")}>
+                        {!isOutgoing && (
                           <p className="mb-1 text-[11px] font-semibold text-muted">{message.senderName}</p>
                         )}
                         <div
                           className={cn(
                             "rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm",
-                            isClient
+                            isOutgoing
                               ? "rounded-ee-md bg-primary text-white"
                               : "rounded-es-md border border-border-subtle bg-surface-muted text-foreground"
                           )}
@@ -331,7 +351,11 @@ export function ProjectUpdatesWorkspace({
                 value={messageDraft}
                 onChange={(event) => setMessageDraft(event.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={t("messagePlaceholder", { agency: selected.agencyName })}
+                placeholder={
+                  portal === "agency"
+                    ? t("messagePlaceholderClient", { client: selected.clientName })
+                    : t("messagePlaceholder", { agency: selected.agencyName })
+                }
                 rows={2}
                 className="min-h-[72px] flex-1 resize-none rounded-xl border border-border-subtle bg-surface px-4 py-3 text-sm outline-none ring-primary/20 focus:ring-2"
               />
@@ -419,7 +443,7 @@ export function ProjectUpdatesWorkspace({
                             </button>
                           )}
                           <Link
-                            href={`/client/projects/${selected.requestId}`}
+                            href={`${workspacePath}/${selected.requestId}`}
                             className="text-muted-foreground hover:text-foreground"
                           >
                             {t("view")}
