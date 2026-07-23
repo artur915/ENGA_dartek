@@ -10,6 +10,7 @@ import {
   LandingSectionHeader,
   LandingViewAllLink,
 } from "@/components/landing/LandingSection";
+import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
 import { formatCurrency } from "@/lib/format";
 
 export async function AgenciesPreviewSection() {
@@ -39,9 +40,10 @@ export async function AgenciesPreviewSection() {
           </ButtonLink>
         </LandingCard>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <LandingGrid className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {preview.map((agency) => (
-            <LandingCard key={agency.id} className="flex h-full flex-col">
+            <LandingGridItem key={agency.id}>
+            <LandingCard className="flex h-full flex-col">
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-landing-muted text-primary">
                   <Building2 className="h-5 w-5" />
@@ -86,8 +88,9 @@ export async function AgenciesPreviewSection() {
                 </Link>
               </div>
             </LandingCard>
+            </LandingGridItem>
           ))}
-        </div>
+        </LandingGrid>
       )}
     </LandingSection>
   );

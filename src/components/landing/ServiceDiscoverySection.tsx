@@ -20,6 +20,8 @@ import {
   LandingSectionHeader,
   LandingViewAllLink,
 } from "@/components/landing/LandingSection";
+import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
+import { Reveal } from "@/components/motion/Reveal";
 
 const FEATURED_CATEGORIES = [
   "Design",
@@ -74,17 +76,19 @@ export function ServiceDiscoverySection() {
         action={<LandingViewAllLink href="/services" label={t("catalogExploreAll")} />}
       />
 
-      <form onSubmit={handleSearch} className="mx-auto max-w-2xl">
-        <SearchInput
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onClear={() => setQuery("")}
-          placeholder={t("catalogSearchPlaceholder")}
-          aria-label={tc("search")}
-        />
-      </form>
+      <Reveal delay={0.1}>
+        <form onSubmit={handleSearch} className="mx-auto max-w-2xl">
+          <SearchInput
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onClear={() => setQuery("")}
+            placeholder={t("catalogSearchPlaceholder")}
+            aria-label={tc("search")}
+          />
+        </form>
+      </Reveal>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <LandingGrid className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURED_CATEGORIES.map((catName) => {
           const Icon = categoryIcons[catName] ?? PenTool;
           const count = categoryCounts[catName];
@@ -92,7 +96,8 @@ export function ServiceDiscoverySection() {
           const description = descriptions[catName] ?? "";
 
           return (
-            <Link key={catName} href={`/services?category=${encodeURIComponent(catName)}`}>
+            <LandingGridItem key={catName}>
+            <Link href={`/services?category=${encodeURIComponent(catName)}`}>
               <LandingCard className="h-full">
                 <div className="flex items-start gap-4">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-landing-muted text-primary">
@@ -112,9 +117,10 @@ export function ServiceDiscoverySection() {
                 </div>
               </LandingCard>
             </Link>
+            </LandingGridItem>
           );
         })}
-      </div>
+      </LandingGrid>
     </LandingSection>
   );
 }

@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { CheckCircle2, Clock3, FileCheck2, FolderOpen, ListChecks, Scale } from "lucide-react";
 import { LandingSection, LandingSectionHeader } from "@/components/landing/LandingSection";
+import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
 
 const icons = [ListChecks, Scale, FolderOpen, FileCheck2, Clock3, CheckCircle2];
 
@@ -16,12 +17,12 @@ export function ClientBenefitsSection() {
         description={t("description")}
         align="start"
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <LandingGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, i) => {
           const Icon = icons[i] ?? CheckCircle2;
           return (
+            <LandingGridItem key={item}>
             <div
-              key={item}
               className="rounded-xl border border-border bg-surface p-5 shadow-soft transition-shadow hover:shadow-card-hover"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/8 text-primary">
@@ -29,9 +30,10 @@ export function ClientBenefitsSection() {
               </span>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item}</p>
             </div>
+            </LandingGridItem>
           );
         })}
-      </div>
+      </LandingGrid>
     </LandingSection>
   );
 }

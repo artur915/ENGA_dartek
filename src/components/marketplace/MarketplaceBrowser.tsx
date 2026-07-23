@@ -2,22 +2,23 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import {
   ENGINEERING_SERVICES,
   SERVICE_CATEGORIES,
   SERVICE_PACKAGES,
 } from "@/data/catalog";
 import { getServicesForPackage } from "@/lib/catalog-stats";
+import { getPackageDisplayCounts } from "@/lib/marketplace-display";
 import {
   getCategoryLabel,
   getPackageNameByEnglishName,
   getProviderLabel,
 } from "@/lib/catalog-i18n";
 import { MarketplacePackageCard } from "@/components/marketplace/MarketplacePackageCard";
+import { MarketplaceServiceCard } from "@/components/marketplace/MarketplaceServiceCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { FilterBar, FilterChip } from "@/components/ui/FilterChip";
 import { Select } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
 import { Box, Filter, Layers, Search, Wrench, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -61,9 +62,10 @@ export function MarketplaceBrowser() {
     });
   }, [category, pkgFilter, provider, query]);
 
-  const hasServiceFilters = Boolean(category || pkgFilter || provider);
+  const hasFilters = Boolean(query || category || pkgFilter || provider);
 
-  function resetServiceFilters() {
+  function resetFilters() {
+    setQuery("");
     setCategory("");
     setPkgFilter("");
     setProvider("");
@@ -112,47 +114,73 @@ export function MarketplaceBrowser() {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className="h-12 w-full rounded-full border border-gray-200 bg-white py-2 ps-11 pe-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
-          />
-        </div>
-        <button
-          type="button"
-          onClick={() => setFiltersOpen(true)}
-          className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50/40 lg:hidden"
-        >
-          <Filter className="h-4 w-4" />
-          {t("filters")}
-        </button>
-        <div className="hidden items-center gap-2 lg:flex">
-          {tab === "services" && filterControls}
+      <div className="rounded-2xl border border-border-subtle bg-surface-muted/60 p-4 sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="h-12 w-full rounded-full border border-border bg-surface py-2 ps-11 pe-4 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
           <button
             type="button"
             onClick={() => setFiltersOpen(true)}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50/40"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-border bg-surface px-5 text-sm font-semibold text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5 lg:hidden"
           >
-            <Filter className="h-4 w-4" />
+            <Filter className="h-4 w-4 text-primary" />
             {t("filters")}
           </button>
+          <div className="hidden items-center gap-2 lg:flex">
+            {tab === "services" && filterControls}
+            <button
+              type="button"
+              onClick={() => setFiltersOpen(true)}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-surface px-5 text-sm font-semibold text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5"
+            >
+              <Filter className="h-4 w-4 text-primary" />
+              {t("filters")}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="mt-8 flex gap-8 border-b border-gray-200">
+      {hasFilters && tab === "services" && (
+        <FilterBar onReset={resetFilters} resetLabel={t("resetFilters")} className="mt-4">
+          {query && <FilterChip label={query} onRemove={() => setQuery("")} />}
+          {category && (
+            <FilterChip
+              label={getCategoryLabel(category, locale)}
+              onRemove={() => setCategory("")}
+            />
+          )}
+          {pkgFilter && (
+            <FilterChip
+              label={getPackageNameByEnglishName(pkgFilter, locale)}
+              onRemove={() => setPkgFilter("")}
+            />
+          )}
+          {provider && (
+            <FilterChip
+              label={getProviderLabel(provider, locale)}
+              onRemove={() => setProvider("")}
+            />
+          )}
+        </FilterBar>
+      )}
+
+      <div className="mt-8 flex gap-6 border-b border-border-subtle">
         <button
           type="button"
           onClick={() => setTab("packages")}
           className={cn(
-            "inline-flex items-center gap-2 border-b-2 pb-3 text-sm font-semibold transition-colors",
+            "inline-flex items-center gap-2 border-b-2 pb-3.5 text-sm font-semibold transition-colors",
             tab === "packages"
-              ? "border-emerald-700 text-emerald-700"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted hover:text-foreground"
           )}
         >
           <Box className="h-4 w-4" />
@@ -162,10 +190,10 @@ export function MarketplaceBrowser() {
           type="button"
           onClick={() => setTab("services")}
           className={cn(
-            "inline-flex items-center gap-2 border-b-2 pb-3 text-sm font-semibold transition-colors",
+            "inline-flex items-center gap-2 border-b-2 pb-3.5 text-sm font-semibold transition-colors",
             tab === "services"
-              ? "border-emerald-700 text-emerald-700"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-primary text-primary"
+              : "border-transparent text-muted hover:text-foreground"
           )}
         >
           <Wrench className="h-4 w-4" />
@@ -174,15 +202,15 @@ export function MarketplaceBrowser() {
       </div>
 
       {tab === "packages" ? (
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {filteredPackages.map((pkg) => {
-            const included = Number(t(`packages.${pkg.slug}.included`));
-            const total = Number(t(`packages.${pkg.slug}.total`));
+            const services = getServicesForPackage(pkg.name);
+            const { included, total } = getPackageDisplayCounts(pkg.slug, services.length);
             return (
               <MarketplacePackageCard
                 key={pkg.slug}
                 pkg={pkg}
-                services={getServicesForPackage(pkg.name)}
+                services={services}
                 included={included}
                 total={total}
               />
@@ -191,19 +219,7 @@ export function MarketplaceBrowser() {
         </div>
       ) : (
         <>
-          {hasServiceFilters && (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={resetServiceFilters}
-                className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-              >
-                {t("resetFilters")}
-              </button>
-            </div>
-          )}
-
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-5 text-sm font-medium text-muted">
             {t("foundServices", { count: filteredServices.length })}
           </p>
 
@@ -215,45 +231,9 @@ export function MarketplaceBrowser() {
               className="mt-8"
             />
           ) : (
-            <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {filteredServices.map((service) => (
-                <article
-                  key={service.id}
-                  className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-base font-bold text-gray-900">{service.name}</h2>
-                    <Badge variant="outline" size="sm">
-                      {getCategoryLabel(service.category, locale)}
-                    </Badge>
-                  </div>
-                  <p className="mt-2 text-sm text-gray-500">
-                    {getProviderLabel(service.provider, locale)}
-                  </p>
-                  {service.packages.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {service.packages.slice(0, 2).map((p) => (
-                        <Badge key={p} size="sm">
-                          {getPackageNameByEnglishName(p, locale)}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                  <div className="mt-5 flex justify-end gap-2">
-                    <Link
-                      href={`/services/${service.id}`}
-                      className="inline-flex h-10 items-center rounded-lg border border-gray-200 px-4 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-                    >
-                      {t("viewDetails")}
-                    </Link>
-                    <Link
-                      href={`/client/requests/new?service=${service.id}`}
-                      className="inline-flex h-10 items-center rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
-                    >
-                      {t("requestService")}
-                    </Link>
-                  </div>
-                </article>
+                <MarketplaceServiceCard key={service.id} service={service} />
               ))}
             </div>
           )}
@@ -264,17 +244,17 @@ export function MarketplaceBrowser() {
         <div className="fixed inset-0 z-50">
           <button
             type="button"
-            className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
             onClick={() => setFiltersOpen(false)}
             aria-label="Close filters"
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:inset-x-auto sm:bottom-auto sm:start-1/2 sm:top-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl">
+          <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-surface p-5 shadow-elevated sm:inset-x-auto sm:bottom-auto sm:start-1/2 sm:top-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">{t("filters")}</h2>
+              <h2 className="text-lg font-bold text-foreground">{t("filters")}</h2>
               <button
                 type="button"
                 onClick={() => setFiltersOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100"
+                className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-surface-muted"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -283,7 +263,7 @@ export function MarketplaceBrowser() {
             <button
               type="button"
               onClick={() => setFiltersOpen(false)}
-              className="mt-6 h-11 w-full rounded-xl bg-emerald-700 text-sm font-semibold text-white"
+              className="mt-6 h-11 w-full rounded-xl bg-primary text-sm font-semibold text-white hover:bg-primary-dark"
             >
               {t("applyFilters")}
             </button>

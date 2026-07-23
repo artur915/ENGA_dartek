@@ -9,6 +9,7 @@ import {
   LandingSectionHeader,
   LandingViewAllLink,
 } from "@/components/landing/LandingSection";
+import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
 
 const LANDING_PACKAGE_SLUGS = [
   "build-my-villa",
@@ -40,11 +41,12 @@ export function PackagesSection() {
         align="start"
         action={<LandingViewAllLink href="/packages" label={tc("viewAll")} />}
       />
-      <div className="grid gap-5 md:grid-cols-2">
+      <LandingGrid className="grid gap-5 md:grid-cols-2">
         {packages.map((pkg) => {
           const meta = packageMeta[pkg.slug];
           return (
-            <LandingCard key={pkg.slug} className="flex h-full flex-col">
+            <LandingGridItem key={pkg.slug}>
+            <LandingCard className="flex h-full flex-col">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
                 {meta?.forWho ?? getPackageField(pkg, "categories", locale)}
               </p>
@@ -67,9 +69,10 @@ export function PackagesSection() {
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" />
               </ButtonLink>
             </LandingCard>
+            </LandingGridItem>
           );
         })}
-      </div>
+      </LandingGrid>
     </LandingSection>
   );
 }

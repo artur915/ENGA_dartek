@@ -2,6 +2,8 @@ import { useTranslations } from "next-intl";
 import { ArrowRight, Briefcase, FileText, FolderKanban, Receipt, TrendingUp, Upload } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { LandingSection, LandingSectionHeader } from "@/components/landing/LandingSection";
+import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
+import { Reveal } from "@/components/motion/Reveal";
 
 const icons = [Briefcase, FileText, FolderKanban, Upload, Receipt, TrendingUp];
 
@@ -18,12 +20,12 @@ export function ProviderBenefitsSection() {
         align="start"
         inverted
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <LandingGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, i) => {
           const Icon = icons[i] ?? Briefcase;
           return (
+            <LandingGridItem key={item}>
             <div
-              key={item}
               className="rounded-xl border border-primary/15 bg-white/85 p-5 shadow-soft backdrop-blur-sm"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary-dark">
@@ -31,15 +33,16 @@ export function ProviderBenefitsSection() {
               </span>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item}</p>
             </div>
+            </LandingGridItem>
           );
         })}
-      </div>
-      <div className="mt-10">
+      </LandingGrid>
+      <Reveal className="mt-10">
         <ButtonLink href="/auth/sign-up?role=agency_owner" size="lg" variant="primary">
           {t("cta")}
           <ArrowRight className="h-4 w-4 rtl:rotate-180" />
         </ButtonLink>
-      </div>
+      </Reveal>
     </LandingSection>
   );
 }

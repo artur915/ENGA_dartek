@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ChevronDown, ClipboardList, CreditCard, FileSignature, TrafficCone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LandingSection, LandingSectionHeader } from "@/components/landing/LandingSection";
+import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
 
 const stageIcons = [ClipboardList, FileSignature, TrafficCone, CreditCard];
 const stageKeys = ["submit", "compare", "execute", "complete"] as const;
@@ -22,7 +23,7 @@ export function WorkflowSection() {
       />
 
       {/* Desktop: horizontal process */}
-      <ol className="hidden lg:grid lg:grid-cols-4 lg:gap-0">
+      <LandingGrid className="hidden lg:grid lg:grid-cols-4 lg:gap-0">
         {stageKeys.map((key, i) => {
           const Icon = stageIcons[i] ?? ClipboardList;
           const stage = t.raw(`workflowStages.${key}`) as {
@@ -33,7 +34,8 @@ export function WorkflowSection() {
           const isOpen = expanded === key;
 
           return (
-            <li key={key} className="relative flex flex-col">
+            <LandingGridItem key={key}>
+            <div className="relative flex flex-col">
               {i < stageKeys.length - 1 && (
                 <div
                   className="absolute top-6 end-0 hidden h-px w-full translate-x-1/2 bg-border lg:block"
@@ -77,10 +79,11 @@ export function WorkflowSection() {
                   </ol>
                 )}
               </article>
-            </li>
+            </div>
+            </LandingGridItem>
           );
         })}
-      </ol>
+      </LandingGrid>
 
       {/* Mobile / tablet: vertical process */}
       <div className="space-y-3 lg:hidden">

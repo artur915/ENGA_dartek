@@ -3,6 +3,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import { locales, rtlLocales, type Locale } from "@/i18n/config";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 import "../globals.css";
 
 const inter = Inter({
@@ -42,7 +43,9 @@ export default async function LocaleLayout({
       <body
         className={`${inter.variable} ${notoArabic.variable} flex min-h-full flex-col font-sans antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
+          <MotionProvider>{children}</MotionProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
