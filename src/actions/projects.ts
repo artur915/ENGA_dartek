@@ -48,10 +48,10 @@ export async function getClientActiveProjects() {
       agencies(name),
       project_requests(
         id, title, status, location_city, created_at,
-        milestones(id, title, status, sort_order, due_date, status_update),
+        milestones(id, title, status, sort_order, due_date, status_update, updated_at),
         payments(id, amount, status)
       ),
-      quotations(price, estimated_duration)
+      quotations(price, estimated_duration, deliverables_items, payment_milestones)
     `)
     .eq("client_id", profile.id)
     .order("created_at", { ascending: false });
@@ -113,7 +113,7 @@ export async function getAgencyActiveProjects() {
       id, signed_at, created_at,
       project_requests(
         id, title, status, location_city, created_at,
-        milestones(id, title, status, sort_order, due_date, status_update),
+        milestones(id, title, status, sort_order, due_date, status_update, updated_at),
         payments(id, amount, status)
       ),
       quotations(price),

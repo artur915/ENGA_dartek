@@ -8,6 +8,8 @@ export function getClientNav(t: (key: string) => string, tc?: (key: string) => s
     { href: "/client/requests/new", label: t("newRequest"), icon: "Plus" },
     { href: "/client/quotations", label: t("compareQuotes"), icon: "FileText" },
     { href: "/client/projects", label: t("activeProjects"), icon: "FolderKanban" },
+    { href: "/client/schedule", label: t("projectSchedule"), icon: "Calendar" },
+    { href: "/client/updates", label: t("projectUpdates"), icon: "Bell" },
   ];
 }
 

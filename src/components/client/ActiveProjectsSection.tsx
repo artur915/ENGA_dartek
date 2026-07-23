@@ -129,7 +129,7 @@ export async function ActiveProjectsSection({
             return (
               <ActiveProjectCard
                 key={agreement.id}
-                scheduleHref={`/client/projects/${request.id}`}
+                scheduleHref={`/client/schedule?project=${request.id}`}
                 workspaceHref={`/client/projects/${request.id}`}
                 title={request.title}
                 contractValueLabel={t("contractValue")}

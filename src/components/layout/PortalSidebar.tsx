@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   Briefcase,
   Building2,
+  Calendar,
   ClipboardList,
   DollarSign,
   FileText,
@@ -18,6 +19,7 @@ import {
   User,
   UserPlus,
   X,
+  Bell,
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -35,6 +37,8 @@ const iconMap: Record<string, LucideIcon> = {
   UserPlus,
   Briefcase,
   Star,
+  Calendar,
+  Bell,
 };
 
 export interface NavItem {
