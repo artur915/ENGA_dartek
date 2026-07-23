@@ -5,6 +5,7 @@ import { ProjectScheduleWorkspace } from "@/components/client/ProjectScheduleWor
 import { getClientActiveProjects } from "@/actions/projects";
 import { getClientNav } from "@/lib/nav";
 import { buildScheduleProject } from "@/lib/project-schedule";
+import { ensureMilestoneScheduleDates, getMilestones } from "@/actions/milestones";
 
 function unwrap<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null;
@@ -27,14 +28,18 @@ export default async function ClientSchedulePage({
   const nav = getClientNav(t, tc);
   const agreements = await getClientActiveProjects();
 
-  const schedules = agreements
-    .map((agreement) => {
-      const agency = unwrap(agreement.agencies);
-      const request = unwrap(agreement.project_requests);
-      const quote = unwrap(agreement.quotations);
-      if (!request) return null;
+  const schedules = (
+    await Promise.all(
+      agreements.map(async (agreement) => {
+        const agency = unwrap(agreement.agencies);
+        const request = unwrap(agreement.project_requests);
+        const quote = unwrap(agreement.quotations);
+        if (!request) return null;
 
-      return buildScheduleProject({
+        await ensureMilestoneScheduleDates(request.id);
+        const milestones = await getMilestones(request.id);
+
+        return buildScheduleProject({
         requestId: request.id,
         agreementId: agreement.id,
         title: request.title,
@@ -43,12 +48,13 @@ export default async function ClientSchedulePage({
         estimatedDuration: quote?.estimated_duration ?? null,
         deliverablesItems: quote?.deliverables_items,
         paymentMilestones: quote?.payment_milestones,
-        milestones: request.milestones ?? [],
+        milestones,
         locale,
         durationWeeksLabel: (weeks) => ts("durationWeeks", { weeks }),
-      });
-    })
-    .filter(Boolean);
+        });
+      })
+    )
+  ).filter(Boolean);
 
   return (
     <PortalPageLayout

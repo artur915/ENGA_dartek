@@ -113,6 +113,44 @@ function formatIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+export function getPhaseBarStyle(
+  phase: Pick<SchedulePhase, "startDate" | "endDate">,
+  weeks: ScheduleWeek[]
+): { left: string; width: string } {
+  if (!weeks.length) return { left: "0%", width: "0%" };
+
+  const timelineStart = startOfDay(weeks[0].startDate);
+  const timelineEnd = startOfDay(weeks[weeks.length - 1].endDate);
+  const phaseStart = startOfDay(new Date(phase.startDate));
+  const phaseEnd = startOfDay(new Date(phase.endDate));
+
+  const totalDays = Math.max(1, daysBetween(timelineStart, timelineEnd) + 1);
+  const startDay = Math.max(0, daysBetween(timelineStart, phaseStart));
+  const endDay = Math.min(totalDays - 1, daysBetween(timelineStart, phaseEnd));
+  const spanDays = Math.max(1, endDay - startDay + 1);
+
+  return {
+    left: `${(startDay / totalDays) * 100}%`,
+    width: `${(spanDays / totalDays) * 100}%`,
+  };
+}
+
+export function computeDefaultMilestoneDueDates(
+  projectStart: Date,
+  milestoneCount: number,
+  estimatedDuration: string | null | undefined
+): string[] {
+  if (milestoneCount <= 0) return [];
+
+  const durationWeeks = parseDurationWeeks(estimatedDuration);
+  const totalDays = Math.max(milestoneCount, durationWeeks * 7);
+  const segmentDays = Math.max(1, Math.floor(totalDays / milestoneCount));
+
+  return Array.from({ length: milestoneCount }, (_, index) =>
+    formatIsoDate(addDays(projectStart, (index + 1) * segmentDays - 1))
+  );
+}
+
 function distributeDeliverables(
   deliverables: string[],
   milestoneCount: number,

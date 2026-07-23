@@ -431,7 +431,8 @@
     "completedMilestone": "مكتمل",
     "upcomingMilestone": "قادم",
     "upcomingHint": "يبدأ بعد إكمال المراحل السابقة.",
-    "progressReadOnlyHint": "يحدّث المكتب الهندسي نسبة الإنجاز."
+    "progressReadOnlyHint": "يحدّث المكتب الهندسي نسبة الإنجاز.",
+    "milestoneDueLabel": "تاريخ استحقاق المرحلة"
   },
   "quotationsPage": {
     "acceptConfirm": "قبول هذا العرض وإنشاء الاتفاقية؟",
@@ -563,7 +564,15 @@
       "legendCompleted": "مكتمل",
       "legendInProgress": "قيد التنفيذ",
       "legendUpcoming": "قادم",
-      "datesNote": "التواريخ مرتبطة بخطة المشروع."
+      "datesNote": "التواريخ مرتبطة بخطة المشروع.",
+      "milestoneProgressTitle": "تقدم المراحل",
+      "milestoneProgressHintAgency": "عدّل نسبة الإنجاز للمرحلة النشطة. المراحل المكتملة تبقى 100%.",
+      "milestoneProgressHintClient": "يحدّث المكتب الهندسي نسبة الإنجاز.",
+      "milestoneDue": "الاستحقاق {date}",
+      "progressLabel": "نسبة الإنجاز",
+      "completedMilestone": "مكتمل",
+      "upcomingMilestone": "قادم",
+      "statusUpdated": "تم تحديث الحالة"
     },
     "updates": {
       "title": "تحديثات المشروع",
@@ -778,7 +787,15 @@
       "legendCompleted": "مكتمل",
       "legendInProgress": "قيد التنفيذ",
       "legendUpcoming": "قادم",
-      "datesNote": "التواريخ مرتبطة بخطة المشروع."
+      "datesNote": "التواريخ مرتبطة بخطة المشروع.",
+      "milestoneProgressTitle": "تقدم المراحل",
+      "milestoneProgressHintAgency": "عدّل نسبة الإنجاز للمرحلة النشطة. المراحل المكتملة تبقى 100%.",
+      "milestoneProgressHintClient": "يحدّث المكتب الهندسي نسبة الإنجاز.",
+      "milestoneDue": "الاستحقاق {date}",
+      "progressLabel": "نسبة الإنجاز",
+      "completedMilestone": "مكتمل",
+      "upcomingMilestone": "قادم",
+      "statusUpdated": "تم تحديث الحالة"
     },
     "updates": {
       "title": "تحديثات المشروع",

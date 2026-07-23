@@ -6,6 +6,7 @@ import { getAgencyActiveProjects } from "@/actions/projects";
 import { getMyAgency } from "@/actions/agency";
 import { getAgencyNav } from "@/lib/nav";
 import { buildScheduleProject } from "@/lib/project-schedule";
+import { ensureMilestoneScheduleDates, getMilestones } from "@/actions/milestones";
 
 function unwrap<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null;
@@ -29,29 +30,34 @@ export default async function AgencySchedulePage({
   const nav = getAgencyNav(t, tc);
   const [agreements, agency] = await Promise.all([getAgencyActiveProjects(), getMyAgency()]);
 
-  const schedules = agreements
-    .map((agreement) => {
-      const client = unwrap(agreement.profiles);
-      const request = unwrap(agreement.project_requests);
-      const quote = unwrap(agreement.quotations);
-      if (!request) return null;
+  const schedules = (
+    await Promise.all(
+      agreements.map(async (agreement) => {
+        const client = unwrap(agreement.profiles);
+        const request = unwrap(agreement.project_requests);
+        const quote = unwrap(agreement.quotations);
+        if (!request) return null;
 
-      return buildScheduleProject({
-        requestId: request.id,
-        agreementId: agreement.id,
-        title: request.title,
-        agencyName: agency?.name ?? "—",
-        clientName: client?.full_name || client?.email || td("clientLabel"),
-        signedAt: agreement.signed_at,
-        estimatedDuration: quote?.estimated_duration ?? null,
-        deliverablesItems: quote?.deliverables_items,
-        paymentMilestones: quote?.payment_milestones,
-        milestones: request.milestones ?? [],
-        locale,
-        durationWeeksLabel: (weeks) => ts("durationWeeks", { weeks }),
-      });
-    })
-    .filter(Boolean);
+        await ensureMilestoneScheduleDates(request.id);
+        const milestones = await getMilestones(request.id);
+
+        return buildScheduleProject({
+          requestId: request.id,
+          agreementId: agreement.id,
+          title: request.title,
+          agencyName: agency?.name ?? "—",
+          clientName: client?.full_name || client?.email || td("clientLabel"),
+          signedAt: agreement.signed_at,
+          estimatedDuration: quote?.estimated_duration ?? null,
+          deliverablesItems: quote?.deliverables_items,
+          paymentMilestones: quote?.payment_milestones,
+          milestones,
+          locale,
+          durationWeeksLabel: (weeks) => ts("durationWeeks", { weeks }),
+        });
+      })
+    )
+  ).filter(Boolean);
 
   return (
     <PortalPageLayout

@@ -34,6 +34,7 @@ interface Milestone {
   status: MilestoneStatus;
   status_update: string | null;
   sort_order: number;
+  due_date: string | null;
 }
 
 interface Payment {
@@ -108,6 +109,8 @@ export function ProjectWorkspace({
   }, [sortedMilestones]);
 
   function handleProgressChange(milestoneId: string, progress: number) {
+    if (mode !== "agency") return;
+
     const clamped = Math.min(100, Math.max(0, Math.round(progress)));
     setMilestoneProgress(milestoneId, clamped);
     setProgressById((current) => ({ ...current, [milestoneId]: clamped }));
@@ -148,6 +151,13 @@ export function ProjectWorkspace({
       ? agreement.quotations[0]
       : agreement.quotations
     : null;
+
+  function handleDueDateChange(id: string, dueDate: string) {
+    startTransition(async () => {
+      await updateMilestone(id, { due_date: dueDate || null });
+      router.refresh();
+    });
+  }
 
   function handleAddMilestone() {
     if (!newMilestone.trim()) return;
@@ -309,18 +319,31 @@ export function ProjectWorkspace({
                         {t("completedMilestone")} · 100%
                       </p>
                     ) : execution.isActive ? (
-                      <>
-                        <MilestoneProgressControl
-                          value={progressValue}
-                          onChange={(value) => handleProgressChange(m.id, value)}
-                          disabled={mode !== "agency" || requestStatus === "archived" || isPending}
-                          label={t("progressLabel")}
-                          completedLabel={t("completedMilestone")}
-                        />
-                        {mode === "client" && (
-                          <p className="mt-1 text-xs text-muted">{t("progressReadOnlyHint")}</p>
-                        )}
-                      </>
+                      mode === "agency" ? (
+                        <>
+                          <MilestoneProgressControl
+                            value={progressValue}
+                            onChange={(value) => handleProgressChange(m.id, value)}
+                            disabled={requestStatus === "archived" || isPending}
+                            label={t("progressLabel")}
+                            completedLabel={t("completedMilestone")}
+                          />
+                          <label className="mt-3 block text-xs text-muted">
+                            {t("milestoneDueLabel")}
+                            <input
+                              type="date"
+                              value={m.due_date ?? ""}
+                              disabled={isPending}
+                              onChange={(event) => handleDueDateChange(m.id, event.target.value)}
+                              className="mt-1 block h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground"
+                            />
+                          </label>
+                        </>
+                      ) : (
+                        <p className="mt-2 text-xs font-semibold text-primary">
+                          {t("progressLabel")}: {progressValue}%
+                        </p>
+                      )
                     ) : execution.isUpcoming ? (
                       <p className="mt-2 text-xs text-muted">{t("upcomingHint")}</p>
                     ) : null}

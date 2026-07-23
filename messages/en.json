@@ -431,7 +431,8 @@
     "completedMilestone": "Completed",
     "upcomingMilestone": "Upcoming",
     "upcomingHint": "Starts after earlier milestones are completed.",
-    "progressReadOnlyHint": "Progress is updated by the engineering office."
+    "progressReadOnlyHint": "Progress is updated by the engineering office.",
+    "milestoneDueLabel": "Milestone due date"
   },
   "quotationsPage": {
     "acceptConfirm": "Accept this quotation and generate agreement?",
@@ -563,7 +564,15 @@
       "legendCompleted": "Completed",
       "legendInProgress": "In progress",
       "legendUpcoming": "Upcoming",
-      "datesNote": "Dates are tied to the project plan."
+      "datesNote": "Dates are tied to the project plan.",
+      "milestoneProgressTitle": "Milestone progress",
+      "milestoneProgressHintAgency": "Adjust completion for the active milestone. Completed milestones stay at 100%.",
+      "milestoneProgressHintClient": "Progress is updated by your engineering office.",
+      "milestoneDue": "Due {date}",
+      "progressLabel": "Completion",
+      "completedMilestone": "Completed",
+      "upcomingMilestone": "Upcoming",
+      "statusUpdated": "Status updated"
     },
     "updates": {
       "title": "Project Updates",
@@ -778,11 +787,16 @@
       "legendCompleted": "Completed",
       "legendInProgress": "In progress",
       "legendUpcoming": "Upcoming",
-      "datesNote": "Dates are tied to the project plan."
+      "datesNote": "Dates are tied to the project plan.",
+      "milestoneProgressTitle": "Milestone progress",
+      "milestoneProgressHintAgency": "Adjust completion for the active milestone. Completed milestones stay at 100%.",
+      "milestoneProgressHintClient": "Progress is updated by your engineering office.",
+      "milestoneDue": "Due {date}",
+      "progressLabel": "Completion",
+      "completedMilestone": "Completed",
+      "upcomingMilestone": "Upcoming",
+      "statusUpdated": "Status updated"
     },
-    "updates": {
-      "title": "Project Updates",
-      "pageDescription": "Messages and structured updates across your active client projects.",
       "empty": "No active projects yet. Submit quotations on incoming requests to win work.",
       "browseProjects": "View all projects",
       "viewSchedule": "View schedule",

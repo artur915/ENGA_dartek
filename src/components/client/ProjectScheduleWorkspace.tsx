@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Calendar, Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ScheduleProject } from "@/lib/project-schedule";
 import { refreshScheduleProject } from "@/lib/project-schedule";
-import { loadMilestoneProgress } from "@/lib/milestone-progress-storage";
+import { updateMilestone } from "@/actions/milestones";
+import { loadMilestoneProgress, setMilestoneProgress } from "@/lib/milestone-progress-storage";
 import { ProjectGanttChart } from "@/components/client/ProjectGanttChart";
+import { ScheduleMilestonePanel } from "@/components/client/ScheduleMilestonePanel";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 
@@ -24,6 +27,8 @@ export function ProjectScheduleWorkspace({
   portal?: Portal;
 }) {
   const t = useTranslations(portal === "agency" ? "agency.schedule" : "client.schedule");
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [view, setView] = useState<"client" | "agency">(portal === "agency" ? "agency" : "client");
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
   const [progressById, setProgressById] = useState<Record<string, number>>({});
@@ -75,6 +80,21 @@ export function ProjectScheduleWorkspace({
 
   const awaitingApproval = selected.awaitingApproval && !approvedIds.has(selected.requestId);
   const subtitle = portal === "agency" ? selected.clientName ?? "—" : selected.agencyName;
+
+  function handleAgencyProgressChange(milestoneId: string, progress: number) {
+    if (portal !== "agency") return;
+
+    const clamped = Math.min(100, Math.max(0, Math.round(progress)));
+    setMilestoneProgress(milestoneId, clamped);
+    setProgressById((current) => ({ ...current, [milestoneId]: clamped }));
+
+    if (clamped >= 100) {
+      startTransition(async () => {
+        await updateMilestone(milestoneId, { status: "green", status_update: t("statusUpdated") });
+        router.refresh();
+      });
+    }
+  }
 
   return (
     <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
@@ -213,6 +233,13 @@ export function ProjectScheduleWorkspace({
           <div className="mt-5">
             <ProjectGanttChart phases={selected.phases} weeks={selected.weeks} portal={portal} />
           </div>
+
+          <ScheduleMilestonePanel
+            milestones={selected.milestones}
+            portal={portal}
+            progressById={progressById}
+            onProgressChange={portal === "agency" ? handleAgencyProgressChange : undefined}
+          />
 
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted">
             <Clock3 className="h-3.5 w-3.5" />

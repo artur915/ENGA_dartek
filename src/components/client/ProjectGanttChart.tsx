@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import type { SchedulePhase, ScheduleWeek } from "@/lib/project-schedule";
+import { getPhaseBarStyle, type SchedulePhase, type ScheduleWeek } from "@/lib/project-schedule";
 
 export function ProjectGanttChart({
   phases,
@@ -70,6 +70,7 @@ function LegendDot({ className, label }: { className: string; label: string }) {
 
 function GanttPhaseRow({ phase, weeks }: { phase: SchedulePhase; weeks: ScheduleWeek[] }) {
   const isUpcoming = phase.status === "upcoming";
+  const barStyle = getPhaseBarStyle(phase, weeks);
 
   return (
     <>
@@ -108,10 +109,7 @@ function GanttPhaseRow({ phase, weeks }: { phase: SchedulePhase; weeks: Schedule
 
         <div
           className="pointer-events-none absolute inset-y-0 flex items-center px-1"
-          style={{
-            left: `${(phase.weekStart / weeks.length) * 100}%`,
-            width: `${Math.max((phase.weekSpan / weeks.length) * 100, 2.5)}%`,
-          }}
+          style={barStyle}
         >
           <div
             className={cn(
