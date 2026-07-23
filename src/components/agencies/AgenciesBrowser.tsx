@@ -159,16 +159,16 @@ export function AgenciesBrowser({ agencies }: { agencies: Agency[] }) {
                   {formatCurrency(Number(agency.indicative_price_from), t("currency"), locale)}
                 </p>
               )}
-              <div className="mt-5 flex flex-wrap gap-2 border-t border-border-subtle pt-4">
+              <div className="mt-5 flex items-stretch gap-2 border-t border-border-subtle pt-4">
                 <Link
                   href={`/agencies/${agency.id}`}
-                  className="inline-flex h-10 flex-1 items-center justify-center rounded-xl border border-border text-sm font-semibold hover:bg-surface-muted"
+                  className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center rounded-xl border border-border px-2 text-center text-xs font-semibold leading-snug sm:text-sm"
                 >
                   {ta("viewProfile")}
                 </Link>
                 <Link
                   href="/client/requests/new"
-                  className="inline-flex h-10 flex-1 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-white hover:bg-primary-dark"
+                  className="inline-flex min-h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-primary px-3 text-xs font-semibold text-white hover:bg-primary-dark sm:text-sm"
                 >
                   {ta("requestQuote")}
                 </Link>

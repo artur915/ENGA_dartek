@@ -71,16 +71,16 @@ export async function AgenciesPreviewSection() {
                   {formatCurrency(Number(agency.indicative_price_from), tc("currency"), locale)}
                 </p>
               )}
-              <div className="mt-5 flex flex-wrap gap-2 border-t border-border-subtle pt-4">
+              <div className="mt-5 flex items-stretch gap-2 border-t border-border-subtle pt-4">
                 <Link
                   href={`/agencies/${agency.id}`}
-                  className="inline-flex h-10 items-center rounded-lg border border-border px-3.5 text-sm font-semibold text-navy transition-colors hover:border-primary/30 hover:text-primary"
+                  className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center rounded-lg border border-border px-2 text-center text-xs font-semibold leading-snug text-navy transition-colors hover:border-primary/30 hover:text-primary sm:text-sm"
                 >
                   {t("agenciesViewProfile")}
                 </Link>
                 <Link
                   href="/client/requests/new"
-                  className="inline-flex h-10 items-center rounded-lg bg-primary px-3.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
+                  className="inline-flex min-h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-lg bg-primary px-3 text-xs font-semibold text-white transition-colors hover:bg-primary-dark sm:text-sm"
                 >
                   {t("agenciesRequestQuote")}
                 </Link>
