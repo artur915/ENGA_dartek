@@ -22,6 +22,7 @@ export function getAgencyNav(t: (key: string) => string, tc: (key: string) => st
     { href: "/agency/projects", label: t("activeProjects"), icon: "FolderKanban" },
     { href: "/agency/schedule", label: t("projectSchedule"), icon: "Calendar" },
     { href: "/agency/updates", label: t("projectUpdates"), icon: "Bell" },
+    { href: "/agency/partners", label: t("partners"), icon: "Handshake" },
     { href: "/agency/finance", label: t("financeLite"), icon: "DollarSign" },
   ];
 }
