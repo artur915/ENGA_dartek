@@ -9,6 +9,8 @@ import {
   getPackageNameByEnglishName,
   getProviderLabel,
 } from "@/lib/catalog-i18n";
+import { getCategoryAccent } from "@/lib/design-tokens";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -194,9 +196,14 @@ export function ServicesBrowser({ initialCategory, initialQuery }: ServicesBrows
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold text-foreground">{service.name}</h3>
-                    <Badge variant="outline" size="sm">
+                    <span
+                      className={cn(
+                        "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1",
+                        getCategoryAccent(service.category).badge
+                      )}
+                    >
                       {getCategoryLabel(service.category, locale)}
-                    </Badge>
+                    </span>
                   </div>
                   <p className="mt-1 text-sm text-muted">{getProviderLabel(service.provider, locale)}</p>
                   {service.packages.length > 0 && (

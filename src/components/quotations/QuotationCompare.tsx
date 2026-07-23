@@ -15,6 +15,8 @@ import {
 } from "@/lib/quotation-display";
 import { Building2, Clock, CheckCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
+import { QUOTATION_STATUS_ACCENT } from "@/lib/design-tokens";
+import { cn } from "@/lib/utils";
 
 interface Quotation extends QuotationDisplayData {
   id: string;
@@ -58,10 +60,21 @@ export function QuotationCompare({
 
   if (quotations.length === 0) {
     return (
-      <Card className="mt-8 text-center">
+      <Card className="mt-8 border-dashed bg-surface-muted text-center">
         <p className="text-muted">{requestStatus === "floating" ? t("floating") : t("none")}</p>
       </Card>
     );
+  }
+
+  function statusBadgeVariant(status: string): "default" | "success" | "warning" | "danger" | "info" | "accent" {
+    const accent = QUOTATION_STATUS_ACCENT[status];
+    if (accent === "green") return "success";
+    if (accent === "amber") return "warning";
+    if (accent === "rose") return "danger";
+    if (accent === "blue" || accent === "sky") return "info";
+    if (accent === "teal") return "accent";
+    if (accent === "purple") return "default";
+    return "default";
   }
 
   return (
@@ -72,23 +85,34 @@ export function QuotationCompare({
         const terms = getQuotationTerms(q);
         const paymentMilestones = getQuotationPaymentMilestones(q);
 
+        const isAccepted = q.status === "accepted";
+
         return (
-          <Card key={q.id} className="relative">
-            <div className="mb-4 flex items-start justify-between">
+          <Card
+            key={q.id}
+            className={cn(
+              "relative",
+              isAccepted && "border-secondary/30 ring-2 ring-secondary/15"
+            )}
+          >
+            <div className="mb-4 flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Building2 className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="font-semibold">{q.agencies?.name}</h3>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {q.agencies?.disciplines?.slice(0, 2).map((d) => (
-                      <Badge key={d} variant="outline">
-                        {d}
-                      </Badge>
-                    ))}
-                  </div>
+                  <Badge variant={statusBadgeVariant(q.status)} size="sm" className="mt-1">
+                    {q.status}
+                  </Badge>
                 </div>
+              </div>
+              <div className="flex flex-wrap justify-end gap-1">
+                {q.agencies?.disciplines?.slice(0, 2).map((d) => (
+                  <Badge key={d} variant="outline" size="sm">
+                    {d}
+                  </Badge>
+                ))}
               </div>
             </div>
 
@@ -154,7 +178,7 @@ export function QuotationCompare({
                 type="button"
                 onClick={() => handleAccept(q.id)}
                 disabled={isPending}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-dark disabled:opacity-50"
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-50"
               >
                 <CheckCircle className="h-4 w-4" />
                 {isPending ? t("processing") : t("accept")}

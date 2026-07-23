@@ -7,13 +7,14 @@ import { ArrowRight } from "lucide-react";
 import { fadeUp, heroItem, heroStagger, motionVariants, viewportOnce } from "@/lib/motion";
 import { useHydrated } from "@/hooks/use-hydrated";
 
-type LandingVariant = "light" | "muted" | "navy" | "accent";
+type LandingVariant = "light" | "muted" | "navy" | "accent" | "provider";
 
 const variantStyles: Record<LandingVariant, string> = {
   light: "bg-landing-bg text-foreground",
   muted: "bg-landing-muted text-foreground",
   navy: "gradient-accent text-foreground",
-  accent: "bg-primary/8 text-foreground border-y border-primary/15",
+  accent: "bg-primary/5 text-foreground border-y border-primary/10",
+  provider: "bg-secondary-light/40 text-foreground border-y border-secondary/15",
 };
 
 export function LandingSection({

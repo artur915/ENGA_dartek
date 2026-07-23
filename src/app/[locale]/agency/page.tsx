@@ -53,7 +53,7 @@ export default async function AgencyDashboard({
           label={t("dashboard.revenue")}
           value={formatNumber(stats.revenue, locale)}
           icon={TrendingUp}
-          accent="accent"
+          accent="secondary"
         />
       </div>
 

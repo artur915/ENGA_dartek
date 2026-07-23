@@ -12,15 +12,15 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white shadow-sm hover:bg-primary-dark active:scale-[0.98] disabled:hover:bg-primary",
+    "bg-primary text-white shadow-sm hover:bg-primary-hover active:scale-[0.98] disabled:hover:bg-primary",
   secondary:
-    "bg-surface-muted text-foreground hover:bg-border-subtle active:scale-[0.98]",
+    "bg-secondary-light text-secondary-dark shadow-sm hover:bg-secondary/15 active:scale-[0.98]",
   outline:
     "border border-border bg-surface text-foreground hover:border-primary/40 hover:bg-primary/5 active:scale-[0.98]",
   ghost:
     "text-muted-foreground hover:bg-surface-muted hover:text-foreground active:scale-[0.98]",
   accent:
-    "bg-accent text-primary-dark shadow-sm hover:bg-accent-light active:scale-[0.98]",
+    "bg-secondary text-white shadow-sm hover:bg-secondary-hover active:scale-[0.98]",
   danger:
     "bg-danger text-white shadow-sm hover:bg-danger/90 active:scale-[0.98]",
 };

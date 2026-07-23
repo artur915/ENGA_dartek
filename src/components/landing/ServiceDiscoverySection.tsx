@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { getCategoryLabel } from "@/lib/catalog-i18n";
+import { getCategoryAccent } from "@/lib/design-tokens";
+import { cn } from "@/lib/utils";
 import {
   LandingCard,
   LandingSection,
@@ -94,29 +96,35 @@ export function ServiceDiscoverySection() {
           const count = categoryCounts[catName];
           const label = getCategoryLabel(catName, locale);
           const description = descriptions[catName] ?? "";
+          const accent = getCategoryAccent(catName);
 
           return (
             <LandingGridItem key={catName}>
-            <Link href={`/services?category=${encodeURIComponent(catName)}`}>
-              <LandingCard className="h-full">
-                <div className="flex items-start gap-4">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-landing-muted text-primary">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-navy transition-colors group-hover:text-primary">
-                      {label}
-                    </h3>
-                    <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                      {description}
-                    </p>
-                    <p className="mt-3 text-xs font-medium text-muted">
-                      {t("catalogServicesCount", { count })}
-                    </p>
+              <Link href={`/services?category=${encodeURIComponent(catName)}`}>
+                <LandingCard className={cn("h-full border", accent.bg, accent.border, accent.hoverBorder)}>
+                  <div className="flex items-start gap-4">
+                    <span
+                      className={cn(
+                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
+                        accent.iconBg
+                      )}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className={cn("font-semibold text-navy transition-colors", accent.text)}>
+                        {label}
+                      </h3>
+                      <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                        {description}
+                      </p>
+                      <p className={cn("mt-3 text-xs font-semibold", accent.text)}>
+                        {t("catalogServicesCount", { count })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </LandingCard>
-            </Link>
+                </LandingCard>
+              </Link>
             </LandingGridItem>
           );
         })}

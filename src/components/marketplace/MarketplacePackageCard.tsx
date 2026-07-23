@@ -7,6 +7,7 @@ import type { EngineeringService, ServicePackage } from "@/data/catalog";
 import { Badge } from "@/components/ui/Badge";
 import { ChevronDown, Package, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getPackageAccent } from "@/lib/design-tokens";
 
 interface MarketplacePackageCardProps {
   pkg: ServicePackage;
@@ -26,12 +27,20 @@ export function MarketplacePackageCard({
 
   const name = t(`packages.${pkg.slug}.name`);
   const description = t(`packages.${pkg.slug}.description`);
+  const accent = getPackageAccent(pkg.slug);
 
   return (
-    <article className="group flex h-full flex-col rounded-2xl border border-border-subtle bg-surface p-6 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-card-hover">
+    <article
+      className={cn(
+        "group flex h-full flex-col rounded-2xl border bg-surface p-6 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover",
+        accent.bg,
+        accent.border,
+        accent.hoverBorder
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", accent.iconBg)}>
             <Package className="h-5 w-5" />
           </div>
           <h2 className="pt-1 text-lg font-bold leading-snug text-foreground">{name}</h2>
@@ -74,7 +83,7 @@ export function MarketplacePackageCard({
       <div className="mt-5 flex justify-end border-t border-border-subtle pt-4">
         <Link
           href={`/client/requests/new?package=${encodeURIComponent(pkg.name)}`}
-          className="inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark"
+          className="inline-flex h-11 items-center rounded-xl bg-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
         >
           {t("selectPackage")}
         </Link>

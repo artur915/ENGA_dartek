@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { StatCard } from "@/components/ui/StatCard";
 import { addFinanceRecord } from "@/actions/finance";
 import { formatCurrency } from "@/lib/format";
 
@@ -52,22 +53,17 @@ export function FinanceDashboard({
   }
 
   const statCards = [
-    { label: t("projectIncome"), value: summary.projectIncome },
-    { label: t("externalIncome"), value: summary.externalIncome },
-    { label: t("expenses"), value: summary.expenses },
-    { label: t("balance"), value: summary.balance },
+    { label: t("projectIncome"), value: summary.projectIncome, accent: "success" as const },
+    { label: t("externalIncome"), value: summary.externalIncome, accent: "info" as const },
+    { label: t("expenses"), value: summary.expenses, accent: "warning" as const },
+    { label: t("balance"), value: summary.balance, accent: "primary" as const },
   ];
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((s) => (
-          <Card key={s.label}>
-            <p className="text-sm text-muted">{s.label}</p>
-            <p className="mt-2 text-2xl font-bold text-primary">
-              {formatCurrency(s.value, tc("currency"), locale)}
-            </p>
-          </Card>
+          <StatCard key={s.label} label={s.label} value={formatCurrency(s.value, tc("currency"), locale)} accent={s.accent} />
         ))}
       </div>
 

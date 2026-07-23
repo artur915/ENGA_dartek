@@ -4,11 +4,97 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, ClipboardList, CreditCard, FileSignature, TrafficCone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getWorkflowStageAccent } from "@/lib/design-tokens";
 import { LandingSection, LandingSectionHeader } from "@/components/landing/LandingSection";
 import { LandingGrid, LandingGridItem } from "@/components/motion/LandingGrid";
 
 const stageIcons = [ClipboardList, FileSignature, TrafficCone, CreditCard];
 const stageKeys = ["submit", "compare", "execute", "complete"] as const;
+const stageNumberBg: Record<(typeof stageKeys)[number], string> = {
+  submit: "bg-accent-blue",
+  compare: "bg-accent-teal",
+  execute: "bg-accent-orange",
+  complete: "bg-accent-green",
+};
+
+function StageCard({
+  stageKey,
+  index,
+  stage,
+  isOpen,
+  onToggle,
+  t,
+  layout,
+}: {
+  stageKey: (typeof stageKeys)[number];
+  index: number;
+  stage: { title: string; summary: string; steps: string[] };
+  isOpen: boolean;
+  onToggle: () => void;
+  t: ReturnType<typeof useTranslations>;
+  layout: "desktop" | "mobile";
+}) {
+  const Icon = stageIcons[index] ?? ClipboardList;
+  const accent = getWorkflowStageAccent(stageKey);
+  const panelId = layout === "desktop" ? `workflow-panel-${stageKey}` : `workflow-mobile-${stageKey}`;
+
+  return (
+    <article className={cn("relative flex flex-col", layout === "desktop" && "pe-4 last:pe-0")}>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={cn(
+          "flex flex-1 flex-col rounded-xl border bg-surface p-5 text-start shadow-soft transition-all hover:shadow-card-hover",
+          accent.border,
+          accent.bg
+        )}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+      >
+        <span
+          className={cn(
+            "flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white",
+            stageNumberBg[stageKey]
+          )}
+        >
+          {index + 1}
+        </span>
+        <span className="mt-4 flex items-center gap-2">
+          <Icon className={cn("h-4 w-4", accent.text)} />
+          <span className="text-base font-bold text-navy">{stage.title}</span>
+        </span>
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{stage.summary}</p>
+        <span className={cn("mt-3 inline-flex items-center gap-1 text-xs font-semibold", accent.text)}>
+          {isOpen ? t("workflowHideDetails") : t("workflowViewDetails")}
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isOpen && "rotate-180")} />
+        </span>
+      </button>
+      {isOpen && (
+        <ol
+          id={panelId}
+          className={cn(
+            "mt-2 rounded-xl border border-border-subtle p-4",
+            accent.bg
+          )}
+        >
+          {stage.steps.map((step, stepIndex) => (
+            <li key={step} className="flex items-start gap-2.5 py-1.5 text-sm text-foreground">
+              <span
+                className={cn(
+                  "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ring-1",
+                  accent.badge
+                )}
+              >
+                {stepIndex + 1}
+              </span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      )}
+    </article>
+  );
+}
 
 export function WorkflowSection() {
   const t = useTranslations("landing");
@@ -22,10 +108,8 @@ export function WorkflowSection() {
         description={t("workflowDescription")}
       />
 
-      {/* Desktop: horizontal process */}
-      <LandingGrid className="hidden lg:grid lg:grid-cols-4 lg:gap-0">
+      <LandingGrid className="hidden lg:grid lg:grid-cols-4 lg:gap-4">
         {stageKeys.map((key, i) => {
-          const Icon = stageIcons[i] ?? ClipboardList;
           const stage = t.raw(`workflowStages.${key}`) as {
             title: string;
             summary: string;
@@ -35,69 +119,46 @@ export function WorkflowSection() {
 
           return (
             <LandingGridItem key={key}>
-            <div className="relative flex flex-col">
-              {i < stageKeys.length - 1 && (
-                <div
-                  className="absolute top-6 end-0 hidden h-px w-full translate-x-1/2 bg-border lg:block"
-                  aria-hidden
-                />
-              )}
-              <article className="relative flex flex-1 flex-col pe-4 last:pe-0">
-                <button
-                  type="button"
-                  onClick={() => setExpanded(isOpen ? null : key)}
-                  className="flex flex-1 flex-col rounded-xl border border-border bg-surface p-5 text-start shadow-soft transition-shadow hover:shadow-card-hover"
-                  aria-expanded={isOpen}
-                  aria-controls={`workflow-panel-${key}`}
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
-                    {i + 1}
-                  </span>
-                  <span className="mt-4 flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-primary" />
-                    <span className="text-base font-bold text-navy">{stage.title}</span>
-                  </span>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{stage.summary}</p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
-                    {isOpen ? t("workflowHideDetails") : t("workflowViewDetails")}
-                    <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isOpen && "rotate-180")} />
-                  </span>
-                </button>
-                {isOpen && (
-                  <ol
-                    id={`workflow-panel-${key}`}
-                    className="mt-2 rounded-xl border border-border-subtle bg-landing-bg p-4"
-                  >
-                    {stage.steps.map((step, stepIndex) => (
-                      <li key={step} className="flex items-start gap-2.5 py-1.5 text-sm text-foreground">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
-                          {stepIndex + 1}
-                        </span>
-                        {step}
-                      </li>
-                    ))}
-                  </ol>
+              <div className="relative flex flex-col">
+                {i < stageKeys.length - 1 && (
+                  <div
+                    className="absolute top-6 end-0 hidden h-px w-full translate-x-1/2 bg-border lg:block"
+                    aria-hidden
+                  />
                 )}
-              </article>
-            </div>
+                <StageCard
+                  stageKey={key}
+                  index={i}
+                  stage={stage}
+                  isOpen={isOpen}
+                  onToggle={() => setExpanded(isOpen ? null : key)}
+                  t={t}
+                  layout="desktop"
+                />
+              </div>
             </LandingGridItem>
           );
         })}
       </LandingGrid>
 
-      {/* Mobile / tablet: vertical process */}
       <div className="space-y-3 lg:hidden">
         {stageKeys.map((key, i) => {
-          const Icon = stageIcons[i] ?? ClipboardList;
           const stage = t.raw(`workflowStages.${key}`) as {
             title: string;
             summary: string;
             steps: string[];
           };
           const isOpen = expanded === key;
+          const accent = getWorkflowStageAccent(key);
 
           return (
-            <article key={key} className="overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
+            <article
+              key={key}
+              className={cn(
+                "overflow-hidden rounded-xl border bg-surface shadow-soft",
+                accent.border
+              )}
+            >
               <button
                 type="button"
                 onClick={() => setExpanded(isOpen ? null : key)}
@@ -105,12 +166,20 @@ export function WorkflowSection() {
                 aria-expanded={isOpen}
                 aria-controls={`workflow-mobile-${key}`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
+                <span
+                  className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white",
+                    stageNumberBg[key]
+                  )}
+                >
                   {i + 1}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-primary" />
+                    {(() => {
+                      const Icon = stageIcons[i] ?? ClipboardList;
+                      return <Icon className={cn("h-4 w-4", accent.text)} />;
+                    })()}
                     <span className="text-base font-bold text-navy">{stage.title}</span>
                   </span>
                   <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{stage.summary}</p>
@@ -120,10 +189,15 @@ export function WorkflowSection() {
                 />
               </button>
               {isOpen && (
-                <ol id={`workflow-mobile-${key}`} className="border-t border-border-subtle bg-landing-muted px-5 py-4">
+                <ol id={`workflow-mobile-${key}`} className={cn("border-t border-border-subtle px-5 py-4", accent.bg)}>
                   {stage.steps.map((step, stepIndex) => (
                     <li key={step} className="flex items-start gap-2.5 py-1.5 text-sm">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
+                      <span
+                        className={cn(
+                          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ring-1",
+                          accent.badge
+                        )}
+                      >
                         {stepIndex + 1}
                       </span>
                       {step}

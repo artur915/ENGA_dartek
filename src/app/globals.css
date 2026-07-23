@@ -1,38 +1,87 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #374151;
-  --navy: #15803d;
-  --primary: #22c55e;
-  --primary-light: #4ade80;
-  --primary-dark: #16a34a;
-  --accent: #34d399;
-  --accent-light: #6ee7b7;
+  /* Neutrals */
+  --background: #fafbfc;
+  --foreground: #1e293b;
+  --navy: #0f172a;
   --surface: #ffffff;
-  --surface-muted: #f0fdf4;
+  --surface-muted: #f1f5f9;
   --surface-elevated: #ffffff;
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --muted: #64748b;
+  --muted-foreground: #475569;
+
+  /* Primary — royal blue */
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-light: #dbeafe;
+  --primary-dark: #1e3a8a;
+
+  /* Secondary — teal */
+  --secondary: #0d9488;
+  --secondary-hover: #0f766e;
+  --secondary-light: #ccfbf1;
+  --secondary-dark: #115e59;
+
+  /* Legacy alias */
+  --accent: var(--secondary);
+  --accent-light: var(--secondary-light);
+
+  /* Controlled accents */
+  --accent-blue: #2563eb;
+  --accent-teal: #14b8a6;
+  --accent-green: #059669;
+  --accent-orange: #ea580c;
+  --accent-purple: #7c3aed;
+  --accent-yellow: #ca8a04;
+  --accent-sky: #0284c7;
+  --accent-indigo: #4f46e5;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+  --accent-emerald: #10b981;
+
+  /* Semantic */
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --error: #dc2626;
+  --info: #2563eb;
+  --premium: #7c3aed;
+
+  /* Landing */
   --landing-bg: #ffffff;
-  --landing-muted: #ecfdf5;
-  --landing-navy: #22c55e;
-  --border: #bbf7d0;
-  --border-subtle: #dcfce7;
-  --muted: #6b7280;
-  --muted-foreground: #4b5563;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --ring: rgba(34, 197, 94, 0.35);
-  --shadow-sm: 0 1px 2px rgba(34, 197, 94, 0.06);
-  --shadow-md: 0 4px 20px rgba(34, 197, 94, 0.08);
-  --shadow-lg: 0 16px 48px rgba(34, 197, 94, 0.1);
-  --shadow-soft: 0 8px 32px rgba(34, 197, 94, 0.07);
+  --landing-muted: #f0f7ff;
+  --landing-navy: #0f172a;
+  --footer-bg: #0f172a;
+  --footer-fg: #f8fafc;
+
+  /* Focus & shadows */
+  --ring: rgba(29, 78, 216, 0.35);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.1);
+  --shadow-soft: 0 8px 32px rgba(15, 23, 42, 0.06);
+
+  /* Layout tokens */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
   --space-section: 4rem;
   --space-section-lg: 5.5rem;
+  --container-max: 80rem;
+  --btn-height-sm: 2.25rem;
+  --btn-height-md: 2.75rem;
+  --btn-height-lg: 3rem;
+  --input-height: 2.75rem;
+  --icon-sm: 1rem;
+  --icon-md: 1.25rem;
+  --icon-lg: 1.5rem;
+
+  /* Typography scale */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -41,17 +90,33 @@
   --text-2xl: 1.5rem;
   --text-3xl: 1.875rem;
   --text-4xl: 2.25rem;
-  --info: #0284c7;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-navy: var(--navy);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
   --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-dark: var(--secondary-dark);
   --color-accent: var(--accent);
   --color-accent-light: var(--accent-light);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-green: var(--accent-green);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-sky: var(--accent-sky);
+  --color-accent-indigo: var(--accent-indigo);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-rose: var(--accent-rose);
+  --color-accent-emerald: var(--accent-emerald);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --color-surface-elevated: var(--surface-elevated);
@@ -62,12 +127,15 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-error: var(--error);
+  --color-info: var(--info);
+  --color-premium: var(--premium);
   --color-ring: var(--ring);
-  --color-navy: var(--navy);
   --color-landing-bg: var(--landing-bg);
   --color-landing-muted: var(--landing-muted);
   --color-landing-navy: var(--landing-navy);
-  --color-info: var(--info);
+  --color-footer-bg: var(--footer-bg);
+  --color-footer-fg: var(--footer-fg);
   --font-sans: var(--font-inter);
   --font-arabic: var(--font-noto-arabic);
   --shadow-card: var(--shadow-sm);
@@ -165,15 +233,44 @@
   }
 
   .gradient-primary {
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 55%, var(--primary-dark) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--primary-light) 0%,
+      var(--primary) 55%,
+      var(--primary-dark) 100%
+    );
+  }
+
+  .gradient-secondary {
+    background: linear-gradient(
+      135deg,
+      var(--secondary-light) 0%,
+      var(--secondary) 100%
+    );
   }
 
   .gradient-accent {
-    background: linear-gradient(135deg, #ecfdf5 0%, var(--primary-light) 45%, var(--primary) 100%);
+    background: linear-gradient(
+      135deg,
+      #eff6ff 0%,
+      var(--primary-light) 40%,
+      color-mix(in srgb, var(--secondary-light) 60%, white) 100%
+    );
+  }
+
+  .gradient-hero {
+    background:
+      radial-gradient(ellipse 80% 60% at 90% 20%, color-mix(in srgb, var(--secondary-light) 70%, transparent), transparent),
+      radial-gradient(ellipse 70% 50% at 10% 80%, color-mix(in srgb, var(--primary-light) 80%, transparent), transparent),
+      var(--landing-bg);
   }
 
   .gradient-subtle {
     background: linear-gradient(180deg, var(--surface) 0%, var(--surface-muted) 100%);
+  }
+
+  .gradient-footer {
+    background: linear-gradient(180deg, var(--footer-bg) 0%, #020617 100%);
   }
 
   .heading-display {
@@ -189,7 +286,7 @@
   }
 
   .link-primary {
-    @apply font-semibold text-primary transition-colors hover:text-primary-dark;
+    @apply font-semibold text-primary transition-colors hover:text-primary-hover;
   }
 
   .status-green {
@@ -231,5 +328,13 @@
       transparent 1px
     );
     background-size: 48px 100%;
+  }
+
+  .nav-active {
+    @apply text-primary font-semibold;
+  }
+
+  .nav-link {
+    @apply text-muted-foreground transition-colors hover:text-foreground;
   }
 }

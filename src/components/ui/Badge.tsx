@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: "default" | "success" | "warning" | "danger" | "outline" | "accent";
+  variant?: "default" | "success" | "warning" | "danger" | "outline" | "accent" | "info" | "secondary";
   size?: "sm" | "md";
   className?: string;
 }
@@ -13,7 +13,9 @@ const variants = {
   warning: "bg-warning/10 text-warning ring-1 ring-warning/15",
   danger: "bg-danger/10 text-danger ring-1 ring-danger/15",
   outline: "border border-border bg-surface text-muted-foreground",
-  accent: "bg-accent/15 text-primary-dark ring-1 ring-accent/20",
+  accent: "bg-secondary/10 text-secondary-dark ring-1 ring-secondary/20",
+  info: "bg-info/10 text-info ring-1 ring-info/15",
+  secondary: "bg-secondary-light text-secondary-dark ring-1 ring-secondary/15",
 };
 
 const sizes = {

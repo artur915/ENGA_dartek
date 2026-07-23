@@ -2,18 +2,20 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { type ComponentProps } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "accent";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-white shadow-sm hover:bg-primary-dark",
+    "bg-primary text-white shadow-sm hover:bg-primary-hover",
   secondary:
-    "bg-surface-muted text-foreground hover:bg-border-subtle",
+    "bg-secondary-light text-secondary-dark shadow-sm hover:bg-secondary/15",
   outline:
     "border border-border bg-surface text-foreground hover:border-primary/40 hover:bg-primary/5",
   ghost:
     "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
+  accent:
+    "bg-secondary text-white shadow-sm hover:bg-secondary-hover",
 };
 
 const sizes: Record<ButtonSize, string> = {

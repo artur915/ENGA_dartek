@@ -1,6 +1,8 @@
 import { useTranslations, useLocale } from "next-intl";
 import { SERVICE_PACKAGES } from "@/data/catalog";
 import { getPackageField } from "@/lib/catalog-i18n";
+import { getPackageAccent } from "@/lib/design-tokens";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import {
@@ -44,31 +46,40 @@ export function PackagesSection() {
       <LandingGrid className="grid gap-5 md:grid-cols-2">
         {packages.map((pkg) => {
           const meta = packageMeta[pkg.slug];
+          const accent = getPackageAccent(pkg.slug);
+
           return (
             <LandingGridItem key={pkg.slug}>
-            <LandingCard className="flex h-full flex-col">
-              <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
-                {meta?.forWho ?? getPackageField(pkg, "categories", locale)}
-              </p>
-              <h3 className="mt-2 text-xl font-bold text-navy">
-                {getPackageField(pkg, "name", locale)}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {meta?.problem ?? getPackageField(pkg, "description", locale)}
-              </p>
-              <p className="mt-4 flex-1 text-xs text-muted">
-                {getPackageField(pkg, "categories", locale)}
-              </p>
-              <ButtonLink
-                href={`/client/requests/new?package=${encodeURIComponent(pkg.name)}`}
-                variant="outline"
-                size="sm"
-                className="mt-6 w-full sm:w-auto"
+              <LandingCard
+                className={cn(
+                  "flex h-full flex-col border",
+                  accent.bg,
+                  accent.border,
+                  accent.hoverBorder
+                )}
               >
-                {t("ctaSubmitRequest")}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-              </ButtonLink>
-            </LandingCard>
+                <p className={cn("text-xs font-bold uppercase tracking-[0.12em]", accent.text)}>
+                  {meta?.forWho ?? getPackageField(pkg, "categories", locale)}
+                </p>
+                <h3 className="mt-2 text-xl font-bold text-navy">
+                  {getPackageField(pkg, "name", locale)}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {meta?.problem ?? getPackageField(pkg, "description", locale)}
+                </p>
+                <p className="mt-4 flex-1 text-xs text-muted">
+                  {getPackageField(pkg, "categories", locale)}
+                </p>
+                <ButtonLink
+                  href={`/client/requests/new?package=${encodeURIComponent(pkg.name)}`}
+                  variant="primary"
+                  size="sm"
+                  className="mt-6 w-full sm:w-auto"
+                >
+                  {t("ctaSubmitRequest")}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                </ButtonLink>
+              </LandingCard>
             </LandingGridItem>
           );
         })}

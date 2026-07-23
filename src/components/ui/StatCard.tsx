@@ -13,22 +13,24 @@ export function StatCard({
   value: string | number;
   icon?: LucideIcon;
   trend?: string;
-  accent?: "primary" | "success" | "warning" | "accent" | "muted";
+  accent?: "primary" | "secondary" | "success" | "warning" | "info" | "muted";
   className?: string;
 }) {
   const accents = {
     primary: "bg-primary/10 text-primary",
+    secondary: "bg-secondary/10 text-secondary-dark",
     success: "bg-success/10 text-success",
     warning: "bg-warning/10 text-warning",
-    accent: "bg-accent/15 text-accent",
+    info: "bg-info/10 text-info",
     muted: "bg-surface-muted text-muted",
   };
 
   const valueColors = {
     primary: "text-primary",
+    secondary: "text-secondary-dark",
     success: "text-success",
     warning: "text-warning",
-    accent: "text-accent",
+    info: "text-info",
     muted: "text-foreground",
   };
 
