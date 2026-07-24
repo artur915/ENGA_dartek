@@ -5,7 +5,9 @@ import { ProjectScheduleWorkspace } from "@/components/client/ProjectScheduleWor
 import { getClientActiveProjects } from "@/actions/projects";
 import { getClientNav } from "@/lib/nav";
 import { buildScheduleProject } from "@/lib/project-schedule";
-import { ensureMilestoneScheduleDates, getMilestones } from "@/actions/milestones";
+import { buildProgressMapFromMilestones } from "@/lib/milestone-progress";
+import { ensureMilestoneScheduleDates } from "@/lib/milestone-schedule-dates";
+import { getMilestones } from "@/actions/milestones";
 
 function unwrap<T>(value: T | T[] | null | undefined): T | null {
   if (!value) return null;
@@ -49,6 +51,7 @@ export default async function ClientSchedulePage({
         deliverablesItems: quote?.deliverables_items,
         paymentMilestones: quote?.payment_milestones,
         milestones,
+        progressById: buildProgressMapFromMilestones(milestones),
         locale,
         durationWeeksLabel: (weeks) => ts("durationWeeks", { weeks }),
         });

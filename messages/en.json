@@ -795,8 +795,15 @@
       "progressLabel": "Completion",
       "completedMilestone": "Completed",
       "upcomingMilestone": "Upcoming",
-      "statusUpdated": "Status updated"
+      "statusUpdated": "Status updated",
+      "saveSchedule": "Save",
+      "saving": "Saving…",
+      "saveScheduleSuccess": "Schedule saved. The client will see the updated progress.",
+      "saveScheduleHint": "Save to publish milestone progress to the client schedule."
     },
+    "updates": {
+      "title": "Project Updates",
+      "pageDescription": "Messages and structured updates across your active client projects.",
       "empty": "No active projects yet. Submit quotations on incoming requests to win work.",
       "browseProjects": "View all projects",
       "viewSchedule": "View schedule",

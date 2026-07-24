@@ -8,11 +8,12 @@ import { Calendar, Clock3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ScheduleProject } from "@/lib/project-schedule";
 import { refreshScheduleProject } from "@/lib/project-schedule";
-import { updateMilestone } from "@/actions/milestones";
-import { loadMilestoneProgress, setMilestoneProgress } from "@/lib/milestone-progress-storage";
+import { saveScheduleProgress } from "@/actions/milestones";
+import { buildProgressMapFromMilestones } from "@/lib/milestone-progress";
 import { ProjectGanttChart } from "@/components/client/ProjectGanttChart";
 import { ScheduleMilestonePanel } from "@/components/client/ScheduleMilestonePanel";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 
 type Portal = "client" | "agency";
@@ -32,20 +33,17 @@ export function ProjectScheduleWorkspace({
   const [view, setView] = useState<"client" | "agency">(portal === "agency" ? "agency" : "client");
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
   const [progressById, setProgressById] = useState<Record<string, number>>({});
+  const [savedProgressById, setSavedProgressById] = useState<Record<string, number>>({});
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    setProgressById(loadMilestoneProgress());
-  }, []);
-
-  useEffect(() => {
-    const syncProgress = () => setProgressById(loadMilestoneProgress());
-    window.addEventListener("storage", syncProgress);
-    window.addEventListener("enga-milestone-progress", syncProgress);
-    return () => {
-      window.removeEventListener("storage", syncProgress);
-      window.removeEventListener("enga-milestone-progress", syncProgress);
-    };
-  }, []);
+    const fromServer = buildProgressMapFromMilestones(projects.flatMap((project) => project.milestones));
+    setProgressById(fromServer);
+    if (portal === "agency") {
+      setSavedProgressById(fromServer);
+    }
+  }, [projects, portal]);
 
   const scheduleProjects = useMemo(
     () => projects.map((project) => refreshScheduleProject(project, progressById)),
@@ -67,6 +65,17 @@ export function ProjectScheduleWorkspace({
     [scheduleProjects, selectedId]
   );
 
+  const isDirty = useMemo(() => {
+    if (portal !== "agency" || !selected) return false;
+
+    return selected.milestones.some((milestone) => {
+      if (milestone.status === "green") return false;
+      const saved = savedProgressById[milestone.id] ?? 0;
+      const draft = progressById[milestone.id] ?? saved;
+      return draft !== saved;
+    });
+  }, [portal, selected, progressById, savedProgressById]);
+
   if (!scheduleProjects.length || !selected) {
     return (
       <div className="rounded-2xl border border-border-subtle bg-surface p-8 text-center">
@@ -85,15 +94,42 @@ export function ProjectScheduleWorkspace({
     if (portal !== "agency") return;
 
     const clamped = Math.min(100, Math.max(0, Math.round(progress)));
-    setMilestoneProgress(milestoneId, clamped);
+    setSaveMessage(null);
+    setSaveError(null);
     setProgressById((current) => ({ ...current, [milestoneId]: clamped }));
+  }
 
-    if (clamped >= 100) {
-      startTransition(async () => {
-        await updateMilestone(milestoneId, { status: "green", status_update: t("statusUpdated") });
-        router.refresh();
+  function handleSaveSchedule() {
+    if (portal !== "agency" || !isDirty) return;
+
+    const updates = selected.milestones
+      .filter((milestone) => milestone.status !== "green")
+      .map((milestone) => ({
+        milestoneId: milestone.id,
+        progress: progressById[milestone.id] ?? savedProgressById[milestone.id] ?? 0,
+      }))
+      .filter((update) => {
+        const saved = savedProgressById[update.milestoneId] ?? 0;
+        return update.progress !== saved;
       });
-    }
+
+    startTransition(async () => {
+      const result = await saveScheduleProgress(selected.requestId, updates, t("statusUpdated"));
+      if (result.error) {
+        setSaveError(result.error);
+        setSaveMessage(null);
+        return;
+      }
+
+      const nextSaved = { ...savedProgressById };
+      for (const update of updates) {
+        nextSaved[update.milestoneId] = update.progress;
+      }
+      setSavedProgressById(nextSaved);
+      setSaveMessage(t("saveScheduleSuccess"));
+      setSaveError(null);
+      router.refresh();
+    });
   }
 
   return (
@@ -240,6 +276,26 @@ export function ProjectScheduleWorkspace({
             progressById={progressById}
             onProgressChange={portal === "agency" ? handleAgencyProgressChange : undefined}
           />
+
+          {portal === "agency" && (
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle pt-4">
+              <p className="text-xs text-muted">{t("saveScheduleHint")}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                {saveError && <p className="text-xs font-medium text-danger">{saveError}</p>}
+                {saveMessage && !saveError && (
+                  <p className="text-xs font-medium text-success">{saveMessage}</p>
+                )}
+                <Button
+                  type="button"
+                  onClick={handleSaveSchedule}
+                  disabled={!isDirty || isPending}
+                  size="sm"
+                >
+                  {isPending ? t("saving") : t("saveSchedule")}
+                </Button>
+              </div>
+            </div>
+          )}
 
           <p className="mt-4 inline-flex items-center gap-2 text-xs text-muted">
             <Clock3 className="h-3.5 w-3.5" />

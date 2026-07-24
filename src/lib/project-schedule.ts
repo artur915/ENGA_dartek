@@ -21,6 +21,7 @@ export type MilestoneRow = {
   sort_order: number;
   due_date: string | null;
   status_update: string | null;
+  progress_percent?: number | null;
   updated_at?: string | null;
 };
 

@@ -795,7 +795,11 @@
       "progressLabel": "نسبة الإنجاز",
       "completedMilestone": "مكتمل",
       "upcomingMilestone": "قادم",
-      "statusUpdated": "تم تحديث الحالة"
+      "statusUpdated": "تم تحديث الحالة",
+      "saveSchedule": "حفظ",
+      "saving": "جاري الحفظ…",
+      "saveScheduleSuccess": "تم حفظ الجدول. سيرى العميل التقدم المحدّث.",
+      "saveScheduleHint": "احفظ لنشر تقدم المراحل في جدول العميل."
     },
     "updates": {
       "title": "تحديثات المشروع",

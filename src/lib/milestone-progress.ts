@@ -1,6 +1,20 @@
 import type { MilestoneRow, SchedulePhaseStatus } from "@/lib/project-schedule";
 
-export type MilestoneLike = Pick<MilestoneRow, "id" | "status" | "sort_order">;
+export type MilestoneLike = Pick<MilestoneRow, "id" | "status" | "sort_order"> & {
+  progress_percent?: number | null;
+};
+
+export function buildProgressMapFromMilestones(milestones: MilestoneLike[]): Record<string, number> {
+  const map: Record<string, number> = {};
+  for (const milestone of sortMilestones(milestones)) {
+    if (milestone.status === "green") {
+      map[milestone.id] = 100;
+    } else if (milestone.progress_percent != null) {
+      map[milestone.id] = Math.min(100, Math.max(0, Math.round(milestone.progress_percent)));
+    }
+  }
+  return map;
+}
 
 export type MilestoneExecutionState = {
   status: SchedulePhaseStatus;
@@ -62,7 +76,11 @@ export function resolveMilestoneExecutionAtIndex(
 
   const stored = progressById[milestone.id];
   const progress =
-    stored !== undefined ? Math.min(100, Math.max(0, Math.round(stored))) : 0;
+    stored !== undefined
+      ? Math.min(100, Math.max(0, Math.round(stored)))
+      : milestone.progress_percent != null
+        ? Math.min(100, Math.max(0, Math.round(milestone.progress_percent)))
+        : 0;
 
   return {
     status: "in_progress",

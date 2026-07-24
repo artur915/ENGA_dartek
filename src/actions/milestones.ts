@@ -58,6 +58,7 @@ export async function createDefaultMilestones(requestId: string) {
       sort_order: i + 1,
       status: "amber" as MilestoneStatus,
       due_date: dueDates[i] ?? null,
+      progress_percent: 0,
     }))
   );
 
@@ -65,41 +66,6 @@ export async function createDefaultMilestones(requestId: string) {
     .from("project_requests")
     .update({ status: "in_progress" as RequestStatus })
     .eq("id", requestId);
-}
-
-/** Backfill missing due dates so the Gantt matches the provider schedule baseline. */
-export async function ensureMilestoneScheduleDates(requestId: string) {
-  const supabase = await createClient();
-  const { data: milestones } = await supabase
-    .from("milestones")
-    .select("id, due_date, sort_order")
-    .eq("request_id", requestId)
-    .order("sort_order");
-
-  if (!milestones?.length) return;
-  if (milestones.every((milestone) => milestone.due_date)) return;
-
-  const { signedAt, estimatedDuration } = await getAgreementScheduleContext(requestId);
-  const dueDates = computeDefaultMilestoneDueDates(
-    signedAt,
-    milestones.length,
-    estimatedDuration
-  );
-
-  await Promise.all(
-    milestones.map((milestone, index) => {
-      if (milestone.due_date) return Promise.resolve();
-      return supabase
-        .from("milestones")
-        .update({ due_date: dueDates[index] ?? null })
-        .eq("id", milestone.id);
-    })
-  );
-
-  revalidatePath("/client/schedule");
-  revalidatePath("/agency/schedule");
-  revalidatePath("/client/projects");
-  revalidatePath("/agency/projects");
 }
 
 export async function getMilestones(requestId: string) {
@@ -174,9 +140,70 @@ export async function addMilestone(requestId: string, title: string) {
     title,
     sort_order: (count ?? 0) + 1,
     status: "amber",
+    progress_percent: 0,
   });
 
   if (error) return { error: error.message };
+  revalidatePath("/client/projects");
+  revalidatePath("/agency/projects");
+  revalidatePath("/client/schedule");
+  revalidatePath("/agency/schedule");
+  return { success: true };
+}
+
+export async function saveScheduleProgress(
+  requestId: string,
+  updates: Array<{ milestoneId: string; progress: number }>,
+  statusUpdate = "Status updated"
+) {
+  const profile = await getProfile();
+  if (!profile) return { error: "Not authenticated" };
+
+  if (
+    profile.role !== "agency_owner" &&
+    profile.role !== "agency_employee" &&
+    profile.role !== "admin"
+  ) {
+    return { error: "Only providers can update milestones" };
+  }
+
+  if (!updates.length) return { success: true };
+
+  const supabase = await createClient();
+  const { data: milestones } = await supabase
+    .from("milestones")
+    .select("id, request_id")
+    .eq("request_id", requestId);
+
+  const allowedIds = new Set((milestones ?? []).map((milestone) => milestone.id));
+
+  for (const update of updates) {
+    if (!allowedIds.has(update.milestoneId)) {
+      return { error: "Invalid milestone" };
+    }
+
+    const progress = Math.min(100, Math.max(0, Math.round(update.progress)));
+    const payload: {
+      progress_percent: number;
+      status?: MilestoneStatus;
+      completed_at?: string | null;
+      status_update?: string;
+    } = { progress_percent: progress };
+
+    if (progress >= 100) {
+      payload.status = "green";
+      payload.completed_at = new Date().toISOString();
+      payload.status_update = statusUpdate;
+    }
+
+    const { error } = await supabase
+      .from("milestones")
+      .update(payload)
+      .eq("id", update.milestoneId);
+
+    if (error) return { error: error.message };
+  }
+
   revalidatePath("/client/projects");
   revalidatePath("/agency/projects");
   revalidatePath("/client/schedule");
