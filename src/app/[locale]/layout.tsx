@@ -1,21 +1,9 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Inter, Noto_Sans_Arabic } from "next/font/google";
 import { locales, rtlLocales, type Locale } from "@/i18n/config";
 import { MotionProvider } from "@/components/motion/MotionProvider";
-import "../globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const notoArabic = Noto_Sans_Arabic({
-  variable: "--font-noto-arabic",
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-});
+import { LocaleDocument } from "@/components/layout/LocaleDocument";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -39,14 +27,16 @@ export default async function LocaleLayout({
   const dir = rtlLocales.includes(locale as Locale) ? "rtl" : "ltr";
 
   return (
-    <html lang={locale} dir={dir} data-scroll-behavior="smooth">
-      <body
-        className={`${inter.variable} ${notoArabic.variable} flex min-h-full flex-col font-sans antialiased`}
-      >
-        <NextIntlClientProvider messages={messages}>
-          <MotionProvider>{children}</MotionProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang=${JSON.stringify(locale)};document.documentElement.dir=${JSON.stringify(dir)};`,
+        }}
+      />
+      <NextIntlClientProvider messages={messages}>
+        <LocaleDocument />
+        <MotionProvider>{children}</MotionProvider>
+      </NextIntlClientProvider>
+    </>
   );
 }

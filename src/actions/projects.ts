@@ -41,20 +41,25 @@ export async function getClientActiveProjects() {
   if (!profile) return [];
 
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("agreements")
     .select(`
       id, signed_at, created_at,
       agencies(name),
       project_requests(
         id, title, status, location_city, created_at,
-        milestones(id, title, status, sort_order, due_date, progress_percent, status_update, updated_at),
+        milestones(*),
         payments(id, amount, status)
       ),
       quotations(price, estimated_duration, deliverables_items, payment_milestones)
     `)
     .eq("client_id", profile.id)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[getClientActiveProjects]", error.message);
+    return [];
+  }
 
   const activeStatuses = new Set(["accepted", "in_progress"]);
 
@@ -107,13 +112,13 @@ export async function getAgencyActiveProjects() {
 
   if (!agency) return [];
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("agreements")
     .select(`
       id, signed_at, created_at,
       project_requests(
         id, title, status, location_city, created_at,
-        milestones(id, title, status, sort_order, due_date, progress_percent, status_update, updated_at),
+        milestones(*),
         payments(id, amount, status)
       ),
       quotations(price, estimated_duration, deliverables_items, payment_milestones),
@@ -121,6 +126,11 @@ export async function getAgencyActiveProjects() {
     `)
     .eq("agency_id", agency.id)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("[getAgencyActiveProjects]", error.message);
+    return [];
+  }
 
   const activeStatuses = new Set(["accepted", "in_progress"]);
 

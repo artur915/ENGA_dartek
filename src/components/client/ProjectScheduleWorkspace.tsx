@@ -30,7 +30,6 @@ export function ProjectScheduleWorkspace({
   const t = useTranslations(portal === "agency" ? "agency.schedule" : "client.schedule");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [view, setView] = useState<"client" | "agency">(portal === "agency" ? "agency" : "client");
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
   const [progressById, setProgressById] = useState<Record<string, number>>({});
   const [savedProgressById, setSavedProgressById] = useState<Record<string, number>>({});
@@ -173,28 +172,6 @@ export function ProjectScheduleWorkspace({
             <p className="mt-1 max-w-2xl text-sm text-muted">{t("subtitle")}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-lg border border-border-subtle bg-surface p-1">
-              <button
-                type="button"
-                onClick={() => setView("client")}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-xs font-semibold",
-                  view === "client" ? "bg-foreground text-white" : "text-muted"
-                )}
-              >
-                {t("clientView")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setView("agency")}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-xs font-semibold",
-                  view === "agency" ? "bg-foreground text-white" : "text-muted"
-                )}
-              >
-                {t("agencyView")}
-              </button>
-            </div>
             {awaitingApproval ? (
               <Badge variant="warning" size="sm">
                 {t("awaitingApproval")}
